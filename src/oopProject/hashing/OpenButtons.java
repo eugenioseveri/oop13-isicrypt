@@ -18,16 +18,20 @@ public class OpenButtons extends JPanel{
 	JFileChooser fileChooser = new JFileChooser();
 	File hashObj;
 	DataInputStream stream;
-	
-	public DataInputStream filChooser(){
-		@SuppressWarnings("unused")
-		//this variable is used for make the execution of showOpenDialog bloker
+	/*Gestire l'annullamento dell'aperturra file*/
+	public DataInputStream fileChooser(){
+		//this variable is used for make the execution of showOpenDialog bloker, and manage the exceprions
 		int block = fileChooser.showOpenDialog(OpenButtons.this);
 		hashObj = fileChooser.getSelectedFile();
+		if( block == JFileChooser.CANCEL_OPTION || block == JFileChooser.ERROR_OPTION ){
+			System.out.println("File non selezionato");
+			/*Da Cambiare quando si inserisce nella GUI!!!!!*/
+			System.exit(ABORT);
+		}
 		try {
 			stream = new DataInputStream(new FileInputStream(hashObj));
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			System.out.println("Can't stream the selected file: "+e);
 		}
 		return stream;		
 	}
