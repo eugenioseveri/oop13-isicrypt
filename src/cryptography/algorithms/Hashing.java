@@ -11,7 +11,7 @@ import javax.swing.JPanel;	//need for the interface that select the file
 import cryptography.interfacesandabstractclasses.IHashing;
 
 /**
- * 
+ 
  * @author Filippo Vimini
  *
  */
