@@ -1,5 +1,6 @@
-package oopProject.hashing;
+package test;
 
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,9 +18,9 @@ public class OpenButtons extends JPanel{
 	
 	JFileChooser fileChooser = new JFileChooser();
 	File hashObj;
-	DataInputStream stream;
+	BufferedInputStream stream;
 	/*Gestire l'annullamento dell'aperturra file*/
-	public DataInputStream fileChooser(){
+	public BufferedInputStream fileChooser(){
 		//this variable is used for make the execution of showOpenDialog bloker, and manage the exceprions
 		int block = fileChooser.showOpenDialog(OpenButtons.this);
 		hashObj = fileChooser.getSelectedFile();
@@ -29,7 +30,7 @@ public class OpenButtons extends JPanel{
 			System.exit(ABORT);
 		}
 		try {
-			stream = new DataInputStream(new FileInputStream(hashObj));
+			stream = new BufferedInputStream(new DataInputStream(new FileInputStream(hashObj)));
 		} catch (FileNotFoundException e) {
 			System.out.println("Can't stream the selected file: "+e);
 		}
