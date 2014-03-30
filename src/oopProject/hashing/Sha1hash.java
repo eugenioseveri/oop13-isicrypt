@@ -69,8 +69,7 @@ public class Sha1hash extends JPanel implements IHashing {
 
 	@Override
 	public boolean compare(String st1, String st2) {
-		return st1.equalsIgnoreCase(st2);
-		
+		return st1.equalsIgnoreCase(st2);	//NO casesensitive!
 	}
 
 }
