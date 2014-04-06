@@ -14,4 +14,11 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>res/IsiCryptIcon.jpg</name>
+			<type>1</type>
+			<location>D:/Utenti/Filippo/Immagini/IsiCryptIcon.jpg</location>
+		</link>
+	</linkedResources>
 </projectDescription>
