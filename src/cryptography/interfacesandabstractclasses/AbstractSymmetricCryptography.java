@@ -1,20 +1,32 @@
 package cryptography.interfacesandabstractclasses;
 
-import java.security.Key;
+import java.io.InputStream;
+import java.io.OutputStream;
+import javax.crypto.SecretKey;
 
 /**
+ * DEPRECATED?
  * Abstract class used to implement getters/setters methods for symmetric algorithms classes.
  * @author Eugenio Severi
  */
 public abstract class AbstractSymmetricCryptography implements ICryptography {
 
-	private Key symmetricKey;
+	private InputStream input;
+	private OutputStream output;
+	private SecretKey symmetricKey;
+	
+	/*public AbstractSymmetricCryptography(InputStream input, OutputStream output) {
+		this.input = input;
+		this.output = output;
+	}*/
+	public AbstractSymmetricCryptography() {
+	}
 
-	Key getKey() {
+	SecretKey getKey() {
 		return this.symmetricKey;
 	}
 	
-	void setKey(Key newKey) {
+	void setKey(SecretKey newKey) {
 		// Aggiungere controllo sull'input?
 		this.symmetricKey = newKey;
 	}
