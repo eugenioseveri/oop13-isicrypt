@@ -1,11 +1,8 @@
 package gui;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import java.awt.FlowLayout;
 import javax.swing.JButton;
 import java.awt.Color;
 import java.awt.SystemColor;
@@ -14,12 +11,15 @@ import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import java.awt.Font;
 import javax.swing.SwingConstants;
-import java.awt.Window.Type;
 import javax.swing.DropMode;
 import java.awt.Toolkit;
 
 public class StartScreenView extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2756177018639178949L;
 	private JPanel contentPane;
 	private JTextField textField;
 

@@ -34,9 +34,9 @@ public class GuiMethodSetter {
 	 * @param weighty		Weight of the element on y axis of the cell.
 	 * @param ipadx			Dimension in % of the element in x axis.
 	 * @param ipady			Dimension in % of the element in y axis.
+	 * @param insets[]		Array with insets values of GridBagLayout.
 	 * @param fill			VIsible space of cell occupies by the element.
 	 * @param anchor		Anchor of the element in the cell.
-	 * @param insets[]		Array with insets values of GridBagLayout.
 	 */
 	public void setLimit( GridBagConstraints limiti, int gridx, int gridy, int gridwidth, int gridheight, int weightx, int weighty, int ipadx, int ipady, int insets[], int fill, int anchor, Container contenitore, Component C ){
 		limiti.gridx = gridx;
@@ -79,11 +79,13 @@ public class GuiMethodSetter {
 	 */
 	public String textEncoder(File file) throws FileNotFoundException{
 		Scanner myScanner = null;
-		String contents;
+		String contents = null;
 		try
 		{
-		    myScanner = new Scanner(file);
-		    contents = myScanner.useDelimiter("\\Z").next(); 
+			if(file != null){
+				myScanner = new Scanner(file);
+				contents = myScanner.useDelimiter("\\Z").next(); 
+			}
 		}
 		finally
 		{

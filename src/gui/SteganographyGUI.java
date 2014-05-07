@@ -34,20 +34,21 @@ import javax.swing.SwingConstants;
 import org.apache.commons.lang3.StringUtils;
 
 import cryptography.algorithms.Steganography;
+import static gui.OpenButtons.FileTypes.*;
 
 	public class SteganographyGUI {
 		/*
 		 * String variable that contains the text that will be selected by user.
 		 */
-		String textDefault = null;
+		private static String textDefault = null;
 		/*
 		 * Contains the selected image. Used like ICON.
 		 */
-		File imageIcon = null; //Type File because staganography is ready for take another file over images
+		private static File imageIcon = null; //Type File because steganography is ready for take another file over images
 		/*
 		 * Contains the selected image.
 		 */
-		File imageChoosen = null;
+		private static File imageChoosen = null;
 		/*
 		 * String that contains the extract text for image
 		 */
@@ -59,15 +60,19 @@ import cryptography.algorithms.Steganography;
 		/*
 		 * Default font for button
 		 */
-		Font font = new Font("Verdana",Font.BOLD, 12);
+		private static final Font font = new Font("Verdana",Font.BOLD, 12);
+		/*
+		 * Default Background JPanel Color
+		 */
+		private static final Color panelBakColor = Color.DARK_GRAY;
 		/*
 		 * Default color of button
 		 */
-		Color buttonColor = Color.black;
+		private static final Color buttonColor = Color.black;
 		/*
 		 * Default foreground color of JButton
 		 */
-		Color foregroundColor = Color.white;
+		private static final Color foregroundColor = Color.white;
 		/*
 		 * JFrame for message dialog
 		 */
@@ -96,8 +101,11 @@ import cryptography.algorithms.Steganography;
 		public SteganographyGUI(Container contenitore) throws IOException{
 			GridBagLayout layout = new GridBagLayout();
 			GridBagConstraints limit = new GridBagConstraints();
+			/*
+			 * JPanel setting
+			 */
 			contenitore.setLayout(layout);
-			contenitore.setBackground(Color.DARK_GRAY);
+			contenitore.setBackground(panelBakColor);
 			/*
 			 * Arrays that contains various dimension of insets
 			 */
@@ -113,61 +121,70 @@ import cryptography.algorithms.Steganography;
 			/*
 			 * Component setting
 			 */
+			
 			//JButton
-			new GuiMethodSetter().setJButton(selectImageButton, buttonColor, foregroundColor, font, false, false);
 			((JButton)selectImageButton).addActionListener(new ActionListener() {
 				
 				public void actionPerformed(ActionEvent arg0) {
-					imageIcon = new OpenButtons().imageChooser();
-					imageChoosen = imageIcon;
 					try {
-						((JLabel) iconLabel).setIcon(new GuiMethodSetter().iconOptimizer(((JLabel)iconLabel), ImageIO.read(imageIcon)));
-						if(!StringUtils.isEmpty(textArea.getText())){
-							((JButton)startButton).setEnabled(true);
+						imageIcon = new OpenButtons().FileChooser(IMAGE);
+						if(imageIcon != null){
+							imageChoosen = imageIcon;
+							((JLabel) iconLabel).setIcon(new GuiMethodSetter().iconOptimizer(((JLabel)iconLabel), ImageIO.read(imageIcon)));
+							if(!StringUtils.isEmpty(textArea.getText())){
+								((JButton)startButton).setEnabled(true);
+							}
+							((JButton)clearSettingButton).setEnabled(true);
 						}
-						((JButton)clearSettingButton).setEnabled(true);
 					} catch (IOException e) {
-						e.printStackTrace();
+						System.out.println("image not select");
 					}
 				}
 			});
+			new GuiMethodSetter().setJButton(selectImageButton, buttonColor, foregroundColor, font, false, false);
 			new GuiMethodSetter().setLimit(limit, 0, 0, 1, 1, 0, 0, buttonWidthDimension, standardButtonIpady, insetsDefault, GridBagConstraints.NONE, GridBagConstraints.WEST, contenitore, selectImageButton);
+		
 			//JButton
-			new GuiMethodSetter().setJButton(selectTextButton, buttonColor, foregroundColor, font, false, false);
 			((JButton)selectTextButton).setMinimumSize(((JButton)selectTextButton).getPreferredSize());
 			((JButton)selectTextButton).addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					try {
-						textDefault = new GuiMethodSetter().textEncoder(new OpenButtons().textChooser());
-						textArea.setText("");
-						textArea.append(textDefault);
-						if(imageIcon != null){
-							((JButton)startButton).setEnabled(true);
+						textDefault = new GuiMethodSetter().textEncoder(new OpenButtons().FileChooser(TEXT));
+						if(textDefault != null){
+							textArea.setText("");
+							textArea.append(textDefault);
+							if(imageIcon != null){
+								((JButton)startButton).setEnabled(true);
+							}
+							((JButton)clearSettingButton).setEnabled(true);
+							((JButton)insertTextButton).setEnabled(false);
 						}
-						((JButton)clearSettingButton).setEnabled(true);
-						((JButton)insertTextButton).setEnabled(false);
 					} catch (FileNotFoundException e) {
-						e.printStackTrace();
+						System.out.println("text not select");
 					}
 				}
 			});
+			new GuiMethodSetter().setJButton(selectTextButton, buttonColor, foregroundColor, font, false, false);
 			new GuiMethodSetter().setLimit(limit, 1, 0, 1, 1, 0, 0, buttonWidthDimension + 23, buttonHeightDimension, insetsDefault, GridBagConstraints.NONE, GridBagConstraints.CENTER, contenitore, selectTextButton);
+		
 			//JSeparator 
 			((JSeparator)separator).setBackground(Color.white);
 			((JSeparator)separator).setMinimumSize(((JSeparator)separator).getPreferredSize());
 			new GuiMethodSetter().setLimit(limit, 2, 0, 1, 6, 0, 1, 0, 0, zeroInsets, GridBagConstraints.BOTH, GridBagConstraints.CENTER, contenitore, separator);	
+			
 			//JLabel for icon
 			BufferedImage defaultStartimage = ImageIO.read(new File(pathDefault));
 			ImageIcon icon = new GuiMethodSetter().iconOptimizer(((JLabel) iconLabel), defaultStartimage);
 			((JLabel) iconLabel).setIcon(icon);
 			int insetsIcon[] = {20,10,10,10};
 			new GuiMethodSetter().setLimit(limit, 3, 0, 1, 6, 0, 0, 0, 0,insetsIcon, GridBagConstraints.CENTER, GridBagConstraints.CENTER, contenitore, iconLabel);
+			
 			//JCheckBox
 			((JCheckBox)encryptCheckbox).setBackground(Color.DARK_GRAY);
 			((JCheckBox)encryptCheckbox).setForeground(Color.white);
 			new GuiMethodSetter().setLimit(limit, 0, 1, 2, 1, 0, 0, 0, standardButtonIpady,insetsDefault, GridBagConstraints.NONE, GridBagConstraints.WEST, contenitore, encryptCheckbox);
+			
 			//JButton
-			new GuiMethodSetter().setJButton(startButton, buttonColor, foregroundColor, font, false, false);
 			((JButton)startButton).addActionListener(new ActionListener() {
 				
 				public void actionPerformed(ActionEvent arg0) {
@@ -180,7 +197,9 @@ import cryptography.algorithms.Steganography;
 				}
 			});
 			((JButton)startButton).setEnabled(false);
+			new GuiMethodSetter().setJButton(startButton, buttonColor, foregroundColor, font, false, false);
 			new GuiMethodSetter().setLimit(limit, 0, 2, 2, 1, 0, 0, standardButtonIpadx, standardButtonIpady, insetsDefault, GridBagConstraints.BOTH, GridBagConstraints.CENTER, contenitore, startButton);
+			
 			//JScrollPane(JtextArea)
 			scrollPane.setMinimumSize(scrollPane.getPreferredSize());
 			/*
@@ -191,30 +210,33 @@ import cryptography.algorithms.Steganography;
 			textArea.setWrapStyleWord(true);
 			((JScrollPane)scrollPane).setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			new GuiMethodSetter().setLimit(limit, 0, 7, 4, 1, 1, 0, 0, 0, insetsDefault, GridBagConstraints.BOTH, GridBagConstraints.WEST, contenitore, scrollPane);
+			
 			//JButton
-			new GuiMethodSetter().setJButton(findTextButton, buttonColor, foregroundColor, font, false, false);
 			((JButton)findTextButton).addActionListener(new ActionListener() {
 				
 				public void actionPerformed(ActionEvent arg0) {
 					try {
-						File iconFinder = new OpenButtons().imageChooser();
-						((JLabel) iconLabel).setIcon(new GuiMethodSetter().iconOptimizer(((JLabel)iconLabel), ImageIO.read(iconFinder)));
-						textBorrowed = new Steganography().messageBorrower(iconFinder);
-						if(textArea != null)textArea.setText("");
-						if(textBorrowed != null)textArea.append(textBorrowed);
-						else JOptionPane.showMessageDialog(dialog, "Message not found");
-						((JButton)startButton).setEnabled(false);
-						((JButton)selectImageButton).setEnabled(false);
-						((JButton)selectTextButton).setEnabled(false);
-						((JButton)clearSettingButton).setEnabled(true);
+						File iconFinder = new OpenButtons().FileChooser(IMAGE);
+						if(iconFinder != null){
+							((JLabel) iconLabel).setIcon(new GuiMethodSetter().iconOptimizer(((JLabel)iconLabel), ImageIO.read(iconFinder)));
+							textBorrowed = new Steganography().messageBorrower(iconFinder);
+							if(textArea != null)textArea.setText("");
+							if(textBorrowed != null)textArea.append(textBorrowed);
+							else JOptionPane.showMessageDialog(dialog, "Message not found");
+							((JButton)startButton).setEnabled(false);
+							((JButton)selectImageButton).setEnabled(false);
+							((JButton)selectTextButton).setEnabled(false);
+							((JButton)clearSettingButton).setEnabled(true);
+						}
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
 				}
 			});
+			new GuiMethodSetter().setJButton(findTextButton, buttonColor, foregroundColor, font, false, false);
 			new GuiMethodSetter().setLimit(limit, 0, 3, 2, 1, 0, 0, standardButtonIpadx, standardButtonIpady, insetsDefault, GridBagConstraints.BOTH, GridBagConstraints.CENTER, contenitore, findTextButton);
+			
 			//JButton
-			new GuiMethodSetter().setJButton(clearSettingButton, buttonColor, foregroundColor, font, false, false);
 			((JButton)clearSettingButton).addActionListener(new ActionListener() {
 				
 				public void actionPerformed(ActionEvent arg0) {
@@ -236,9 +258,10 @@ import cryptography.algorithms.Steganography;
 				}
 			});
 			((JButton)clearSettingButton).setEnabled(false);
+			new GuiMethodSetter().setJButton(clearSettingButton, buttonColor, foregroundColor, font, false, false);
 			new GuiMethodSetter().setLimit(limit, 0, 4, 2, 1, 0, 0, standardButtonIpadx, standardButtonIpady, insetsDefault, GridBagConstraints.BOTH, GridBagConstraints.CENTER, contenitore, clearSettingButton);
+			
 			//JButton
-			new GuiMethodSetter().setJButton(insertTextButton, buttonColor, foregroundColor, font, false, true);
 			((JButton)insertTextButton).addActionListener(new ActionListener() {
 				
 				public void actionPerformed(ActionEvent arg0) {
@@ -267,7 +290,9 @@ import cryptography.algorithms.Steganography;
 				}
 				});
 			int insetsTextAreaButton[] = {0,0,10,10};
+			new GuiMethodSetter().setJButton(insertTextButton, buttonColor, foregroundColor, font, false, true);
 			new GuiMethodSetter().setLimit(limit, 0, 6, 1, 1, 0, 0, 0, 0, insetsTextAreaButton, GridBagConstraints.NONE, GridBagConstraints.WEST, contenitore, insertTextButton);
+			
 			/*
 			 * Filler for good buttons resizable setting
 			 */

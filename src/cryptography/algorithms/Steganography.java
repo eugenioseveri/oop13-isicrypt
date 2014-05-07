@@ -4,6 +4,7 @@
 package cryptography.algorithms;
 
 import gui.OpenButtons;
+import gui.OpenButtons.FileTypes;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -40,7 +41,7 @@ public class Steganography {
 		this.icon = FileToImage(rawImage);
 		BufferedImage image = bufferCreator(rawImage);
 		image = messageAdder(image, text);
-		String fileName = new OpenButtons().directoryChooser()+"/Stega_"+rawImage.getName();
+		String fileName = new OpenButtons().FileChooser(FileTypes.DIRECTORY)+"/Stega_"+rawImage.getName();
 		File savier = new File(fileName);
 		System.out.println("messageEncrypter done!"); //Check print
 		return ImageIO.write(image, extension, savier);

@@ -9,8 +9,6 @@ import javax.crypto.NoSuchPaddingException;
 
 import cryptography.algorithms.FileInterpret.Reader;
 import cryptography.algorithms.FileInterpret.Writer;
-import test.OpenButtons;
-
 
 public class TestClass {
 
