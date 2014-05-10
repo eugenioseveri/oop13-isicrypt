@@ -7,9 +7,6 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-import cryptography.algorithms.FileInterpret.Reader;
-import cryptography.algorithms.FileInterpret.Writer;
-
 public class TestClass {
 
 	public static void main(String[] args) throws InvalidKeyException, FileNotFoundException, IOException, NoSuchAlgorithmException, NoSuchProviderException, NoSuchPaddingException, ClassNotFoundException, IllegalBlockSizeException, BadPaddingException {

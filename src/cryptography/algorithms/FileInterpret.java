@@ -35,13 +35,43 @@ public class FileInterpret implements Serializable {
 	private String compressionAlgorithm;
 	private InputStream payload;
 	
-	public FileInterpret(String symmetricAlgorithm, SecretKey encryptedSymmetricKey, String hashingAlgorithm, String generatedHash, String compressionEnabled, InputStream payload) {
+	// Costruttore con parametri passati tramite argomenti del metodo
+	public FileInterpret(String symmetricAlgorithm, SecretKey encryptedSymmetricKey, String hashingAlgorithm, String generatedHash, String compressionAlgorithm, InputStream payload) {
 		this.symmetricAlgorithm = symmetricAlgorithm;
 		this.encryptedSymmetricKey = encryptedSymmetricKey;
 		this.hashingAlgorithm = hashingAlgorithm;
 		this.generatedHash = generatedHash;
-		this.compressionAlgorithm = compressionEnabled;
+		this.compressionAlgorithm = compressionAlgorithm;
 		this.payload = payload;
+	}
+
+	// Costruttore con parametri letti da file
+	public FileInterpret(File inputFile) throws ClassNotFoundException, FileNotFoundException, IOException {
+		FileInputStream file = new FileInputStream(inputFile);
+		BufferedInputStream buffStream = new BufferedInputStream(file);
+		ObjectInputStream objStream = new ObjectInputStream(buffStream);
+		// È proprio necessario duplicare l'oggetto? Non c'è modo di assegnare direttamente a "this" l'output di readObject()?
+		FileInterpret readFile = (FileInterpret)objStream.readObject();
+		this.symmetricAlgorithm = readFile.getSymmetricAlgorithm();
+		this.encryptedSymmetricKey = readFile.getEncryptedSymmetricKey();
+		this.hashingAlgorithm = readFile.getHashingAlgorithm();
+		this.generatedHash = readFile.getGeneratedHash();
+		this.compressionAlgorithm = readFile.getCompressionAlgorithm();
+		this.payload = readFile.getPayload();
+		// Sono necessari tutti questi close() o ne basta uno? (Idem nel metodo sotto)
+		objStream.close();
+		/*buffStream.close();
+		file.close();*/
+	}
+	
+	public void writeInterpretToFile(File outputFile) throws FileNotFoundException, IOException {
+		FileOutputStream file = new FileOutputStream(outputFile);
+		BufferedOutputStream buffStream = new BufferedOutputStream(file);
+		ObjectOutputStream objStream = new ObjectOutputStream(buffStream);
+		objStream.writeObject(this);
+		objStream.close();
+		/*buffStream.close();
+		file.close();*/
 	}
 
 	public String getSymmetricAlgorithm() {
@@ -76,12 +106,12 @@ public class FileInterpret implements Serializable {
 		this.generatedHash = generatedHash;
 	}
 
-	public String isCompressionEnabled() {
+	public String getCompressionAlgorithm() {
 		return compressionAlgorithm;
 	}
 
-	public void setCompressionEnabled(String compressionEnabled) {
-		this.compressionAlgorithm = compressionEnabled;
+	public void setCompressionAlgorithm(String compressionAlgorithm) {
+		this.compressionAlgorithm = compressionAlgorithm;
 	}
 
 	public InputStream getPayload() {
@@ -100,35 +130,5 @@ public class FileInterpret implements Serializable {
 				+ ", generatedHash=" + generatedHash
 				+ ", compressionEnabled=" + compressionAlgorithm
 				+ ", payload=" + payload + "]"; // Modificare con payload size (e non direttamente il payload)
-	}
-	
-	public static class Reader{
-		private FileInputStream file;
-		private BufferedInputStream buffStream;
-		private ObjectInputStream objStream;
-
-		public Reader(File inputFile) throws FileNotFoundException, IOException {
-			file = new FileInputStream(inputFile);
-			buffStream = new BufferedInputStream(file);
-			objStream = new ObjectInputStream(buffStream);
-		}
-		public FileInterpret getInterpret() throws ClassNotFoundException, IOException {
-			return (FileInterpret)objStream.readObject();
-		}
-	}
-	
-	public static class Writer {
-		private FileOutputStream file;
-		private BufferedOutputStream buffStream;
-		private ObjectOutputStream objStream;
-
-		public Writer(File outputFile) throws FileNotFoundException, IOException {
-			file = new FileOutputStream(outputFile);
-			buffStream = new BufferedOutputStream(file);
-			objStream = new ObjectOutputStream(buffStream);
-		}
-		public void writeInterpret(FileInterpret inter) throws ClassNotFoundException, IOException {
-			objStream.writeObject(inter); //oppure anche this? (così non serve il parametro)
-		}
 	}
 }

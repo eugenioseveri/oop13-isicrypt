@@ -11,15 +11,18 @@ import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
+import javax.crypto.Cipher;
+
 import cryptography.algorithms.EnumAsymmetricKeyTypes;
 
 /**
  * Abstract class used to implement getters/setters methods for asymmetric algorithms classes.
  * @author Eugenio Severi
  */
-public abstract class AbstractAsymmetricCryptography implements IAsymmetricCryptography {
+public abstract class AbstractAsymmetricCryptography implements IAsymmetricCryptography { // Ha senso mettere "implements" in una classe astratta?
 	
-	private KeyPair keyPair;
+	protected KeyPair keyPair;
+	protected Cipher cryptoCipher;
 	
 	public PublicKey getPublicKey() {
 		return this.keyPair.getPublic();
@@ -66,10 +69,8 @@ public abstract class AbstractAsymmetricCryptography implements IAsymmetricCrypt
 			objInStream = new ObjectInputStream(new BufferedInputStream(input));
 			if(keyType.isPrivate()) { // Reimposta solo la chiave richiesta e conserva l'altra (se già presente).
 				this.keyPair = new KeyPair(getPublicKey(), (PrivateKey)objInStream.readObject());
-				//this.privateKey = (PrivateKey)objInStream.readObject();
 			} else {
 				this.keyPair = new KeyPair((PublicKey)objInStream.readObject(), getPrivateKey());
-				//this.publicKey = (PublicKey)objInStream.readObject();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

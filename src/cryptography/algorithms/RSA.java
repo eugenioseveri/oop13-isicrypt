@@ -1,7 +1,6 @@
 package cryptography.algorithms;
 
 import java.security.InvalidKeyException;
-import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 
@@ -20,25 +19,23 @@ import cryptography.interfacesandabstractclasses.IAsymmetricCryptography;
 public class RSA extends AbstractAsymmetricCryptography implements IAsymmetricCryptography {
 
 	private final static String ALGORITHM = "RSA";
-	private Cipher rsaCipher = null;
-	private KeyPair keyPair;
 	
 	public RSA() throws NoSuchAlgorithmException, NoSuchPaddingException {
-		this.rsaCipher = Cipher.getInstance(ALGORITHM);
+		super.cryptoCipher = Cipher.getInstance(ALGORITHM);
 	}
 	
 	@Override
 	public byte[] encode(byte[] input) throws IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
 		// Aggiungere try-catch
-		this.rsaCipher.init(Cipher.ENCRYPT_MODE, this.keyPair.getPublic());
-		return this.rsaCipher.doFinal(input);
+		super.cryptoCipher.init(Cipher.ENCRYPT_MODE, super.keyPair.getPublic());
+		return super.cryptoCipher.doFinal(input);
 	}
 
 	@Override
 	public byte[] decode(byte[] input) throws IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
 		// Aggiungere try-catch
-		this.rsaCipher.init(Cipher.DECRYPT_MODE, this.keyPair.getPrivate());
-		return this.rsaCipher.doFinal(input);
+		super.cryptoCipher.init(Cipher.DECRYPT_MODE, super.keyPair.getPrivate());
+		return super.cryptoCipher.doFinal(input);
 	}
 
 	@Override
@@ -48,7 +45,7 @@ public class RSA extends AbstractAsymmetricCryptography implements IAsymmetricCr
 		}
 		KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(ALGORITHM);
 		keyPairGenerator.initialize(keySize);
-		this.keyPair = keyPairGenerator.generateKeyPair();
+		super.keyPair = keyPairGenerator.generateKeyPair();
 	}
 	
 	private boolean checkKeySize(int keySize) {
@@ -59,60 +56,4 @@ public class RSA extends AbstractAsymmetricCryptography implements IAsymmetricCr
 		}
 		return false;
 	}
-
-	
-	/*@Override
-	public void saveKeyToFile(EnumAsymmetricKeyTypes keyType, FileOutputStream output) throws IOException {
-		
-	}
-	@Override
-	public void loadKeyFromFile(EnumAsymmetricKeyTypes keyType, FileInputStream input) throws IOException, ClassNotFoundException {
-		
-	}*/
-	/*@Override
-	public void saveKeyToFile(EnumAsymmetricKeyTypes keyType, FileOutputStream output) throws IOException {
-		ObjectOutputStream objOutStream = null;
-		try {
-			objOutStream = new ObjectOutputStream(new BufferedOutputStream(output));
-			if(keyType.isPrivate()) {
-				objOutStream.writeObject(this.privateKey);
-			} else {
-				objOutStream.writeObject(this.publicKey);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if(objOutStream != null) {
-				objOutStream.close();
-				if(output != null) {
-					output.close();
-				}
-			}
-		}
-	}
-
-	@Override
-	public void loadKeyFromFile(EnumAsymmetricKeyTypes keyType, FileInputStream input) throws IOException, ClassNotFoundException {
-		ObjectInputStream objInStream = null;
-		try {
-			objInStream = new ObjectInputStream(new BufferedInputStream(input));
-			if(keyType.isPrivate()) {
-				this.privateKey = (PrivateKey)objInStream.readObject();
-			} else {
-				this.publicKey = (PublicKey)objInStream.readObject();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} finally {
-			if(objInStream != null) {
-				objInStream.close();
-				if(input != null) {
-					input.close();
-				}
-			}
-		}
-	}*/
-	
 }
