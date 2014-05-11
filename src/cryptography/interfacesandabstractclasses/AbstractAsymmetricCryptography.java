@@ -35,11 +35,11 @@ public abstract class AbstractAsymmetricCryptography implements IAsymmetricCrypt
 	public void setKeyPair(KeyPair pair) { // Due diversi modi di chiamare il metodo (vedi sotto)
 		this.keyPair = pair;
 	}
-	
+
 	public void setKeyPair(PublicKey publicKey, PrivateKey privateKey) {
 		this.keyPair = new KeyPair(publicKey, privateKey);
 	}
-	
+
 	@Override
 	public void saveKeyToFile(EnumAsymmetricKeyTypes keyType, FileOutputStream output) throws IOException {
 		ObjectOutputStream objOutStream = null;

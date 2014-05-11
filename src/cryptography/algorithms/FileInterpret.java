@@ -7,7 +7,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -20,28 +19,32 @@ import javax.crypto.SecretKey;
  * - Encrypted symmetric key
  * - Hashing algorithm
  * - Hash of unencrypted file
- * - Compression enabled (boolean)
+ * - Compression algorithm
+ * - File name
  * - Payload (encrypted file)
  * Two inner static classes provide reading and writing methods.
  * @author Eugenio Severi
  */
 public class FileInterpret implements Serializable {
 	
+	transient private static final int BYTE_CONVERSION_FACTOR = 1024;
 	private static final long serialVersionUID = 7222536160521152258L;
 	private String symmetricAlgorithm;
 	private SecretKey encryptedSymmetricKey;
 	private String hashingAlgorithm;
 	private String generatedHash;
 	private String compressionAlgorithm;
-	private InputStream payload;
+	private String fileName;
+	private byte[] payload;
 	
 	// Costruttore con parametri passati tramite argomenti del metodo
-	public FileInterpret(String symmetricAlgorithm, SecretKey encryptedSymmetricKey, String hashingAlgorithm, String generatedHash, String compressionAlgorithm, InputStream payload) {
+	public FileInterpret(String symmetricAlgorithm, SecretKey encryptedSymmetricKey, String hashingAlgorithm, String generatedHash, String compressionAlgorithm, String fileName, byte[] payload) {
 		this.symmetricAlgorithm = symmetricAlgorithm;
 		this.encryptedSymmetricKey = encryptedSymmetricKey;
 		this.hashingAlgorithm = hashingAlgorithm;
 		this.generatedHash = generatedHash;
 		this.compressionAlgorithm = compressionAlgorithm;
+		this.fileName = fileName;
 		this.payload = payload;
 	}
 
@@ -57,6 +60,7 @@ public class FileInterpret implements Serializable {
 		this.hashingAlgorithm = readFile.getHashingAlgorithm();
 		this.generatedHash = readFile.getGeneratedHash();
 		this.compressionAlgorithm = readFile.getCompressionAlgorithm();
+		this.fileName = readFile.getFileName();
 		this.payload = readFile.getPayload();
 		// Sono necessari tutti questi close() o ne basta uno? (Idem nel metodo sotto)
 		objStream.close();
@@ -75,7 +79,7 @@ public class FileInterpret implements Serializable {
 	}
 
 	public String getSymmetricAlgorithm() {
-		return symmetricAlgorithm;
+		return this.symmetricAlgorithm;
 	}
 
 	public void setSymmetricAlgorithm(String symmetricAlgorithm) {
@@ -83,7 +87,7 @@ public class FileInterpret implements Serializable {
 	}
 
 	public SecretKey getEncryptedSymmetricKey() {
-		return encryptedSymmetricKey;
+		return this.encryptedSymmetricKey;
 	}
 
 	public void setEncryptedSymmetricKey(SecretKey encryptedSymmetricKey) {
@@ -91,7 +95,7 @@ public class FileInterpret implements Serializable {
 	}
 
 	public String getHashingAlgorithm() {
-		return hashingAlgorithm;
+		return this.hashingAlgorithm;
 	}
 
 	public void setHashingAlgorithm(String hashingAlgorithm) {
@@ -99,7 +103,7 @@ public class FileInterpret implements Serializable {
 	}
 
 	public String getGeneratedHash() {
-		return generatedHash;
+		return this.generatedHash;
 	}
 
 	public void setGeneratedHash(String generatedHash) {
@@ -107,18 +111,26 @@ public class FileInterpret implements Serializable {
 	}
 
 	public String getCompressionAlgorithm() {
-		return compressionAlgorithm;
+		return this.compressionAlgorithm;
 	}
 
 	public void setCompressionAlgorithm(String compressionAlgorithm) {
 		this.compressionAlgorithm = compressionAlgorithm;
 	}
 
-	public InputStream getPayload() {
-		return payload;
+	public String getFileName() {
+		return this.fileName;
+	}
+	
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+	
+	public byte[] getPayload() {
+		return this.payload;
 	}
 
-	public void setPayload(InputStream payload) {
+	public void setPayload(byte[] payload) {
 		this.payload = payload;
 	}
 	
@@ -129,6 +141,6 @@ public class FileInterpret implements Serializable {
 				+ ", hashingAlgorithm=" + hashingAlgorithm
 				+ ", generatedHash=" + generatedHash
 				+ ", compressionEnabled=" + compressionAlgorithm
-				+ ", payload=" + payload + "]"; // Modificare con payload size (e non direttamente il payload)
+				+ ", payloadSize=" + payload.length/BYTE_CONVERSION_FACTOR + " KB]"; // Payload size in KB
 	}
 }

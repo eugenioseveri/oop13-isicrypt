@@ -17,7 +17,8 @@ public class TestClass {
 		System.out.println("MD5 algorithm: "+ciao2);*/
 		/*AES newAES = new AES();
 		newAES.generateKey(128);
-		newAES.encode(new FileInputStream("aaa.txt"), new FileOutputStream("bbb.txt"));*/
+		newAES.encode(new FileInputStream("aaa.txt"), new FileOutputStream("bbb.txt"));
+		newAES.decode(new FileInputStream("bbb.txt"), new FileOutputStream("ccc.txt"));*/
 		
 		//newAES.encode(new TestClass().FileChooser(), "bbb.txt");
 		//FileInterpret.FileInterpret.Reader aaa = new FileInterpret.FileInterpret.Reader(null);
@@ -40,9 +41,8 @@ public class TestClass {
 		System.out.println(bytearrayencrypted[0]);
 		byte[] bytearraydecrypted = newrsa.decode(bytearrayencrypted);
 		System.out.println(bytearraydecrypted[0]);*/
-		File newFile = new File("eee.txt");
-		Wiping.getInstance().wipe(newFile, 1);
-		
+		/*File newFile = new File("eee.txt");
+		Wiping.getInstance().wipe(newFile, 1);*/
 		
 		
 	}	

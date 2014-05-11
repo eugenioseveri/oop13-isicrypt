@@ -15,6 +15,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import cryptography.interfacesandabstractclasses.AbstractSymmetricCryptography;
 import cryptography.interfacesandabstractclasses.ICryptography;
 
 /**
@@ -22,24 +23,14 @@ import cryptography.interfacesandabstractclasses.ICryptography;
  * Class used to implement AES algorithm.
  * @author Eugenio Severi
  */
-public class AES implements ICryptography {
+public class AES extends AbstractSymmetricCryptography implements ICryptography {
 	
 	private final static String ALGORITHM = "AES";
 	private final static int AES_KEYSIZES[] = {128, 192, 256};
 	private final static int BUFFER_SIZE = 1024;
-	private Cipher aesCipher = null;
-	private SecretKeySpec aeskeySpec;
 
 	public AES() throws NoSuchAlgorithmException, NoSuchPaddingException {
-		this.aesCipher = Cipher.getInstance(ALGORITHM);
-	}
-	
-	public SecretKeySpec getAeskeySpec() {
-		return this.aeskeySpec;
-	}
-
-	public void setAeskeySpec(SecretKeySpec aeskeySpec) {
-		this.aeskeySpec = aeskeySpec;
+		super.cryptoCipher = Cipher.getInstance(ALGORITHM);
 	}
 	
 	@Override
@@ -48,11 +39,11 @@ public class AES implements ICryptography {
 		int i;
 		byte[] b = new byte[BUFFER_SIZE];
 		try {
-		this.aesCipher.init(Cipher.ENCRYPT_MODE, this.aeskeySpec); //java.security.InvalidKeyException: No installed provider supports this key: javax.crypto.spec.SecretKeySpec. Vedere https://www.google.it/?gfe_rd=cr&ei=281KU-qKGqWO8QfErIG4Aw#q=java+InvalidKeyException&safe=off
+			super.cryptoCipher.init(Cipher.ENCRYPT_MODE, super.symmetricKeySpec); //java.security.InvalidKeyException: No installed provider supports this key: javax.crypto.spec.SecretKeySpec. Vedere https://www.google.it/?gfe_rd=cr&ei=281KU-qKGqWO8QfErIG4Aw#q=java+InvalidKeyException&safe=off
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-		CipherOutputStream out = new CipherOutputStream(output, this.aesCipher);
+		CipherOutputStream out = new CipherOutputStream(output, super.cryptoCipher);
 		while((i=input.read(b)) != -1) {
 			out.write(b, 0, i);
 		}
@@ -64,8 +55,8 @@ public class AES implements ICryptography {
 		// Aggiungere try-catch
 		int i;
 		byte[] b = new byte[BUFFER_SIZE];
-		this.aesCipher.init(Cipher.DECRYPT_MODE, this.aeskeySpec);
-		CipherInputStream in = new CipherInputStream(input, this.aesCipher);
+		super.cryptoCipher.init(Cipher.DECRYPT_MODE, super.symmetricKeySpec);
+		CipherInputStream in = new CipherInputStream(input, super.cryptoCipher);
 		while((i=in.read(b)) != -1) {
 			output.write(b, 0, i);
 		}
@@ -83,7 +74,7 @@ public class AES implements ICryptography {
 		keyGen.init(keySize);
 		SecretKey key = keyGen.generateKey();
 		byte[] aesKey = key.getEncoded();
-		this.aeskeySpec = new SecretKeySpec(aesKey, ALGORITHM);
+		super.symmetricKeySpec = new SecretKeySpec(aesKey, ALGORITHM);
 	}
 	
 	private boolean checkKeySize(int keySize) {
