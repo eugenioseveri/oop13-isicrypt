@@ -18,9 +18,9 @@ import javax.crypto.SecretKey;
  * - Symmetric algorithm
  * - Encrypted symmetric key
  * - Hashing algorithm
- * - Hash of unencrypted file
+ * - Hash of payload file (self-generated)
  * - Compression algorithm
- * - File name
+ * - File name (self-generated)
  * - Payload (encrypted file)
  * Two inner static classes provide reading and writing methods.
  * @author Eugenio Severi
@@ -37,18 +37,18 @@ public class FileInterpret implements Serializable {
 	private String fileName;
 	private byte[] payload;
 	
-	// Costruttore con parametri passati tramite argomenti del metodo
-	public FileInterpret(String symmetricAlgorithm, SecretKey encryptedSymmetricKey, String hashingAlgorithm, String generatedHash, String compressionAlgorithm, String fileName, byte[] payload) {
+	// Costruttore con parametri passati tramite argomenti del metodo. Da utilizzare per costruire da zero un FileInterpret.
+	public FileInterpret(String symmetricAlgorithm, SecretKey encryptedSymmetricKey, String hashingAlgorithm, String compressionAlgorithm, File payloadFile) throws FileNotFoundException, IOException {
 		this.symmetricAlgorithm = symmetricAlgorithm;
 		this.encryptedSymmetricKey = encryptedSymmetricKey;
 		this.hashingAlgorithm = hashingAlgorithm;
-		this.generatedHash = generatedHash;
+		this.generatedHash = new Hashing(hashingAlgorithm, new FileInputStream(payloadFile)).generateHash(); // Da cambiare appena cambia la classe Hashing
 		this.compressionAlgorithm = compressionAlgorithm;
-		this.fileName = fileName;
-		this.payload = payload;
+		this.fileName = payloadFile.getName();
+		loadPayloadToRAM(payloadFile);
 	}
 
-	// Costruttore con parametri letti da file
+	// Costruttore con parametri letti da file. Da utilizzare per leggere un FileInterpret precedentemente scritto su disco.
 	public FileInterpret(File inputFile) throws ClassNotFoundException, FileNotFoundException, IOException {
 		FileInputStream file = new FileInputStream(inputFile);
 		BufferedInputStream buffStream = new BufferedInputStream(file);
@@ -62,22 +62,12 @@ public class FileInterpret implements Serializable {
 		this.compressionAlgorithm = readFile.getCompressionAlgorithm();
 		this.fileName = readFile.getFileName();
 		this.payload = readFile.getPayload();
-		// Sono necessari tutti questi close() o ne basta uno? (Idem nel metodo sotto)
+		// Sono necessari tutti questi close() o ne basta uno? (Idem nel metodo writeInterpretToFile() (sotto))
 		objStream.close();
 		/*buffStream.close();
 		file.close();*/
 	}
 	
-	public void writeInterpretToFile(File outputFile) throws FileNotFoundException, IOException {
-		FileOutputStream file = new FileOutputStream(outputFile);
-		BufferedOutputStream buffStream = new BufferedOutputStream(file);
-		ObjectOutputStream objStream = new ObjectOutputStream(buffStream);
-		objStream.writeObject(this);
-		objStream.close();
-		/*buffStream.close();
-		file.close();*/
-	}
-
 	public String getSymmetricAlgorithm() {
 		return this.symmetricAlgorithm;
 	}
@@ -142,5 +132,46 @@ public class FileInterpret implements Serializable {
 				+ ", generatedHash=" + generatedHash
 				+ ", compressionEnabled=" + compressionAlgorithm
 				+ ", payloadSize=" + payload.length/BYTE_CONVERSION_FACTOR + " KB]"; // Payload size in KB
+	}
+	
+	public void writeInterpretToFile(File outputFile) throws FileNotFoundException, IOException {
+		FileOutputStream file = new FileOutputStream(outputFile);
+		BufferedOutputStream buffStream = new BufferedOutputStream(file);
+		ObjectOutputStream objStream = new ObjectOutputStream(buffStream);
+		objStream.writeObject(this);
+		objStream.close();
+		/*buffStream.close();
+		file.close();*/
+	}
+	
+	// Estrae il payload da una classe e lo scrive su disco. Il file è temporaneo.
+	public void writePayloadToFile(File outputFile) throws FileNotFoundException, IOException {
+		FileOutputStream fos = new FileOutputStream(outputFile);
+		BufferedOutputStream buffPayload = new BufferedOutputStream(fos);
+		try {
+			for(byte currentByte: this.payload) {
+				buffPayload.write(currentByte);
+			}
+		} catch (IOException e){
+			// Gestire l'eccezione
+		} finally {
+			buffPayload.close(); // Throws IOException
+		}
+	}
+	
+	private void loadPayloadToRAM(File payload) throws FileNotFoundException, IOException {
+		FileInputStream fis = new FileInputStream(payload);
+		BufferedInputStream buffPayload = new BufferedInputStream(fis);
+		//ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		int currentByte;
+		try {
+			for(int index = 0; (currentByte = buffPayload.read()) != -1; index++) {
+			this.payload[index] = (byte)currentByte;
+			}
+		} catch (IOException e) {
+			// Gestire eccezione
+		} finally {
+			buffPayload.close(); // Throws IOException
+		}
 	}
 }
