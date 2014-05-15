@@ -34,6 +34,7 @@ import javax.swing.SwingConstants;
 import org.apache.commons.lang3.StringUtils;
 
 import cryptography.algorithms.Steganography;
+import cryptography.algorithms.TypeConverter;
 import static gui.OpenButtons.FileTypes.*;
 
 	public class SteganographyGUI {
@@ -149,7 +150,7 @@ import static gui.OpenButtons.FileTypes.*;
 			((JButton)selectTextButton).addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					try {
-						textDefault = new GuiMethodSetter().textEncoder(new OpenButtons().FileChooser(TEXT));
+						textDefault = new TypeConverter().textEncoder(new OpenButtons().FileChooser(TEXT));
 						if(textDefault != null){
 							textArea.setText("");
 							textArea.append(textDefault);

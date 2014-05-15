@@ -38,7 +38,8 @@ public class Steganography {
 	 * @throws IOException
 	 */
 	public boolean messageEncrypter(File rawImage, String extension, String text) throws IOException{
-		this.icon = FileToImage(rawImage);
+		//File rawImage = new FileTypeFinder().tempFileFromInput(rawImageBuffer);
+		this.icon = new TypeConverter().FileToImage(rawImage);
 		BufferedImage image = bufferCreator(rawImage);
 		image = messageAdder(image, text);
 		String fileName = new OpenButtons().FileChooser(FileTypes.DIRECTORY)+"/Stega_"+rawImage.getName();
@@ -160,8 +161,5 @@ public class Steganography {
 		BufferedImage imageBuffer = ImageIO.read(rawImage);
 		System.out.println("bufferCreator fatto!");
 		return imageBuffer;
-	}
-	private Image FileToImage( File rawImage ) throws IOException{
-		return  ImageIO.read(rawImage);
 	}
 }

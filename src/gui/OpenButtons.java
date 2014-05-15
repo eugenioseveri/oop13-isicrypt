@@ -5,6 +5,8 @@ package gui;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;	//need for the interface that select the file
@@ -46,9 +48,14 @@ public class OpenButtons extends JPanel{
 		}
 		int controller = fileChooser.showOpenDialog(getParent());
 		File fileReturn = null;
+		/*FileInputStream fileStream = null;
+		BufferedInputStream bufferReturn = null;*/
 		if(controller == JFileChooser.APPROVE_OPTION){
 			fileReturn = fileChooser.getSelectedFile();
+			/*fileStream = new FileInputStream(fileReturn);
+			bufferReturn = new BufferedInputStream(fileStream);*/
+			return fileReturn;
 		}
-		return fileReturn;
+		return null;
 	}	
 }

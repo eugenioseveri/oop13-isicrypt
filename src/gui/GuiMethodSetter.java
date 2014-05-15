@@ -10,11 +10,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Scanner;
-
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -71,31 +67,7 @@ public class GuiMethodSetter {
 		ImageIcon imageIcon = new ImageIcon(srcImage);
 		return imageIcon;
 	}
-	/**
-	 * Method that convert generic file in String
-	 * @param 	file	File to convert.
-	 * @return 	contents	String with text.
-	 * @throws 	FileNotFoundException
-	 */
-	public String textEncoder(File file) throws FileNotFoundException{
-		Scanner myScanner = null;
-		String contents = null;
-		try
-		{
-			if(file != null){
-				myScanner = new Scanner(file);
-				contents = myScanner.useDelimiter("\\Z").next(); 
-			}
-		}
-		finally
-		{
-		    if(myScanner != null)
-		    {
-		        myScanner.close(); 
-		    }
-		}
-		return contents;
-	}
+
 	/**
 	 * 
 	 * @param button					JButton to modify
