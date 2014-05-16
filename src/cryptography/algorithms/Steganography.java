@@ -39,7 +39,7 @@ public class Steganography {
 	 */
 	public boolean messageEncrypter(File rawImage, String extension, String text) throws IOException{
 		//File rawImage = new FileTypeFinder().tempFileFromInput(rawImageBuffer);
-		this.icon = new TypeConverter().FileToImage(rawImage);
+		this.icon = new TypeConverter().fileToImage(rawImage);
 		BufferedImage image = bufferCreator(rawImage);
 		image = messageAdder(image, text);
 		String fileName = new OpenButtons().FileChooser(FileTypes.DIRECTORY)+"/Stega_"+rawImage.getName();

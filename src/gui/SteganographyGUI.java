@@ -150,7 +150,7 @@ import static gui.OpenButtons.FileTypes.*;
 			((JButton)selectTextButton).addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					try {
-						textDefault = new TypeConverter().textEncoder(new OpenButtons().FileChooser(TEXT));
+						textDefault = new TypeConverter().fileToString(new OpenButtons().FileChooser(TEXT));
 						if(textDefault != null){
 							textArea.setText("");
 							textArea.append(textDefault);
