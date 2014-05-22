@@ -16,57 +16,35 @@ import org.apache.commons.io.IOUtils;
 
 public class TypeConverter {
 	
-	public byte[] fileAndProprietyToByte(File file){
+	public byte[] fileToByte(File file){
+		//Create Buffer in/out for read and write the file
 		ByteArrayOutputStream baos = null;
-		FileInputStream ios = null;
-		int OFFSET = 4;
-		int NAMEBYTELENGTH = file.getName().getBytes().length;
-		int ARRAYLENGTH = (int)(file.length() + NAMEBYTELENGTH) + OFFSET;
-		int FILELENGTH = (int)file.length();
-		int nameByteCounter = 0;
-		int fileByteCounter = 0;
-		byte[] fileArray = new byte[ARRAYLENGTH];
-		int FILEARRAYLENTGH = fileArray.length;
-		byte[] nameByteArray = file.getName().getBytes();;
-		byte[] nameLengthByte = intToByteArray(NAMEBYTELENGTH);
-		
+		FileInputStream filebufferInput = null;
+		byte[] fileArray = null;
 		try{
+			//initialize buffer
 			baos = new ByteArrayOutputStream();
-			ios = new FileInputStream(file);		
+			filebufferInput = new FileInputStream(file);		
 			int variable = 0;
-			//write byte of image on byte[]
-			while((variable = ios.read(fileArray)) != -1){
-				baos.write(fileArray, 0, variable);
+			//write byte after byte of file on byte[]
+			while((variable = filebufferInput.read()) != -1){
+				baos.write(variable);
 			}
-			//Put the name of file (byte) in byte[] int the end of array
-			for( fileByteCounter = FILELENGTH;  fileByteCounter< FILEARRAYLENTGH - 4; fileByteCounter++, nameByteCounter++){
-				fileArray[fileByteCounter] = nameByteArray[nameByteCounter];
-			}
-			// add the length byte of name.
-			for(int offsetNameLength = 0; offsetNameLength < 4 ; offsetNameLength++){
-				fileArray[fileByteCounter+offsetNameLength] = nameLengthByte[offsetNameLength];
-			}
-			
+			//Write byte[] of buffer on normal byte[]
+			fileArray = baos.toByteArray();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally{
 				try{
 				if(baos != null)baos.close();
 			}catch(IOException e ){}
 				try{
-					if(ios != null)ios.close();
+					if(filebufferInput != null)filebufferInput.close();
 				}catch(IOException e){}
 		}
 		return fileArray;
-	}
-	
-	public File byteToFile(byte[] arrayFile){
-		
-		return null;
 	}
 	
 	public byte[] intToByteArray(int value){
@@ -134,7 +112,6 @@ public class TypeConverter {
 	        }
 	        return tempFile;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	        return null;
@@ -148,12 +125,41 @@ public class TypeConverter {
 	        result = result + ((b[end-3] & MASK) << 24);            
 	    return result; 
 	}
-	public String byteArrayToString(byte[] array, int offset){
+	public String fileByteArrayToString(byte[] array, int offset){
 		String name ="";
 		int count = array.length - (offset+4);
 		for(int i = count; i < array.length-4; i++){
 			name += (char)array[i];
 		}
 		return name;
+	}
+	
+	public String byteArrayToString(byte[] text){			
+		StringBuilder sb = new StringBuilder(new String(text));
+		return sb.toString();
+	}
+	
+	public byte[] stringAndProprietyToByte(String text){
+		String name = "string";
+		byte[] extesion = name.getBytes();
+		byte[] stringArray = text.getBytes();
+		byte[] returnByte = new byte[(extesion.length + stringArray.length)+4];
+		for(int i = 0; i < stringArray.length; i++){
+			returnByte[i] = stringArray[i];
+		}
+		int o = 0;
+		for(int i = stringArray.length; i < (stringArray.length + extesion.length); i++){
+			returnByte[i] = extesion[o];
+			o++;
+		}
+		int m = 0;
+		byte[] extLength = new TypeConverter().intToByteArray(6);
+		
+		for(int l = (extesion.length + stringArray.length); m < 4; l++){
+			returnByte[l] = extLength[m];
+			m++;
+		}
+		
+		return returnByte;
 	}
 }
