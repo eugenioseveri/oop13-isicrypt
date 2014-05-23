@@ -20,13 +20,10 @@ import javax.crypto.NoSuchPaddingException;
 public class SocketClient extends Thread{
 
 	ByteArrayInputStream byteArrayIn = null;
-	ByteArrayOutputStream out = null;;
 	BufferedOutputStream outStream = null;
-	BufferedInputStream inStream = null;
 	AES aesEncryptor = null;
-	Socket connection = null;
+	Socket client = null;
 	//Define a port
-	int port = 19999;
 	byte[] clientNameByte;
 	ContactInfo contact;
 	//Define a host server
@@ -50,7 +47,7 @@ public class SocketClient extends Thread{
 		//this.closeConnection();				
 		//try
 		//Close existing connection
-		connection.close();
+		client.close();
 	}
 	
 	public SocketClient(ContactInfo contact, String text) throws InterruptedException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, NoSuchProviderException, InvalidKeySpecException, IllegalBlockSizeException, BadPaddingException{
@@ -71,7 +68,7 @@ public class SocketClient extends Thread{
 		//this.closeConnection();				
 		//Try
 		//Close existing connection
-		connection.close();
+		client.close();
 	}
 	
 	private void sendByteArray( byte[] clientName, byte[] fileName, byte[] fileArray) throws InterruptedException, IOException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, NoSuchProviderException, InvalidKeySpecException, IllegalBlockSizeException, BadPaddingException{
@@ -90,7 +87,6 @@ public class SocketClient extends Thread{
 		System.out.println("Connection close...:");
 	}
 	
-	@SuppressWarnings("finally")
 	private byte[] keyExchange(){
 		
 		try {
@@ -98,36 +94,43 @@ public class SocketClient extends Thread{
 			getConnection();
 			System.out.println("Get connection with server...");
 			//Initialize new Buffer out for write
-			this.out  = new ByteArrayOutputStream();
-	//		inStream = new BufferedInputStream(connection.getInputStream());
-			 DataInputStream in = new DataInputStream(connection.getInputStream());
+			ByteArrayOutputStream out  = new ByteArrayOutputStream();
+			BufferedInputStream inStream = new BufferedInputStream(client.getInputStream());		
+	//		 DataInputStream in = new DataInputStream(connection.getInputStream());
 			//Start to receive public key from server
-	/*		int i;
+			int i;
 	    	while ( (i = inStream.read()) != -1) {
-	            this.out.write(i);
-	        }		*/
-			byte[] keyBytes = new byte[in.readInt()];
-			in.readFully(keyBytes);
-			System.out.println("Server's Public key received");
+	            out.write(i);
+	        }		
+	    	//TRY
+	/*		byte[] keyBytes = new byte[in.readInt()];
+			in.readFully(keyBytes);*/
+	//		System.out.println("Server's Public key received");
 	    	//byte[] bytePublicServerKey = out.toByteArray();
 	    	//Save Server's public key
-	//    	PublicKey publicServerKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(out.toByteArray()));
-	    	PublicKey publicServerKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(keyBytes));
-			//new RSA for encrypt file
+	//		System.out.print("Server's public key: ");
+	//		byteArrayStamp(out.toByteArray());
+	    	PublicKey publicServerKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(out.toByteArray()));
+	//    	PublicKey publicServerKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(keyBytes));
+			//new RSA for encrypt AES key
 	    	RSA aesKeyEncryptor = new RSA();
 	    	//Set Server's public key for encrypt
 			aesKeyEncryptor.setKeyPair(publicServerKey,null);
 			//initialize new AES
 			aesEncryptor = new AES();
-			//Generate 128k?bit key
-			aesEncryptor.generateKey(128);	
+			//Generate 128bit key
+			aesEncryptor.generateKey(128);
+	//		System.out.println("generateKey.length: "+aesEncryptor.getSymmetricKeySpec().getEncoded().length);
 			//Create new key from Public Server's key
 			byte[] key = aesEncryptor.getSymmetricKeySpec().getEncoded();
+	//		byteArrayStamp(key);
 			//Create new byte[] with decode key for send it on server
 			byte[] aesKeyEncryted = aesKeyEncryptor.encode(key);
+	//		byteArrayStamp(aesKeyEncryted);
 			//Close buffer I/O even with server
-			this.closeBuffer();
 			//return byte[] with hidden key
+	//		System.out.println("keyExchange completed");
+			//closeBuffer();
 			return aesKeyEncryted;
 			
 		} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException e) {
@@ -142,18 +145,19 @@ public class SocketClient extends Thread{
 			e.printStackTrace();
 		} catch (BadPaddingException e) {
 			e.printStackTrace();
-		}finally{
-			return null;
 		}
+		return null;
 	}
 	
 	//Send AES key, this method don't crypt byte[], the key is just hidden by Diffie-Helman algorithm
 	private void sendAesKey(byte[] sendByte) throws IOException{
 		//Get connection with server by creating new socket
 		getConnection();
+//		System.out.println("AES key to server: ");
+		//byteArrayStamp(sendByte);
 		//Initialize buffer with byte[] to read and buffer with Socket
 		byteArrayIn = new ByteArrayInputStream(sendByte);
-		outStream = new BufferedOutputStream(connection.getOutputStream());
+		outStream = new BufferedOutputStream(client.getOutputStream());
 		//Start write byte from buffer in to socket
 		int transfertElement ;
 		try {
@@ -161,7 +165,7 @@ public class SocketClient extends Thread{
 				outStream.write(transfertElement);
 				outStream.flush();
 			}
-			System.out.println("AES key sent to Server...");
+//			System.out.println("AES key sent to Server...");
 			//Close Buffer I/O
 			closeBuffer();
 		} catch (IOException e) {
@@ -174,18 +178,24 @@ public class SocketClient extends Thread{
 		getConnection();
 		//byteArrayIn = new ByteArrayInputStream(sendByte);
 		//Initialize Buffer Out with socket
-		outStream = new BufferedOutputStream(connection.getOutputStream());
+		outStream = new BufferedOutputStream(client.getOutputStream());
 		ByteArrayOutputStream encryptedByteArraybuffer = new ByteArrayOutputStream();
+		ByteArrayOutputStream lopo = new ByteArrayOutputStream();
+		byteArrayIn = new ByteArrayInputStream(sendByte);
 		//Crypting file with AES key
 		this.aesEncryptor.encode(byteArrayIn, encryptedByteArraybuffer);
+		byteArrayIn = null;
+		byteArrayIn = new ByteArrayInputStream(encryptedByteArraybuffer.toByteArray());
 		//Put Encrypted data on buffer In for send to Server
-		byteArrayIn.read(encryptedByteArraybuffer.toByteArray());
+//		byteArrayIn.read(encryptedByteArraybuffer.toByteArray());
 		int transfertElement;
 		try {
 			while((transfertElement = byteArrayIn.read()) != -1){
 				outStream.write(transfertElement);
+				lopo.write(transfertElement);
 				outStream.flush();
 			}
+	//		byteArrayStamp(lopo.toByteArray());
 			//Close Buffer
 			closeBuffer();
 		} catch (IOException e) {
@@ -195,10 +205,12 @@ public class SocketClient extends Thread{
 	
 	private void getConnection(){
 		try {
+			int port = 19999;
 			//New InetAddress from host passed to client
 			InetAddress address = InetAddress.getByName(host);
-			//Initialize new Socket
-			connection = new Socket(address, port);
+			//Initialize new Socket client
+			client = new Socket(address, port);
+			//client.connect(arg0);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -220,4 +232,13 @@ public class SocketClient extends Thread{
 	public void setClientName(String name){
 		if(name.length() < 17)this.clientName = name;
 	}
+	
+/*	private void byteArrayStamp(byte[] stamp){
+		int i;
+		System.out.println("byte[] length: " + stamp.length);
+		for(i = 0; i < stamp.length; i++){
+			System.out.print((char)stamp[i]);
+		}
+		System.out.println("");
+	}	*/
 }

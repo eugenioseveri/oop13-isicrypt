@@ -11,6 +11,8 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.io.*;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -18,32 +20,26 @@ public class SingleSocketServer extends Thread{
 	public static void main(String[] args) throws IOException, InterruptedException{
 		new SingleSocketServer();
 	}
-	
-	static ServerSocket socket1;
-	protected static final int port = 19999;
-	static Socket connection;
-	
-	static boolean first;
-	static StringBuffer process;
-	static String TimeStamp;
+	static Socket connection;	
 	InputStream inStream = null;
 	OutputStream outStream = null;
 	ByteArrayOutputStream out = null;
-	BufferedOutputStream byteToFile = null;
 	AES aesEncryptor = null;
+	RSA aesKeyEncryptor = null;
 	String client;
+	//try
+	ServerSocket server;
+	
 	
 	public SingleSocketServer() throws InterruptedException, IOException{
-		
-		socket1 = new ServerSocket(port);
-		System.out.println("Server initialized...");
+		final int port = 19999;
+		server = new ServerSocket(port);
+		System.out.println("Server initialized...\nStart to accepting connections...");
 		//Start to accept connections.
-		connection =socket1.accept();
-		System.out.println("Start to accepting connections...");
 		boolean onLine = true;
 		while(onLine){
+			connection = server.accept();
 			this.receiveFile();
-			onLine = false;
 		}
 		connection.close();
 	}
@@ -51,16 +47,13 @@ public class SingleSocketServer extends Thread{
 	private void receiveFile(){
 	    try {
 	    	//Send Public key to client for crypt data.
-			System.out.println("Sending Public key...\n");
-	    	this.keyExchange();
+	    	keyExchange();
 	    	//Receive AES key for decrypt file
-	    	this.receiveAesKey();
-			System.out.println("AES key received...\n Start to accepting files...");
+	    	receiveAesKey();
 			//Start to receive the file
 	    	byte[] clientName = receiveSequence();
 			byte[] nameFile = receiveSequence();
-			byte[] fileArray = receiveSequence();
-			
+			byte[] fileArray = receiveSequence();			
 			//Update Client name
 			this.client = new TypeConverter().byteArrayToString(clientName);
 			System.out.println("\nConnection with: " + this.client+":");
@@ -76,7 +69,7 @@ public class SingleSocketServer extends Thread{
 					//Select directory where save file
 					File directory = new OpenButtons().FileChooser(FileTypes.DIRECTORY);
 					if(directory!=null){
-						byteToFile = new BufferedOutputStream(new FileOutputStream(directory+"/"+fileName));
+						BufferedOutputStream byteToFile = new BufferedOutputStream(new FileOutputStream(directory+"/"+fileName));
 						byteToFile.write(fileArray, 0, fileArray.length);
 						byteToFile.close();
 						System.out.println("file "+fileName+" saved...");
@@ -94,10 +87,12 @@ public class SingleSocketServer extends Thread{
 	private void keyExchange(){
 		try {
 			//connection =socket1.accept();
-			RSA aesKeyEncryptor = new RSA();
+			aesKeyEncryptor = new RSA();
 			// Generate new 2048 k?bit key
 			aesKeyEncryptor.generateKeyPair(2048);
 			//New Buffer for byte[] that contain the key
+		//	System.out.println("Server's Public key: ");
+		//	byteArrayStamp(aesKeyEncryptor.getPublicKey().getEncoded());
 			ByteArrayInputStream byteArrayIn = new ByteArrayInputStream(aesKeyEncryptor.getPublicKey().getEncoded());
 			//Create a buffer for send the public key through Socket
 			outStream = new BufferedOutputStream(connection.getOutputStream());
@@ -109,6 +104,8 @@ public class SingleSocketServer extends Thread{
 			}
 			//Closing Buffer in
 			byteArrayIn.close();
+			connection.close();
+		//	System.out.println("KeyExchange complited...");
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		} catch (NoSuchPaddingException e) {
@@ -123,6 +120,7 @@ public class SingleSocketServer extends Thread{
 	private void receiveAesKey(){
 		int i;
 		try {	
+			connection = server.accept();
 			//connection =socket1.accept();
 			//Initialize new Buffer out
 			this.out = new ByteArrayOutputStream();
@@ -131,11 +129,34 @@ public class SingleSocketServer extends Thread{
 	    	while ( (i = inStream.read()) != -1) {
 	            this.out.write(i);
 	        }
+		//	System.out.println("AES key from client:");
+	    	//byteArrayStamp(out.toByteArray());
+	    	
+	    	byte[] aesKeyDecrypted = aesKeyEncryptor.decode(out.toByteArray());
+	    	//byteArrayStamp(aesKeyDecrypted);
 	    	//Save decrypting key 
-	    	this.aesEncryptor.setSymmetricKeySpec(new SecretKeySpec(out.toByteArray(), "AES"));
+	    	aesEncryptor = new AES();
+	    	this.aesEncryptor.setSymmetricKeySpec(new SecretKeySpec(aesKeyDecrypted, "AES"));
 	    	//Close Buffer in/out connection
-	    	this.closeConnection();
+	    //	closeConnection();
+	    	connection.close();
+	    //	System.out.println("receiveAesKey complited...");
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InvalidKeyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalBlockSizeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (BadPaddingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchPaddingException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -143,14 +164,18 @@ public class SingleSocketServer extends Thread{
 	private byte[] receiveSequence(){
 		int i;
 		try {	
+			connection = server.accept();
 			this.out = new ByteArrayOutputStream();
 			inStream = new BufferedInputStream(connection.getInputStream());
 	    	while ( (i = inStream.read()) != -1) {
 	            this.out.write(i);
 	        }
-	    	this.closeConnection();
+	    	//closeConnection();
 	    	ByteArrayOutputStream gincapa = new ByteArrayOutputStream();
+	  //  	byteArrayStamp(out.toByteArray());
 	    	aesEncryptor.decode(new ByteArrayInputStream(out.toByteArray()), gincapa);
+	 //   	byteArrayStamp(gincapa.toByteArray());
+	    	connection.close();
 	    	return gincapa.toByteArray();	
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -160,15 +185,15 @@ public class SingleSocketServer extends Thread{
 		return out.toByteArray();
 	}
 	
-	private void closeConnection(){
+/*	private void closeConnection(){
 		try {
 			out.close();
 			inStream.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}	
 		
-	}
+	}	*/
 	private String textInput(){
 		  InputStreamReader reader = new InputStreamReader (System.in);
           BufferedReader input = new BufferedReader (reader);
@@ -190,4 +215,13 @@ public class SingleSocketServer extends Thread{
 			System.out.print((char)stringByte[count]);
 		}
 	}
+	
+/*	private void byteArrayStamp(byte[] stamp){
+		int i;
+		System.out.println("byte[] length: " + stamp.length);
+		for(i = 0; i < stamp.length; i++){
+			System.out.print((char)stamp[i]);
+		}
+		System.out.println("");
+	}	*/
 }
