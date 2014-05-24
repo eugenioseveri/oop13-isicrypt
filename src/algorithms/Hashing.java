@@ -1,4 +1,4 @@
-package cryptography.algorithms;
+package algorithms;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -8,7 +8,7 @@ import java.io.InputStream;
 
 import javax.swing.JPanel;	//need for the interface that select the file
 
-import cryptography.interfacesandabstractclasses.IHashing;
+import algorithms.interfacesandabstractclasses.IHashing;
 
 /**
  

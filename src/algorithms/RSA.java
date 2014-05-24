@@ -1,4 +1,4 @@
-package cryptography.algorithms;
+package algorithms;
 
 import java.security.InvalidKeyException;
 import java.security.KeyPairGenerator;
@@ -9,8 +9,8 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-import cryptography.interfacesandabstractclasses.AbstractAsymmetricCryptography;
-import cryptography.interfacesandabstractclasses.IAsymmetricCryptography;
+import algorithms.interfacesandabstractclasses.AbstractAsymmetricCryptography;
+import algorithms.interfacesandabstractclasses.IAsymmetricCryptography;
 
 /**
  * Class used to implement RSA algorithm.

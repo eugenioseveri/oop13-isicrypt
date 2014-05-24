@@ -1,8 +1,10 @@
-package gui;
+package gui.views;
 /**
  * @author Filippo Vimini
  * @data 30/04/2014
  */
+import gui.models.ResizableImage;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -11,12 +13,13 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
-public class GuiMethodSetter {
+public abstract class AbstractGuiMethodSetter {
 	/**
 	 * Class that set all the variables of GridBagConstraints, useful for a better views of code and for use only a one GridBagConstraints for all the elements
 	 * , without have any problem with a mismatching.
@@ -76,7 +79,7 @@ public class GuiMethodSetter {
 	 * @param buttonFont				Text JButton font
 	 * @param focusArea					Boolean for setFocusPainted
 	 */
-	public void setJButton(Component button, Color backgroundColor, Color foregroundButtonColor, Font buttonFont, boolean focusArea, boolean border){
+	public static void setJButton(Component button, Color backgroundColor, Color foregroundButtonColor, Font buttonFont, boolean focusArea, boolean border){
 		if(button instanceof JButton){
 			((JButton)button).setBackground(backgroundColor);
 			((JButton)button).setForeground(foregroundButtonColor);

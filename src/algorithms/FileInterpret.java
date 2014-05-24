@@ -1,4 +1,4 @@
-package cryptography.algorithms;
+package algorithms;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -22,7 +22,6 @@ import javax.crypto.SecretKey;
  * - Compression algorithm
  * - File name (self-generated)
  * - Payload (encrypted file)
- * Two inner static classes provide reading and writing methods.
  * @author Eugenio Severi
  */
 public class FileInterpret implements Serializable {
@@ -162,7 +161,6 @@ public class FileInterpret implements Serializable {
 	private void loadPayloadToRAM(File payload) throws FileNotFoundException, IOException {
 		FileInputStream fis = new FileInputStream(payload);
 		BufferedInputStream buffPayload = new BufferedInputStream(fis);
-		//ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		int currentByte;
 		try {
 			for(int index = 0; (currentByte = buffPayload.read()) != -1; index++) {

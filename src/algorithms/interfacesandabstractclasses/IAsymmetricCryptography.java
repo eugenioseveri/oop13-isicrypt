@@ -1,4 +1,4 @@
-package cryptography.interfacesandabstractclasses;
+package algorithms.interfacesandabstractclasses;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -9,7 +9,7 @@ import java.security.NoSuchAlgorithmException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 
-import cryptography.algorithms.EnumAsymmetricKeyTypes;
+import algorithms.EnumAsymmetricKeyTypes;
 
 
 /**

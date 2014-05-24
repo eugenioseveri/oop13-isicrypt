@@ -1,10 +1,12 @@
-package gui;
+package gui.views;
 /**
  * @author Filippo Vimini
  * @data 25/04/2014
  * Graphic User Interface for Steganography class in Swing.
  * GridBagLayout used for make a precision and resizable GUI, for understand this class is necessary own the GridBagLayout knowledge.
  */
+
+import gui.models.OpenButtons;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -33,13 +35,13 @@ import javax.swing.SwingConstants;
 
 import org.apache.commons.lang3.StringUtils;
 
-import cryptography.algorithms.Steganography;
-import cryptography.algorithms.TypeConverter;
-import static gui.OpenButtons.FileTypes.*;
+import algorithms.Steganography;
+import algorithms.TypeConverter;
+import static gui.models.OpenButtons.FileTypes.*;
 
-	public class SteganographyGUI {
+	public class SteganographyView extends AbstractGuiMethodSetter {
 		/*
-		 * String variable that contains the text that will be selected by user.
+		 * String variable that contains the text that will be selected by user. bn
 		 */
 		private static String textDefault = null;
 		/*
@@ -75,31 +77,43 @@ import static gui.OpenButtons.FileTypes.*;
 		 */
 		private static final Color foregroundColor = Color.white;
 		/*
+		 * Arrays that contains various dimension of insets
+		 */
+		private static final int insetsDefault[] = {10,10,10,10};
+		private static final int[] zeroInsets = {0,0,0,0};
+		/*
+		 * weight for ipadx and ipady
+		 */
+		private static final int standardButtonIpady = 40;
+		private static final int standardButtonIpadx = -40;
+		private static final int buttonHeightDimension = 25;
+		private static final int buttonWidthDimension = 55;
+		/*
 		 * JFrame for message dialog
 		 */
 		JFrame dialog = new JFrame();
 		/*
 		 * Component type initialized immediately for simplify the programming, does not involve in wastage of resources
 		 */
-		Component selectImageButton = new JButton("Select image");
-		String selectText = "Select text\nfrom File";	//Format text for JButton
-		Component selectTextButton = new JButton("<html>" + selectText.replaceAll("\\n", "<br>") + "</html>");//html for new line in button
-		Component separator = new JSeparator(SwingConstants.VERTICAL);
-		Component iconLabel = new JLabel();
-		Component encryptCheckbox = new JCheckBox("Encrypt");
-		Component startButton = new JButton("START");
-		JTextArea textArea = new JTextArea(10,10);
-		Component scrollPane = new JScrollPane(textArea);
-		Component findTextButton = new JButton("Find Text");
-		Component clearSettingButton = new JButton("Clear Setting");
-		Component insertTextButton = new JButton("Select enter text");
-		Component filler = new JLabel();
+		private final Component selectImageButton = new JButton("Select image");
+		private final String selectText = "Select text\nfrom File";	//Format text for JButton
+		private final Component selectTextButton = new JButton("<html>" + selectText.replaceAll("\\n", "<br>") + "</html>");//html for new line in button
+		private final Component separator = new JSeparator(SwingConstants.VERTICAL);
+		private final Component iconLabel = new JLabel();
+		private final Component encryptCheckbox = new JCheckBox("Encrypt");
+		private final Component startButton = new JButton("START");
+		private final JTextArea textArea = new JTextArea(10,10);
+		private final Component scrollPane = new JScrollPane(textArea);
+		private final Component findTextButton = new JButton("Find Text");
+		private final Component clearSettingButton = new JButton("Clear Setting");
+		private final Component insertTextButton = new JButton("Select enter text");
+		private final Component filler = new JLabel();
 		/**
 		 * 
 		 * @param contenitore	Container to change.
 		 * @throws IOException
 		 */
-		public SteganographyGUI(Container contenitore) throws IOException{
+		public SteganographyView(Container contenitore) throws IOException{
 			GridBagLayout layout = new GridBagLayout();
 			GridBagConstraints limit = new GridBagConstraints();
 			/*
@@ -108,21 +122,8 @@ import static gui.OpenButtons.FileTypes.*;
 			contenitore.setLayout(layout);
 			contenitore.setBackground(panelBakColor);
 			/*
-			 * Arrays that contains various dimension of insets
-			 */
-			int insetsDefault[] = {10,10,10,10};
-			int[] zeroInsets = {0,0,0,0};
-			/*
-			 * weight for ipadx and ipady
-			 */
-			int standardButtonIpady = 40;
-			int standardButtonIpadx = -40;
-			int buttonHeightDimension = 25;
-			int buttonWidthDimension = 55;
-			/*
 			 * Component setting
 			 */
-			
 			//JButton
 			((JButton)selectImageButton).addActionListener(new ActionListener() {
 				
@@ -131,7 +132,7 @@ import static gui.OpenButtons.FileTypes.*;
 						imageIcon = new OpenButtons().FileChooser(IMAGE);
 						if(imageIcon != null){
 							imageChoosen = imageIcon;
-							((JLabel) iconLabel).setIcon(new GuiMethodSetter().iconOptimizer(((JLabel)iconLabel), ImageIO.read(imageIcon)));
+							((JLabel) iconLabel).setIcon(iconOptimizer(((JLabel)iconLabel), ImageIO.read(imageIcon)));
 							if(!StringUtils.isEmpty(textArea.getText())){
 								((JButton)startButton).setEnabled(true);
 							}
@@ -142,8 +143,8 @@ import static gui.OpenButtons.FileTypes.*;
 					}
 				}
 			});
-			new GuiMethodSetter().setJButton(selectImageButton, buttonColor, foregroundColor, font, false, false);
-			new GuiMethodSetter().setLimit(limit, 0, 0, 1, 1, 0, 0, buttonWidthDimension, standardButtonIpady, insetsDefault, GridBagConstraints.NONE, GridBagConstraints.WEST, contenitore, selectImageButton);
+			setJButton(selectImageButton, buttonColor, foregroundColor, font, false, false);
+			setLimit(limit, 0, 0, 1, 1, 0, 0, buttonWidthDimension, standardButtonIpady, insetsDefault, GridBagConstraints.NONE, GridBagConstraints.WEST, contenitore, selectImageButton);
 		
 			//JButton
 			((JButton)selectTextButton).setMinimumSize(((JButton)selectTextButton).getPreferredSize());
@@ -165,25 +166,25 @@ import static gui.OpenButtons.FileTypes.*;
 					}
 				}
 			});
-			new GuiMethodSetter().setJButton(selectTextButton, buttonColor, foregroundColor, font, false, false);
-			new GuiMethodSetter().setLimit(limit, 1, 0, 1, 1, 0, 0, buttonWidthDimension + 23, buttonHeightDimension, insetsDefault, GridBagConstraints.NONE, GridBagConstraints.CENTER, contenitore, selectTextButton);
+			setJButton(selectTextButton, buttonColor, foregroundColor, font, false, false);
+			setLimit(limit, 1, 0, 1, 1, 0, 0, buttonWidthDimension + 23, buttonHeightDimension, insetsDefault, GridBagConstraints.NONE, GridBagConstraints.CENTER, contenitore, selectTextButton);
 		
 			//JSeparator 
 			((JSeparator)separator).setBackground(Color.white);
 			((JSeparator)separator).setMinimumSize(((JSeparator)separator).getPreferredSize());
-			new GuiMethodSetter().setLimit(limit, 2, 0, 1, 6, 0, 1, 0, 0, zeroInsets, GridBagConstraints.BOTH, GridBagConstraints.CENTER, contenitore, separator);	
+			setLimit(limit, 2, 0, 1, 6, 0, 1, 0, 0, zeroInsets, GridBagConstraints.BOTH, GridBagConstraints.CENTER, contenitore, separator);	
 			
 			//JLabel for icon
 			BufferedImage defaultStartimage = ImageIO.read(new File(pathDefault));
-			ImageIcon icon = new GuiMethodSetter().iconOptimizer(((JLabel) iconLabel), defaultStartimage);
+			ImageIcon icon = iconOptimizer(((JLabel) iconLabel), defaultStartimage);
 			((JLabel) iconLabel).setIcon(icon);
 			int insetsIcon[] = {20,10,10,10};
-			new GuiMethodSetter().setLimit(limit, 3, 0, 1, 6, 0, 0, 0, 0,insetsIcon, GridBagConstraints.CENTER, GridBagConstraints.CENTER, contenitore, iconLabel);
+			setLimit(limit, 3, 0, 1, 6, 0, 0, 0, 0,insetsIcon, GridBagConstraints.CENTER, GridBagConstraints.CENTER, contenitore, iconLabel);
 			
 			//JCheckBox
 			((JCheckBox)encryptCheckbox).setBackground(Color.DARK_GRAY);
 			((JCheckBox)encryptCheckbox).setForeground(Color.white);
-			new GuiMethodSetter().setLimit(limit, 0, 1, 2, 1, 0, 0, 0, standardButtonIpady,insetsDefault, GridBagConstraints.NONE, GridBagConstraints.WEST, contenitore, encryptCheckbox);
+			setLimit(limit, 0, 1, 2, 1, 0, 0, 0, standardButtonIpady,insetsDefault, GridBagConstraints.NONE, GridBagConstraints.WEST, contenitore, encryptCheckbox);
 			
 			//JButton
 			((JButton)startButton).addActionListener(new ActionListener() {
@@ -198,8 +199,8 @@ import static gui.OpenButtons.FileTypes.*;
 				}
 			});
 			((JButton)startButton).setEnabled(false);
-			new GuiMethodSetter().setJButton(startButton, buttonColor, foregroundColor, font, false, false);
-			new GuiMethodSetter().setLimit(limit, 0, 2, 2, 1, 0, 0, standardButtonIpadx, standardButtonIpady, insetsDefault, GridBagConstraints.BOTH, GridBagConstraints.CENTER, contenitore, startButton);
+			setJButton(startButton, buttonColor, foregroundColor, font, false, false);
+			setLimit(limit, 0, 2, 2, 1, 0, 0, standardButtonIpadx, standardButtonIpady, insetsDefault, GridBagConstraints.BOTH, GridBagConstraints.CENTER, contenitore, startButton);
 			
 			//JScrollPane(JtextArea)
 			scrollPane.setMinimumSize(scrollPane.getPreferredSize());
@@ -210,7 +211,7 @@ import static gui.OpenButtons.FileTypes.*;
 			textArea.setLineWrap(true);
 			textArea.setWrapStyleWord(true);
 			((JScrollPane)scrollPane).setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-			new GuiMethodSetter().setLimit(limit, 0, 7, 4, 1, 1, 0, 0, 0, insetsDefault, GridBagConstraints.BOTH, GridBagConstraints.WEST, contenitore, scrollPane);
+			setLimit(limit, 0, 7, 4, 1, 1, 0, 0, 0, insetsDefault, GridBagConstraints.BOTH, GridBagConstraints.WEST, contenitore, scrollPane);
 			
 			//JButton
 			((JButton)findTextButton).addActionListener(new ActionListener() {
@@ -219,7 +220,7 @@ import static gui.OpenButtons.FileTypes.*;
 					try {
 						File iconFinder = new OpenButtons().FileChooser(IMAGE);
 						if(iconFinder != null){
-							((JLabel) iconLabel).setIcon(new GuiMethodSetter().iconOptimizer(((JLabel)iconLabel), ImageIO.read(iconFinder)));
+							((JLabel) iconLabel).setIcon(iconOptimizer(((JLabel)iconLabel), ImageIO.read(iconFinder)));
 							textBorrowed = new Steganography().messageBorrower(iconFinder);
 							if(textArea != null)textArea.setText("");
 							if(textBorrowed != null)textArea.append(textBorrowed);
@@ -234,15 +235,15 @@ import static gui.OpenButtons.FileTypes.*;
 					}
 				}
 			});
-			new GuiMethodSetter().setJButton(findTextButton, buttonColor, foregroundColor, font, false, false);
-			new GuiMethodSetter().setLimit(limit, 0, 3, 2, 1, 0, 0, standardButtonIpadx, standardButtonIpady, insetsDefault, GridBagConstraints.BOTH, GridBagConstraints.CENTER, contenitore, findTextButton);
+			setJButton(findTextButton, buttonColor, foregroundColor, font, false, false);
+			setLimit(limit, 0, 3, 2, 1, 0, 0, standardButtonIpadx, standardButtonIpady, insetsDefault, GridBagConstraints.BOTH, GridBagConstraints.CENTER, contenitore, findTextButton);
 			
 			//JButton
 			((JButton)clearSettingButton).addActionListener(new ActionListener() {
 				
 				public void actionPerformed(ActionEvent arg0) {
 					try {
-						((JLabel) iconLabel).setIcon(new GuiMethodSetter().iconOptimizer(((JLabel) iconLabel), ImageIO.read(new File(pathDefault))));
+						((JLabel) iconLabel).setIcon(iconOptimizer(((JLabel) iconLabel), ImageIO.read(new File(pathDefault))));
 						textArea.setText("");
 						((JButton)startButton).setEnabled(false);
 						((JButton)clearSettingButton).setEnabled(false);
@@ -259,8 +260,8 @@ import static gui.OpenButtons.FileTypes.*;
 				}
 			});
 			((JButton)clearSettingButton).setEnabled(false);
-			new GuiMethodSetter().setJButton(clearSettingButton, buttonColor, foregroundColor, font, false, false);
-			new GuiMethodSetter().setLimit(limit, 0, 4, 2, 1, 0, 0, standardButtonIpadx, standardButtonIpady, insetsDefault, GridBagConstraints.BOTH, GridBagConstraints.CENTER, contenitore, clearSettingButton);
+			setJButton(clearSettingButton, buttonColor, foregroundColor, font, false, false);
+			setLimit(limit, 0, 4, 2, 1, 0, 0, standardButtonIpadx, standardButtonIpady, insetsDefault, GridBagConstraints.BOTH, GridBagConstraints.CENTER, contenitore, clearSettingButton);
 			
 			//JButton
 			((JButton)insertTextButton).addActionListener(new ActionListener() {
@@ -291,12 +292,12 @@ import static gui.OpenButtons.FileTypes.*;
 				}
 				});
 			int insetsTextAreaButton[] = {0,0,10,10};
-			new GuiMethodSetter().setJButton(insertTextButton, buttonColor, foregroundColor, font, false, true);
-			new GuiMethodSetter().setLimit(limit, 0, 6, 1, 1, 0, 0, 0, 0, insetsTextAreaButton, GridBagConstraints.NONE, GridBagConstraints.WEST, contenitore, insertTextButton);
+			setJButton(insertTextButton, buttonColor, foregroundColor, font, false, true);
+			setLimit(limit, 0, 6, 1, 1, 0, 0, 0, 0, insetsTextAreaButton, GridBagConstraints.NONE, GridBagConstraints.WEST, contenitore, insertTextButton);
 			
 			/*
 			 * Filler for good buttons resizable setting
 			 */
-			new GuiMethodSetter().setLimit(limit, 0, 5, 2, 1, 0, 0, 0, 0, zeroInsets, GridBagConstraints.BOTH, GridBagConstraints.CENTER, contenitore, filler);
+			setLimit(limit, 0, 5, 2, 1, 0, 0, 0, 0, zeroInsets, GridBagConstraints.BOTH, GridBagConstraints.CENTER, contenitore, filler);
 		}
 }

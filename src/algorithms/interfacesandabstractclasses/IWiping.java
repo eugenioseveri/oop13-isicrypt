@@ -1,4 +1,4 @@
-package cryptography.interfacesandabstractclasses;
+package algorithms.interfacesandabstractclasses;
 
 import java.io.File;
 import java.io.IOException;

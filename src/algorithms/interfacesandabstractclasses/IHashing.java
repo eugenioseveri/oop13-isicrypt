@@ -1,6 +1,6 @@
-package cryptography.interfacesandabstractclasses;
+package algorithms.interfacesandabstractclasses;
 
-import cryptography.algorithms.Hashing;
+import algorithms.Hashing;
 /**
  * Interface used to define mandatory methods of hashing classes.
  * @author Filippo Vimini

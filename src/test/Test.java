@@ -9,7 +9,7 @@ import java.security.NoSuchAlgorithmException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 
-import cryptography.algorithms.AES;
+import algorithms.AES;
 
 public class Test {
 	

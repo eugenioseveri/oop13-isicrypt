@@ -1,4 +1,4 @@
-package cryptography.algorithms;
+package test;
 
 import java.io.*;
 import java.security.*;
@@ -7,7 +7,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-public class TestClass {
+public class CryptoTest {
 
 	public static void main(String[] args) throws InvalidKeyException, FileNotFoundException, IOException, NoSuchAlgorithmException, NoSuchProviderException, NoSuchPaddingException, ClassNotFoundException, IllegalBlockSizeException, BadPaddingException {
 		//JFileChooser fileChooser = new JFileChooser();

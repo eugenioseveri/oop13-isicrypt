@@ -1,8 +1,10 @@
-package cryptography.algorithms;
+package algorithms;
 /**
  * @author Filippo Vimini
  * Created 05/05/2014
  */
+import gui.models.ContactInfo;
+
 import java.net.*;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;

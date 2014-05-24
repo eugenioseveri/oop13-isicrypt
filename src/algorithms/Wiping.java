@@ -1,4 +1,4 @@
-package cryptography.algorithms;
+package algorithms;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,7 +7,7 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.security.SecureRandom;
 
-import cryptography.interfacesandabstractclasses.IWiping;
+import algorithms.interfacesandabstractclasses.IWiping;
 
 /**
  * Class used to implement wiping algorithms.

@@ -1,4 +1,4 @@
-package cryptography.interfacesandabstractclasses;
+package algorithms.interfacesandabstractclasses;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -13,7 +13,7 @@ import java.security.PublicKey;
 
 import javax.crypto.Cipher;
 
-import cryptography.algorithms.EnumAsymmetricKeyTypes;
+import algorithms.EnumAsymmetricKeyTypes;
 
 /**
  * Abstract class used to implement getters/setters methods for asymmetric algorithms classes.

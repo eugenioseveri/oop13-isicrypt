@@ -1,10 +1,10 @@
 /**
  * 
  */
-package cryptography.algorithms;
+package algorithms;
 
-import gui.OpenButtons;
-import gui.OpenButtons.FileTypes;
+import gui.models.OpenButtons;
+import gui.models.OpenButtons.FileTypes;
 
 import java.awt.Graphics2D;
 import java.awt.Image;

@@ -1,4 +1,4 @@
-package cryptography.algorithms;
+package algorithms;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,8 +15,8 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import cryptography.interfacesandabstractclasses.AbstractSymmetricCryptography;
-import cryptography.interfacesandabstractclasses.ICryptography;
+import algorithms.interfacesandabstractclasses.AbstractSymmetricCryptography;
+import algorithms.interfacesandabstractclasses.ICryptography;
 
 /**
  * FARE VERSIONE THREADED

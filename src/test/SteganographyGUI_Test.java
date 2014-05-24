@@ -7,7 +7,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import gui.SteganographyGUI;
+import gui.views.SteganographyView;
 
 public class SteganographyGUI_Test {
 
@@ -18,7 +18,7 @@ public class SteganographyGUI_Test {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(1280,720);//Posso mettere quello che voglio, tanto i componenti si adattano! CHE SBORATA!!!
 		JPanel contenitore = new JPanel();
-		new SteganographyGUI(contenitore);
+		new SteganographyView(contenitore);
 		frame.getContentPane().add(contenitore);
 		frame.setVisible(true);
 	}

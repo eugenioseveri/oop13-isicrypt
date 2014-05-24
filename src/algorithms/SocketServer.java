@@ -1,10 +1,10 @@
-package cryptography.algorithms;
+package algorithms;
 /**
  * @author Filippo Vimini
  * Created 05/05/2014
  */
-import gui.OpenButtons;
-import gui.OpenButtons.FileTypes;
+import gui.models.OpenButtons;
+import gui.models.OpenButtons.FileTypes;
 
 import java.net.*;
 import java.security.InvalidKeyException;
@@ -16,9 +16,9 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 
-public class SingleSocketServer extends Thread{
+public class SocketServer extends Thread{
 	public static void main(String[] args) throws IOException, InterruptedException{
-		new SingleSocketServer();
+		new SocketServer();
 	}
 	static Socket connection;	
 	InputStream inStream = null;
@@ -31,7 +31,7 @@ public class SingleSocketServer extends Thread{
 	ServerSocket server;
 	
 	
-	public SingleSocketServer() throws InterruptedException, IOException{
+	public SocketServer() throws InterruptedException, IOException{
 		final int port = 19999;
 		server = new ServerSocket(port);
 		System.out.println("Server initialized...\nStart to accepting connections...");

@@ -1,4 +1,4 @@
-package cryptography.algorithms;
+package gui.models;
 
 public class ContactInfo {
 	String name = null;

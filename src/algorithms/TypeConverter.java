@@ -1,4 +1,4 @@
-package cryptography.algorithms;
+package algorithms;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

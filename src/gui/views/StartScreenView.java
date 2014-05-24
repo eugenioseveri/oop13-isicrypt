@@ -1,4 +1,4 @@
-package gui;
+package gui.views;
 
 import java.awt.EventQueue;
 import javax.swing.JFrame;

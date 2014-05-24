@@ -1,4 +1,4 @@
-package cryptography.algorithms;
+package algorithms;
 
 /**
  * @author Eugenio Severi

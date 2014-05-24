@@ -10,10 +10,10 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-import gui.OpenButtons;
-import gui.OpenButtons.FileTypes;
-import cryptography.algorithms.ContactInfo;
-import cryptography.algorithms.SocketClient;
+import algorithms.SocketClient;
+import gui.models.ContactInfo;
+import gui.models.OpenButtons;
+import gui.models.OpenButtons.FileTypes;
 
 public class SocketTest extends Thread {
 
