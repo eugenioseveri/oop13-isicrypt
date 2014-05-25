@@ -1,25 +1,13 @@
 package test;
 
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
+import gui.controllers.SteganographyController;
 import gui.views.SteganographyView;
 
 public class SteganographyGUI_Test {
 
-	public static void main(String[] args) throws IOException {
-		JFrame frame = new JFrame();
-		frame.setIconImage(ImageIO.read(new File("./res/isiCryptICON_MetroStyle.jpg")));
-		frame.setTitle("GridBagLayout-Test");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(1280,720);//Posso mettere quello che voglio, tanto i componenti si adattano! CHE SBORATA!!!
-		JPanel contenitore = new JPanel();
-		new SteganographyView(contenitore);
-		frame.getContentPane().add(contenitore);
-		frame.setVisible(true);
+	public static void main(String[] args){
+		SteganographyController controller = new SteganographyController(); 
+		SteganographyView view = new SteganographyView();
+		controller.setView(view);
 	}
 }
