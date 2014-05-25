@@ -1,12 +1,10 @@
 package gui.controllers;
 
 public interface ISteganographyController {
-	void selectImage();
-	void selectText();
-	void start();
-	void findText();
-	void clearSetting();
-	void insertText();
-	
-
+	void commandSelectImage();
+	void commandSelectText();
+	void commandStart();
+	void commandFindText();
+	void commandClearSetting();
+	void commandInsertText();
 }
