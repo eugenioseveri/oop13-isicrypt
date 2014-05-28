@@ -3,6 +3,7 @@ package algorithms;
  * @author Filippo Vimini
  * Created 05/05/2014
  */
+import gui.controllers.FileExchangeController;
 import gui.models.ContactInfo;
 
 import java.net.*;
@@ -24,6 +25,7 @@ public class SocketClient extends Thread{
 	ByteArrayInputStream byteArrayIn = null;
 	BufferedOutputStream outStream = null;
 	AES aesEncryptor = null;
+	//Client used only for send name at Server
 	Socket client = null;
 	//Define a port
 	byte[] clientNameByte;
@@ -32,27 +34,44 @@ public class SocketClient extends Thread{
 	String host;
 	String clientName = "UserClientDefault";
 
-	
-	public SocketClient(ContactInfo contact, File file) throws InterruptedException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, NoSuchProviderException, InvalidKeySpecException, IllegalBlockSizeException, BadPaddingException{
+	public SocketClient(ContactInfo contact, InputStream fileStream, String name) {
 		//Update contact info for text area
-		this.contact = contact;
+	//	this.contact = contact;
 		//Get host
+		this.contact = contact;
+		//set Host
 		this.host = contact.getHost();
 		//Put name of Client on byte[] for send through socket
 		this.clientNameByte = this.clientName.getBytes();
 		//Put name of file on byte[] for send through socket
-		byte[] fileName = file.getName().getBytes();       
+		byte[] fileName = name.getBytes();       
+		//InputStream to byte[]
+		ByteArrayOutputStream bufferArray = new ByteArrayOutputStream();
+		int i;
+		try {
+			while((i = fileStream.read())!=-1){
+				bufferArray.write(i);
+			}
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		//Put file on byte[] for send through socket
-		byte[] fileArray = new TypeConverter().fileToByte(file);
+		byte[] fileArray = bufferArray.toByteArray();
 		//Method that send file to Server
 		this.sendByteArray(clientNameByte, fileName, fileArray);
 		//this.closeConnection();				
 		//try
 		//Close existing connection
-		client.close();
+		FileExchangeController.fileAppendClient(name);
+		try {
+			client.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
-	public SocketClient(ContactInfo contact, String text) throws InterruptedException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, NoSuchProviderException, InvalidKeySpecException, IllegalBlockSizeException, BadPaddingException{
+	public SocketClient(ContactInfo contact, String text){
 		//initialize a string that will be used from server to check that the follow byte[] is a text message, not a file
 		String lopo = "string";
 		//Put String on byte[] for send through socket
@@ -70,10 +89,16 @@ public class SocketClient extends Thread{
 		//this.closeConnection();				
 		//Try
 		//Close existing connection
-		client.close();
+		FileExchangeController.textApendClient(text);
+		try {
+			client.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
-	private void sendByteArray( byte[] clientName, byte[] fileName, byte[] fileArray) throws InterruptedException, IOException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, NoSuchProviderException, InvalidKeySpecException, IllegalBlockSizeException, BadPaddingException{
+	private void sendByteArray( byte[] clientName, byte[] fileName, byte[] fileArray){
 		//Start counting of time to leave package
 		long startTime = System.currentTimeMillis();
 		//Client start to send package
@@ -152,17 +177,17 @@ public class SocketClient extends Thread{
 	}
 	
 	//Send AES key, this method don't crypt byte[], the key is just hidden by Diffie-Helman algorithm
-	private void sendAesKey(byte[] sendByte) throws IOException{
+	private void sendAesKey(byte[] sendByte){
 		//Get connection with server by creating new socket
 		getConnection();
 //		System.out.println("AES key to server: ");
 		//byteArrayStamp(sendByte);
 		//Initialize buffer with byte[] to read and buffer with Socket
 		byteArrayIn = new ByteArrayInputStream(sendByte);
-		outStream = new BufferedOutputStream(client.getOutputStream());
 		//Start write byte from buffer in to socket
 		int transfertElement ;
 		try {
+			outStream = new BufferedOutputStream(client.getOutputStream());
 			while((transfertElement = byteArrayIn.read()) != -1){
 				outStream.write(transfertElement);
 				outStream.flush();
@@ -175,23 +200,23 @@ public class SocketClient extends Thread{
 		}
 	}
 	
-	private void sendSequence(byte[] sendByte) throws IOException, InvalidKeyException, NullPointerException{
+	private void sendSequence(byte[] sendByte){
 		//Get connection with server by creating new socket
 		getConnection();
 		//byteArrayIn = new ByteArrayInputStream(sendByte);
 		//Initialize Buffer Out with socket
-		outStream = new BufferedOutputStream(client.getOutputStream());
 		ByteArrayOutputStream encryptedByteArraybuffer = new ByteArrayOutputStream();
 		ByteArrayOutputStream lopo = new ByteArrayOutputStream();
 		byteArrayIn = new ByteArrayInputStream(sendByte);
-		//Crypting file with AES key
-		this.aesEncryptor.encode(byteArrayIn, encryptedByteArraybuffer);
-		byteArrayIn = null;
-		byteArrayIn = new ByteArrayInputStream(encryptedByteArraybuffer.toByteArray());
+		
 		//Put Encrypted data on buffer In for send to Server
 //		byteArrayIn.read(encryptedByteArraybuffer.toByteArray());
 		int transfertElement;
 		try {
+			//Crypting file with AES key
+			this.aesEncryptor.encode(byteArrayIn, encryptedByteArraybuffer);
+			byteArrayIn = new ByteArrayInputStream(encryptedByteArraybuffer.toByteArray());
+			outStream = new BufferedOutputStream(client.getOutputStream());
 			while((transfertElement = byteArrayIn.read()) != -1){
 				outStream.write(transfertElement);
 				lopo.write(transfertElement);
@@ -200,7 +225,7 @@ public class SocketClient extends Thread{
 	//		byteArrayStamp(lopo.toByteArray());
 			//Close Buffer
 			closeBuffer();
-		} catch (IOException e) {
+		} catch (IOException | InvalidKeyException | NullPointerException e) {
 				e.printStackTrace();
 		}
 	}

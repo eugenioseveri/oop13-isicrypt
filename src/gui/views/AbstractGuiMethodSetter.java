@@ -19,40 +19,32 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
-public abstract class AbstractGuiMethodSetter {
+public abstract class AbstractGuiMethodSetter{
 	/**
-	 * Class that set all the variables of GridBagConstraints, useful for a better views of code and for use only a one GridBagConstraints for all the elements
+	 * Class that set all the variables of GridBagConstraints,
+	 *  useful for a better views of code and for use only a one GridBagConstraints for all the elements
 	 * , without have any problem with a mismatching.
 	 * 	
-	 * @param limiti		GridBagConstraints 
-	 * @param gridx			Position for the element, associated with "limit", in the lines of matrix.
-	 * @param gridy			position for the element, associated with "limit", in the columns of matrix.
-	 * @param gridwidth		Number of cell that the element occupies in width.
-	 * @param gridheight	Number of cell that the element occupies in height.
-	 * @param weightx		Weight of the element on x axis of the cell.
-	 * @param weighty		Weight of the element on y axis of the cell.
+	 * @param limit			GridBagConstraints 
 	 * @param ipadx			Dimension in % of the element in x axis.
 	 * @param ipady			Dimension in % of the element in y axis.
 	 * @param insets[]		Array with insets values of GridBagLayout.
 	 * @param fill			VIsible space of cell occupies by the element.
 	 * @param anchor		Anchor of the element in the cell.
+	 * @param container		JPanel where visualize the element
+	 * @param C				Component to save on panel
 	 */
-	public void setLimit( GridBagConstraints limiti, int gridx, int gridy, int gridwidth, int gridheight, int weightx, int weighty, int ipadx, int ipady, int insets[], int fill, int anchor, Container contenitore, Component C ){
-		limiti.gridx = gridx;
-		limiti.gridy = gridy;
-		limiti.gridwidth = gridwidth;
-		limiti.gridheight = gridheight;
-		limiti.weightx = weightx;
-		limiti.weighty = weighty;
-		limiti.ipadx = ipadx;
-		limiti.ipady = ipady;
-		limiti.insets.top = insets[0];
-		limiti.insets.bottom = insets[1];
-		limiti.insets.left = insets[2];
-		limiti.insets.right = insets[3];
-		limiti.fill = fill;
-		limiti.anchor = anchor;
-		contenitore.add(C, limiti);
+	public static void setLimit( GridBagConstraints limit, int ipadx, int ipady, int insets[], int fill, int anchor,
+			Container container, Component C ){
+		limit.ipadx = ipadx;
+		limit.ipady = ipady;
+		limit.insets.top = insets[0];
+		limit.insets.bottom = insets[1];
+		limit.insets.left = insets[2];
+		limit.insets.right = insets[3];
+		limit.fill = fill;
+		limit.anchor = anchor;
+		container.add(C, limit);
 	}
 	/**
 	 * Set default dimension for the panel that contains the image for standard view of all image.
@@ -61,10 +53,10 @@ public abstract class AbstractGuiMethodSetter {
 	 * @return imageIcon	optimized height and width ImageIcon.
 	 * @throws IOException
 	 */
-	public ImageIcon iconOptimizer(JLabel label, BufferedImage srcImage) throws IOException{
+	public ImageIcon iconOptimizer(JLabel label, BufferedImage srcImage, int height, int width){
 		Dimension iconDimension = new Dimension();
-		iconDimension.height = 480;
-		iconDimension.width = 640;
+		iconDimension.height = height;
+		iconDimension.width = width;
 		label.setMinimumSize(iconDimension);
 		srcImage = new ResizableImage().getResizedImage(srcImage);
 		ImageIcon imageIcon = new ImageIcon(srcImage);
@@ -79,7 +71,8 @@ public abstract class AbstractGuiMethodSetter {
 	 * @param buttonFont				Text JButton font
 	 * @param focusArea					Boolean for setFocusPainted
 	 */
-	public static void setJButton(Component button, Color backgroundColor, Color foregroundButtonColor, Font buttonFont, boolean focusArea, boolean border){
+	public static void setJButton(Component button, Color backgroundColor, Color foregroundButtonColor,
+			Font buttonFont, boolean focusArea, boolean border){
 		if(button instanceof JButton){
 			((JButton)button).setBackground(backgroundColor);
 			((JButton)button).setForeground(foregroundButtonColor);
@@ -89,5 +82,26 @@ public abstract class AbstractGuiMethodSetter {
 				((JButton)button).setBorder(BorderFactory.createEmptyBorder());
 			}
 		}
+	}
+	/**
+	 * 
+	 * @param gridx			Position for the element, associated with "limit", in the lines of matrix.
+	 * @param gridy			position for the element, associated with "limit", in the columns of matrix.
+	 * @param gridwidth		Number of cell that the element occupies in width.
+	 * @param gridheight	Number of cell that the element occupies in height.
+	 * @param weightx		Weight of the element on x axis of the cell.
+	 * @param weighty		Weight of the element on y axis of the cell.
+	 * @param container		JPanel where visualize the element
+	 * @param C				Component to save on panel
+	 */
+	public static void setGridposition(GridBagConstraints limit, int gridx, int gridy, int gridwidth, int gridheight,
+			int weightx, int weighty, Container container, Component C ){
+		limit.gridx = gridx;
+		limit.gridy = gridy;
+		limit.gridwidth = gridwidth;
+		limit.gridheight = gridheight;
+		limit.weightx = weightx;
+		limit.weighty = weighty;
+		container.add(C, limit);
 	}
 }

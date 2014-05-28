@@ -16,7 +16,7 @@ import org.apache.commons.io.IOUtils;
 
 public class TypeConverter {
 	
-	public byte[] fileToByte(File file){
+	public static byte[] fileToByte(File file){
 		//Create Buffer in/out for read and write the file
 		ByteArrayOutputStream baos = null;
 		FileInputStream filebufferInput = null;
@@ -47,7 +47,7 @@ public class TypeConverter {
 		return fileArray;
 	}
 	
-	public byte[] intToByteArray(int value){
+	public static byte[] intToByteArray(int value){
 		return new byte[]{
 				(byte)(value >>> 24),
 	            (byte)(value >>> 16),
@@ -71,8 +71,13 @@ public class TypeConverter {
 	 * @return
 	 * @throws IOException
 	 */
-	public Image fileToImage( File rawImage ) throws IOException{
-		return  ImageIO.read(rawImage);
+	public  static Image fileToImage( File rawImage ){
+		try {
+			return  ImageIO.read(rawImage);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	/**
 	 * Method that convert a File type to text
@@ -80,7 +85,7 @@ public class TypeConverter {
 	 * @return
 	 * @throws FileNotFoundException
 	 */
-	public String fileToString(File file) throws FileNotFoundException{
+	public  static String fileToString(File file){
 		Scanner myScanner = null;
 		String contents = null;
 		try
@@ -89,6 +94,9 @@ public class TypeConverter {
 				myScanner = new Scanner(file);
 				contents = myScanner.useDelimiter("\\Z").next(); 
 			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		finally
 		{
@@ -100,7 +108,7 @@ public class TypeConverter {
 		return contents;
 	}
 	
-	public File bufferedInputTOtempFile(BufferedInputStream bis){
+	public static  File bufferedInputTOtempFile(BufferedInputStream bis){
 		String nomeTemp = "streamTempFile";
 		String tempExtension =".tmp";
 		 File tempFile;
@@ -116,7 +124,7 @@ public class TypeConverter {
 		}
 	        return null;
 	}
-	public int getOffset(byte[] b, int end){
+	public static  int getOffset(byte[] b, int end){
 		int MASK = 0xFF;
 	    int result = 0;   
 	        result = b[end] & MASK;
@@ -125,7 +133,7 @@ public class TypeConverter {
 	        result = result + ((b[end-3] & MASK) << 24);            
 	    return result; 
 	}
-	public String fileByteArrayToString(byte[] array, int offset){
+	public  static String fileByteArrayToString(byte[] array, int offset){
 		String name ="";
 		int count = array.length - (offset+4);
 		for(int i = count; i < array.length-4; i++){
@@ -134,12 +142,12 @@ public class TypeConverter {
 		return name;
 	}
 	
-	public String byteArrayToString(byte[] text){			
+	public  static String byteArrayToString(byte[] text){			
 		StringBuilder sb = new StringBuilder(new String(text));
 		return sb.toString();
 	}
 	
-	public byte[] stringAndProprietyToByte(String text){
+	public  static byte[] stringAndProprietyToByte(String text){
 		String name = "string";
 		byte[] extesion = name.getBytes();
 		byte[] stringArray = text.getBytes();
@@ -153,7 +161,8 @@ public class TypeConverter {
 			o++;
 		}
 		int m = 0;
-		byte[] extLength = new TypeConverter().intToByteArray(6);
+		new TypeConverter();
+		byte[] extLength = TypeConverter.intToByteArray(6);
 		
 		for(int l = (extesion.length + stringArray.length); m < 4; l++){
 			returnByte[l] = extLength[m];

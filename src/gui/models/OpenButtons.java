@@ -27,7 +27,7 @@ public class OpenButtons extends JPanel{
 	BufferedInputStream stream;
 	BufferedImage image;
 	
-	public File FileChooser(FileTypes fileType) {
+	public File fileChooser(FileTypes fileType) {
 			fileChooser.setAcceptAllFileFilterUsed(false);			
 		switch( fileType ){
 		case IMAGE: 	

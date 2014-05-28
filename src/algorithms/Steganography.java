@@ -37,15 +37,23 @@ public class Steganography {
 	 * @return					boolean which confirm the image saving.
 	 * @throws IOException
 	 */
-	public boolean messageEncrypter(File rawImage, String extension, String text) throws IOException{
+	public boolean messageEncrypter(File rawImage, String extension, String text){
+		new TypeConverter();
 		//File rawImage = new FileTypeFinder().tempFileFromInput(rawImageBuffer);
-		this.icon = new TypeConverter().fileToImage(rawImage);
-		BufferedImage image = bufferCreator(rawImage);
-		image = messageAdder(image, text);
-		String fileName = new OpenButtons().FileChooser(FileTypes.DIRECTORY)+"/Stega_"+rawImage.getName();
-		File savier = new File(fileName);
-		System.out.println("messageEncrypter done!"); //Check print
-		return ImageIO.write(image, extension, savier);
+		this.icon = TypeConverter.fileToImage(rawImage);
+		BufferedImage image;
+		try {
+			image = bufferCreator(rawImage);
+			image = messageAdder(image, text);
+			String fileName = new OpenButtons().fileChooser(FileTypes.DIRECTORY)+"/Stega_"+rawImage.getName();
+			File savier = new File(fileName);
+			System.out.println("messageEncrypter done!"); //Check print
+			return ImageIO.write(image, extension, savier);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
 	}
 	
 	public String messageBorrower(File rawPicture) throws IOException{

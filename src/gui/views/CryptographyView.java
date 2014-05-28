@@ -294,7 +294,7 @@ public class CryptographyView extends JFrame {
 		gbc_btnDecrypt.insets = new Insets(0, 0, 5, 5);
 		gbc_btnDecrypt.gridx = 5;
 		gbc_btnDecrypt.gridy = 4;
-		gbc_btnDecrypt.fill = gbc_btnDecrypt.SOUTHWEST;
+		gbc_btnDecrypt.fill = GridBagConstraints.SOUTHWEST;
 		contentPane.add(btnDecrypt, gbc_btnDecrypt);
 		
 		progressBar_Decrypt = new JProgressBar();

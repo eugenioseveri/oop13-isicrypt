@@ -12,14 +12,12 @@ import javax.crypto.NoSuchPaddingException;
 
 import algorithms.SocketClient;
 import gui.models.ContactInfo;
-import gui.models.OpenButtons;
-import gui.models.OpenButtons.FileTypes;
+
 
 public class SocketTest extends Thread {
 
 	public static void main(String[] args) throws InterruptedException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, NoSuchProviderException, InvalidKeySpecException, IllegalBlockSizeException, BadPaddingException {
 		ContactInfo Gianni = new ContactInfo("Gianni", "localhost");
-	//	SocketClient client = new SocketClient(Gianni, new OpenButtons().FileChooser(FileTypes.GENERIC_FILE));
 		SocketClient client = new SocketClient(Gianni, "Supporre che la cacca ");
 		client.start();
 	}

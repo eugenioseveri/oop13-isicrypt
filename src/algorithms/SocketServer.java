@@ -3,6 +3,7 @@ package algorithms;
  * @author Filippo Vimini
  * Created 05/05/2014
  */
+import gui.controllers.FileExchangeController;
 import gui.models.OpenButtons;
 import gui.models.OpenButtons.FileTypes;
 
@@ -15,6 +16,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
+import javax.swing.JOptionPane;
 
 public class SocketServer extends Thread{
 	public static void main(String[] args) throws IOException, InterruptedException{
@@ -31,17 +33,22 @@ public class SocketServer extends Thread{
 	ServerSocket server;
 	
 	
-	public SocketServer() throws InterruptedException, IOException{
+	public void run(){
 		final int port = 19999;
-		server = new ServerSocket(port);
-		System.out.println("Server initialized...\nStart to accepting connections...");
-		//Start to accept connections.
-		boolean onLine = true;
-		while(onLine){
-			connection = server.accept();
-			this.receiveFile();
+		try {
+			server = new ServerSocket(port);
+			System.out.println("Server initialized...\nStart to accepting connections...");
+			//Start to accept connections.
+			boolean onLine = true;
+			while(onLine){
+				connection = server.accept();
+				this.receiveFile();
+			}
+			connection.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		connection.close();
 	}
 	
 	private void receiveFile(){
@@ -55,28 +62,32 @@ public class SocketServer extends Thread{
 			byte[] nameFile = receiveSequence();
 			byte[] fileArray = receiveSequence();			
 			//Update Client name
-			this.client = new TypeConverter().byteArrayToString(clientName);
+			this.client = TypeConverter.byteArrayToString(clientName);
 			System.out.println("\nConnection with: " + this.client+":");
+			new TypeConverter();
 			//Get name of file for check the type.
-			String fileName = new TypeConverter().byteArrayToString(nameFile);
+			String fileName = TypeConverter.byteArrayToString(nameFile);
 			//Text or file control
 			if(fileName.equals("string")) this.stringChatDetector(fileArray);
 			else{
 				System.out.println("Client file recived... \nfile name: "+fileName+"\nDownload?(yes|no)");
 				//Keyboard choice
-				String riga = this.textInput();
-				if(riga.equals("yes")||riga.equals("YES")){
+				FileExchangeController.fileAppendServer(fileName, client);
+			//	String riga = FileExchangeController.getChatAreaText();
+			//	if(riga.equals("yes")||riga.equals("YES")){
+				if(JOptionPane.showConfirmDialog(null, "choose one", "choose one", JOptionPane.YES_NO_OPTION) == 0){
 					//Select directory where save file
-					File directory = new OpenButtons().FileChooser(FileTypes.DIRECTORY);
+					File directory = new OpenButtons().fileChooser(FileTypes.DIRECTORY);
 					if(directory!=null){
 						BufferedOutputStream byteToFile = new BufferedOutputStream(new FileOutputStream(directory+"/"+fileName));
 						byteToFile.write(fileArray, 0, fileArray.length);
 						byteToFile.close();
 						System.out.println("file "+fileName+" saved...");
+						FileExchangeController.textAppendServer("File Downloaded", client);
 					}
-					else System.out.println("file discarded..");
+					else FileExchangeController.textAppendServer("File Discarded", client);
 				}
-				else System.out.println("file discarded..");
+				else FileExchangeController.textAppendServer("File Discarded", client);
 			}
 			System.out.println("");
 		} catch (IOException e) {
@@ -185,6 +196,7 @@ public class SocketServer extends Thread{
 		return out.toByteArray();
 	}
 	
+	//TODO eliminate unused method
 /*	private void closeConnection(){
 		try {
 			out.close();
@@ -194,7 +206,7 @@ public class SocketServer extends Thread{
 		}	
 		
 	}	*/
-	private String textInput(){
+/*	private String textInput(){
 		  InputStreamReader reader = new InputStreamReader (System.in);
           BufferedReader input = new BufferedReader (reader);
           String str= new String();
@@ -207,13 +219,15 @@ public class SocketServer extends Thread{
 	}
 	
 	
-	
+	*/
 	private void stringChatDetector(byte[] stringByte){
 		int count;
 		System.out.print("	");
 		for(count = 0; count < stringByte.length; count++){
 			System.out.print((char)stringByte[count]);
 		}
+		String append = TypeConverter.byteArrayToString(stringByte);
+		FileExchangeController.textAppendServer(append, client);
 	}
 	
 /*	private void byteArrayStamp(byte[] stamp){
