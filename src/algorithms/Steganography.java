@@ -11,7 +11,9 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -28,7 +30,7 @@ import org.apache.commons.lang3.StringUtils;
  * della matrice che vengono usati per la bitmap. La griglia di BufferedImage ha infatti delle coordinate, che inziano con l'angolo altro sx (0,0)*/
 public class Steganography {
 
-	public Image icon; //Used for icon on StegaGUI
+	public static Image icon; //Used for icon on StegaGUI
 	/**
 	 * 
 	 * @param rawImage			File that contains the selected image.
@@ -38,8 +40,6 @@ public class Steganography {
 	 * @throws IOException
 	 */
 	public boolean messageEncrypter(File rawImage, String extension, String text){
-		new TypeConverter();
-		//File rawImage = new FileTypeFinder().tempFileFromInput(rawImageBuffer);
 		this.icon = TypeConverter.fileToImage(rawImage);
 		BufferedImage image;
 		try {
@@ -65,9 +65,28 @@ public class Steganography {
 		System.out.println("messageBorrower fatto!");
 		return new String(decode);
 	}
+	
+	public static File stegaForClient(File rawImage, String extension, String text){
+		Steganography.icon = TypeConverter.fileToImage(rawImage);
+		BufferedImage image;
+		try {
+			image = bufferCreator(rawImage);
+			image = messageAdder(image, text);
+			String fileName = rawImage.getName();
+			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(rawImage));
+			File temp = TypeConverter.bufferedInputTOtempFile(bis);
+			System.out.println("messageEncrypter done!"); //Check print
+			return temp;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	/*Questo metodo prende in ingresso il buffer dell'immagine e il testo, li fa trasformare in byte e li unisce restituendo un nuovo buffer
 	 * dell'immagine completo di test nascosto*/
-	private BufferedImage messageAdder( BufferedImage image, String text ){
+	private static BufferedImage messageAdder( BufferedImage image, String text ){
 		int DIMENSIONSTART = 0; //number that represent the star byte of the message
 		int MESSAGESTART = 32; //number that represent the star byte of the message length
 		/*converto messaggio, lunghezza e immagine in byte per poterli manipolare*/
@@ -86,7 +105,7 @@ public class Steganography {
 	
 	/*Questo metodo prende in ingresso l'immagine, il testo convertiti in byte e l'offset della distanza in cui incomincia il dato da 
 	 * analizzare. restituisce un array contenente i dati dell'immagine, del testo nascosto e di dove iniziare a cercare i dati*/
-	private byte[] textHiding(byte[] image, byte[] text, int offset){
+	private static byte[] textHiding(byte[] image, byte[] text, int offset){
 		if(text.length + offset> image.length){
 			throw new IllegalArgumentException("The file is not longh enoght for the message!!");
 		}
@@ -146,14 +165,14 @@ public class Steganography {
 		return rasterImage;
 	}
 	
-	private byte[] getImageData( BufferedImage picture ){
+	private static byte[] getImageData( BufferedImage picture ){
 		WritableRaster raster   = picture.getRaster();
 		DataBufferByte buffer = (DataBufferByte)raster.getDataBuffer();
 		System.out.println("getImageData done"); //print usato per debuggare, old is the best way!
 		return buffer.getData();
 	}
 	
-	private byte[] bitConversion(int i){
+	private static byte[] bitConversion(int i){
 		System.out.println("bitConversion done");//print usato per debuggare, old is the best way!
 		//FF=255
 		byte[] array = new byte[4];
@@ -165,7 +184,7 @@ public class Steganography {
 	}
 	
 	/*metodo creato cosicchè si possa prendere in ingresso un tipo File e risalire quindi al nome originale del file selezionato e settarlo anche per il salvataggio*/
-	private BufferedImage bufferCreator( File rawImage ) throws IOException{
+	private static BufferedImage bufferCreator( File rawImage ) throws IOException{
 		BufferedImage imageBuffer = ImageIO.read(rawImage);
 		System.out.println("bufferCreator fatto!");
 		return imageBuffer;

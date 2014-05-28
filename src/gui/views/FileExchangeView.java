@@ -29,9 +29,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableModel;
 
 public class FileExchangeView extends AbstractGuiMethodSetter{
 	private Font font;
@@ -53,6 +55,7 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 	private static final int xPosition = 0;
 	private static final int yPosition = 0;
 	private static final int defaultCellArea = 1;
+	private static TableModel model = FileExchangeController.tableBuilder();
 	GridBagConstraints limit;
 	//GUI Component initialized columns x row order
 	private final static Component datiLabel = new JLabel("Data");
@@ -73,7 +76,7 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 	private final static Component scrollPaneChat = new JScrollPane(chatTextArea);
 	private final static Component filler = new JButton("");
 	private final static Component sendButton = new JButton("Send");
-	private static JTable contactTable = new JTable(FileExchangeController.tableBuilder());
+	private static JTable contactTable = new JTable(model);
 	private final static Component scrollPaneTable = new JScrollPane(contactTable);
 	private final static JFrame dialog = new JFrame();
 	private final static JFrame frame = new JFrame();
@@ -202,6 +205,7 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 				resizable, resizable, container, scrollPaneVisual);
 		//JTable
 		contactTable.setFont(font);
+		contactTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault, 
 				GridBagConstraints.BOTH, GridBagConstraints.SOUTH, container, scrollPaneTable);
 		setGridposition(limit, xPosition+2, yPosition, defaultCellArea, defaultCellArea+8,
@@ -279,11 +283,14 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 			}
 		});
 		//JTable manage
-		contactTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-			
+		contactTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {	
 			@Override
 			public void valueChanged(ListSelectionEvent arg0) {
-				controller.selectContact();
+				if(contactTable.getSelectedRow() >= 0){
+					controller.selectContact();
+					contactTable.clearSelection();
+					contactTable.getSelectionModel().clearSelection();
+				}
 			}
 		});
 	}
@@ -302,8 +309,6 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 		//frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		frame.setVisible(true);
 	}
-	
-
 	
 	//Setter and Getter
 	public void setFont(Font font) {

@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -61,11 +62,21 @@ public class FileExchangeController implements IFileExchangeViewObserve{
 
 	@Override
 	public void stegaImage() {
-		if(searchContact(FileExchangeModel.getContactInfo())!= null){		
-			new TypeConverter();
-			new Steganography().messageEncrypter(new OpenButtons().fileChooser(FileTypes.IMAGE),
-					"png", 
-					TypeConverter.fileToString(new OpenButtons().fileChooser(FileTypes.TEXT))) ;
+		if(searchContact(FileExchangeModel.getContactInfo())!= null){
+			File imageTemp = new OpenButtons().fileChooser(FileTypes.IMAGE);
+			File textTemp = new OpenButtons().fileChooser(FileTypes.TEXT);
+			if(imageTemp!= null && textTemp != null){
+			new Steganography();
+			File imageToSend = Steganography.stegaForClient(imageTemp,"png", TypeConverter.fileToString(textTemp));
+			BufferedInputStream bis = null;
+			try {
+				bis = new BufferedInputStream(new FileInputStream(imageToSend));
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(imageToSend != null)new SocketClient(FileExchangeModel.getContactInfo(), bis, imageToSend.getName());
+			}
 		}
 		//TODO falla specifica
 		else JOptionPane.showMessageDialog(FileExchangeView.getDialog(), "Select contact");
@@ -88,6 +99,7 @@ public class FileExchangeController implements IFileExchangeViewObserve{
 				e.printStackTrace();
 			}
 			new SocketClient(FileExchangeModel.getContactInfo(), buffer, tempFile.getName());
+
 		}
 		//TODO falla specifica
 		else JOptionPane.showMessageDialog(FileExchangeView.getDialog(), "Select contact");
@@ -95,10 +107,12 @@ public class FileExchangeController implements IFileExchangeViewObserve{
 
 	@Override
 	public void selectContact() {
-		ContactInfo contact = new ContactInfo(FileExchangeView.getContactTable()
-				.getValueAt(FileExchangeView.getContactTable().getSelectedRow(), 1).toString(), FileExchangeView.getContactTable()
-				.getValueAt(FileExchangeView.getContactTable().getSelectedRow(), 0).toString());
+		JTable table = FileExchangeView.getContactTable();
+		String host = table.getValueAt(table.getSelectedRow(), 1).toString();
+		String name = table.getValueAt(table.getSelectedRow(), 0).toString(); 
+		ContactInfo contact = new ContactInfo(host, name);
 		FileExchangeModel.setContactInfo(contact);
+		FileExchangeView.getVisualtextarea().setText("");
 		FileExchangeController.setEnableButton(true);
 		FileExchangeView.getFrame().setVisible(true);
 	}
@@ -133,9 +147,11 @@ public class FileExchangeController implements IFileExchangeViewObserve{
 	public void sendText() {
 		if(StringUtils.isBlank(FileExchangeView.getChattextarea().
 				getText()))JOptionPane.showMessageDialog(FileExchangeView.getDialog(), "None text entered");
-		else textTemp = FileExchangeView.getChattextarea().getText();
-		new SocketClient(FileExchangeModel.getContactInfo(), textTemp);
-		FileExchangeView.getChattextarea().setText("");		
+		else {
+			textTemp = FileExchangeView.getChattextarea().getText();
+			new SocketClient(FileExchangeModel.getContactInfo(), textTemp);
+			FileExchangeView.getChattextarea().setText("");
+		}		
 	}
 
 	private ContactInfo searchContact(ContactInfo search){

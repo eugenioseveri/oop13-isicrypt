@@ -5,6 +5,7 @@ package algorithms;
  */
 import gui.controllers.FileExchangeController;
 import gui.models.ContactInfo;
+import gui.views.FileExchangeView;
 
 import java.net.*;
 import java.security.InvalidKeyException;
@@ -19,6 +20,7 @@ import java.io.*;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.swing.JOptionPane;
 
 public class SocketClient extends Thread{
 
@@ -58,16 +60,17 @@ public class SocketClient extends Thread{
 		//Put file on byte[] for send through socket
 		byte[] fileArray = bufferArray.toByteArray();
 		//Method that send file to Server
-		this.sendByteArray(clientNameByte, fileName, fileArray);
-		//this.closeConnection();				
-		//try
-		//Close existing connection
-		FileExchangeController.fileAppendClient(name);
-		try {
-			client.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(!sendByteArray(clientNameByte, fileName, fileArray))
+			JOptionPane.showMessageDialog(FileExchangeView.getDialog(), "Contact is not Online");
+		else {
+			FileExchangeController.textApendClient(name);
+			//Close existing connection
+			try {
+				client.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -85,26 +88,27 @@ public class SocketClient extends Thread{
 		//Put text message on byte[] for send through socket
 		byte[] fileArray = text.getBytes();
 		//Method that send text to Server
-		this.sendByteArray(clientNameByte, stringCheck, fileArray);
-		//this.closeConnection();				
-		//Try
-		//Close existing connection
-		FileExchangeController.textApendClient(text);
-		try {
-			client.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(!sendByteArray(clientNameByte, stringCheck, fileArray))
+			JOptionPane.showMessageDialog(FileExchangeView.getDialog(), "Contact is not Online");
+		else {
+			FileExchangeController.textApendClient(text);
+			//Close existing connection
+			try {
+				client.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
-	private void sendByteArray( byte[] clientName, byte[] fileName, byte[] fileArray){
+	private boolean sendByteArray( byte[] clientName, byte[] fileName, byte[] fileArray){
 		//Start counting of time to leave package
 		long startTime = System.currentTimeMillis();
 		//Client start to send package
 		System.out.println("Client initialized...:");
 		//Receive the Public key from server and use it to encrypt byte[] to send
-		sendAesKey(keyExchange()); //Rivoluzione AppleSucks!
+		if(!sendAesKey(keyExchange()))return false;
     	sendSequence(clientName);
 		sendSequence(fileName);
 		sendSequence(fileArray);
@@ -112,13 +116,14 @@ public class SocketClient extends Thread{
 		long seconds = (System.currentTimeMillis() - startTime) / 1000;
 		System.out.println("File Send to: " + contact.getName() + "\nTransfert time: " + seconds + "s");
 		System.out.println("Connection close...:");
+		return true;
 	}
 	
 	private byte[] keyExchange(){
 		
 		try {
 			//Get connection with server by creating new socket
-			getConnection();
+			if(!getConnection())return null;
 			System.out.println("Get connection with server...");
 			//Initialize new Buffer out for write
 			ByteArrayOutputStream out  = new ByteArrayOutputStream();
@@ -177,8 +182,9 @@ public class SocketClient extends Thread{
 	}
 	
 	//Send AES key, this method don't crypt byte[], the key is just hidden by Diffie-Helman algorithm
-	private void sendAesKey(byte[] sendByte){
+	private boolean sendAesKey(byte[] sendByte){
 		//Get connection with server by creating new socket
+		if(sendByte == null)return false;
 		getConnection();
 //		System.out.println("AES key to server: ");
 		//byteArrayStamp(sendByte);
@@ -198,6 +204,7 @@ public class SocketClient extends Thread{
 		} catch (IOException e) {
 				e.printStackTrace();
 		}
+		return true;
 	}
 	
 	private void sendSequence(byte[] sendByte){
@@ -230,7 +237,7 @@ public class SocketClient extends Thread{
 		}
 	}
 	
-	private void getConnection(){
+	private boolean getConnection(){
 		try {
 			int port = 19999;
 			//New InetAddress from host passed to client
@@ -239,11 +246,11 @@ public class SocketClient extends Thread{
 			client = new Socket(address, port);
 			//client.connect(arg0);
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			return false;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-			
+			return true;
 	}
 	
 	private void closeBuffer(){

@@ -4,7 +4,7 @@ package gui.views;
  * @author Filippo Vimini
  * @data 25/04/2014
  * Graphic User Interface for Steganography class in Swing.
- * GridBagLayout used for make a precision and resizable GUI, for understand this class is necessary own the GridBagLayout knowledge.
+ * GridBagLayout used for make a precision and resizable GUI, for understand this class is necessary to own the GridBagLayout knowledge.
  */
 
 import gui.controllers.ISteganographyViewObserver;
@@ -51,11 +51,12 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 	private static final int noResizable = 0;
 	private static final int defaultCellArea = 1;
 	private static final int zeroIpad = 0;
-	private static final int defaultIpadX = 45;
+	private static final int defaultIpadX = 10;
 	private static final int defaultIpadY = 30;
 	private static ImageIcon icon = null;
 	private static final String pathDefault = "./res/SteganographyDefaultIcon.jpg";
-	private static final int buttonConstraints = GridBagConstraints.BOTH;
+	private static final int buttonFill = GridBagConstraints.BOTH;
+	private static final int buttonAnchor = GridBagConstraints.CENTER;
 	private static final int iconHeigth = 240;
 	private static final int iconWidth = 320;
 	GridBagConstraints limit;
@@ -70,9 +71,9 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 	private final static Component scrollPane = new JScrollPane(textArea);
 	private final static Component findTextButton = new JButton("Find Text");
 	private final static Component clearSettingButton = new JButton("Clear Setting");
-	private final static Component insertTextButton = new JButton("Select enter text");
-	private final static Component filler = new JLabel();
-	private final static Component filler2 = new JLabel();
+	private final static Component insertTextButton = new JButton("Enter text");
+	private final static Component filler = new JButton();
+	private final static Component filler2 = new JButton();
 	private final static JFrame dialog = new JFrame();
 	private static final JPanel container = new JPanel();
 
@@ -109,33 +110,45 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 		container.setLayout(layout);
 		container.setBackground(panelBakColor);
 	}
+	
+	private void setFrame() {
+		JFrame frame = new JFrame();
+		try {
+			frame.setIconImage(ImageIO.read(new File("./res/isiCryptICON_MetroStyle.jpg")));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		frame.setTitle("Steganography");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(960, 640);
+		frame.getContentPane().add(container);
+		frame.setVisible(true);
+	}
 
 	private void componentSettings() {
 		// JButton select image
 		setJButton(selectImageButton, buttonColor, foregroundColor, font, false, false);
 		setLimit(limit, defaultIpadX, defaultIpadY, insetsDefault,
-				buttonConstraints, GridBagConstraints.CENTER, container, selectImageButton);
+				buttonFill, GridBagConstraints.CENTER, container, selectImageButton);
 		setGridposition(limit, xPosition, yPosition, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, selectImageButton);
 		// JButton select text
-	/*	Dimension textButtonDimension = new Dimension(defaultIpadY, defaultIpadX);
-		((JButton) selectTextButton).setMinimumSize(textButtonDimension);
-		((JButton) selectTextButton).setPreferredSize(textButtonDimension);*/
 		setJButton(selectTextButton, buttonColor, foregroundColor, font, false, false);
-		setLimit(limit, defaultIpadX+12, defaultIpadY, insetsDefault,
-				buttonConstraints, GridBagConstraints.CENTER, container, selectTextButton);
+		setLimit(limit, defaultIpadX+5, defaultIpadY, insetsDefault,
+				buttonFill, GridBagConstraints.CENTER, container, selectTextButton);
 		setGridposition(limit, xPosition+1, yPosition, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, selectTextButton);
 		// JSeparator
 		((JSeparator) separator).setBackground(Color.white);
 		((JSeparator) separator).setMinimumSize(((JSeparator)separator).getPreferredSize());
-		setLimit(limit, 20, zeroIpad, insetsZero, 
+		setLimit(limit, zeroIpad, zeroIpad, insetsZero, 
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, separator);
 		setGridposition(limit, xPosition+2, yPosition, defaultCellArea, defaultCellArea+6,
 				noResizable, resizable, container, separator);
 		//filler2
+		setJButton(filler2, panelBakColor, null, null, false, false);
 		setLimit(limit, zeroIpad, zeroIpad, insetsZero,
-				buttonConstraints, GridBagConstraints.CENTER, container, filler2);
+				buttonFill, GridBagConstraints.CENTER, container, filler2);
 		setGridposition(limit, xPosition+3, yPosition, defaultCellArea, defaultCellArea+6,
 				resizable, resizable, container, filler2);	
 		// JLabel for icon
@@ -149,7 +162,7 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 		int insetsIcon[] = { 20, 10, 10, 10 };
 		((JLabel) iconLabel).setMinimumSize(((JLabel) iconLabel).getPreferredSize());
 		setLimit(limit, zeroIpad, zeroIpad, insetsIcon, 
-				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, iconLabel);
+				GridBagConstraints.BOTH, buttonAnchor, container, iconLabel);
 		setGridposition(limit, xPosition+4, yPosition, defaultCellArea, defaultCellArea+5, 
 				resizable, resizable, container, iconLabel);
 		// JCheckBox
@@ -163,31 +176,32 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 		((JButton) startButton).setEnabled(false);
 		setJButton(startButton, buttonColor, foregroundColor, font, false, false);
 		setLimit(limit, defaultIpadX, defaultIpadY, insetsDefault,
-				buttonConstraints,GridBagConstraints.CENTER, container, startButton);	
+				buttonFill, buttonAnchor, container, startButton);	
 		setGridposition(limit, xPosition, yPosition+2, defaultCellArea+1, defaultCellArea, 
 				noResizable, noResizable, container, startButton);
 		// JButton Find text
 		setJButton(findTextButton, buttonColor, foregroundColor, font, false,false);
 		setLimit(limit, defaultIpadX, defaultIpadY, insetsDefault, 
-				buttonConstraints, GridBagConstraints.CENTER, container, findTextButton);
+				buttonFill, buttonAnchor, container, findTextButton);
 		setGridposition(limit, xPosition, yPosition+3, defaultCellArea+1, defaultCellArea,
 				noResizable, noResizable, container, findTextButton);	
 		// JButton clear setting
 		((JButton) clearSettingButton).setEnabled(false);
 		setJButton(clearSettingButton, buttonColor, foregroundColor, font, false, false);
 		setLimit(limit, defaultIpadX, defaultIpadY, insetsDefault,
-				buttonConstraints, GridBagConstraints.CENTER, container, clearSettingButton);
+				buttonFill, buttonAnchor, container, clearSettingButton);
 		setGridposition(limit, xPosition, yPosition+4, defaultCellArea+1, defaultCellArea, 
 				noResizable, noResizable, container, clearSettingButton);
 		// Filler for good buttons resizable setting
+		((JButton)filler).setVisible(false);
 		setLimit(limit, zeroIpad, zeroIpad, insetsZero,
-				buttonConstraints, GridBagConstraints.CENTER, container, filler);
+				buttonFill, GridBagConstraints.CENTER, container, filler);
 		setGridposition(limit, xPosition, yPosition+5, defaultCellArea, defaultCellArea,
 				noResizable, resizable, container, filler);	
 		// JButton insert text
 		setJButton(insertTextButton, buttonColor, foregroundColor, font, false, true);
-		setLimit(limit, zeroIpad, zeroIpad, insetsTextButton,
-				buttonConstraints, GridBagConstraints.WEST, container, insertTextButton);
+		setLimit(limit, defaultIpadX, zeroIpad, insetsTextButton,
+				buttonFill, GridBagConstraints.WEST, container, insertTextButton);
 		setGridposition(limit, xPosition, yPosition+6, defaultCellArea, defaultCellArea, 
 				noResizable, noResizable, container, insertTextButton);
 		// JScrollPane(JtextArea)
@@ -198,7 +212,7 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, scrollPane);
 		setGridposition(limit, xPosition, yPosition+7, defaultCellArea+4, defaultCellArea,
-				resizable, noResizable, container, scrollPane);
+				resizable, resizable, container, scrollPane);
 	}
 
 	private void setHandlers() {
@@ -238,23 +252,6 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 				controller.insertText();
 			}
 		});
-	}
-
-	
-	private void setFrame() {
-		JFrame frame = new JFrame();
-		try {
-			frame.setIconImage(ImageIO.read(new File(
-					"./res/isiCryptICON_MetroStyle.jpg")));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		frame.setTitle("Steganography");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(1280, 720);
-		frame.getContentPane().add(container);
-		//frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		frame.setVisible(true);
 	}
 
 	//Setter and Getter

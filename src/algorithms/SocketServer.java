@@ -102,8 +102,6 @@ public class SocketServer extends Thread{
 			// Generate new 2048 k?bit key
 			aesKeyEncryptor.generateKeyPair(2048);
 			//New Buffer for byte[] that contain the key
-		//	System.out.println("Server's Public key: ");
-		//	byteArrayStamp(aesKeyEncryptor.getPublicKey().getEncoded());
 			ByteArrayInputStream byteArrayIn = new ByteArrayInputStream(aesKeyEncryptor.getPublicKey().getEncoded());
 			//Create a buffer for send the public key through Socket
 			outStream = new BufferedOutputStream(connection.getOutputStream());
