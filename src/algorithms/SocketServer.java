@@ -29,10 +29,8 @@ public class SocketServer extends Thread{
 	AES aesEncryptor = null;
 	RSA aesKeyEncryptor = null;
 	String client;
-	//try
 	ServerSocket server;
-	
-	
+
 	public void run(){
 		final int port = 19999;
 		try {
@@ -50,7 +48,7 @@ public class SocketServer extends Thread{
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void receiveFile(){
 	    try {
 	    	//Send Public key to client for crypt data.
@@ -73,8 +71,6 @@ public class SocketServer extends Thread{
 				System.out.println("Client file recived... \nfile name: "+fileName+"\nDownload?(yes|no)");
 				//Keyboard choice
 				FileExchangeController.fileAppendServer(fileName, client);
-			//	String riga = FileExchangeController.getChatAreaText();
-			//	if(riga.equals("yes")||riga.equals("YES")){
 				if(JOptionPane.showConfirmDialog(null, "choose one", "choose one", JOptionPane.YES_NO_OPTION) == 0){
 					//Select directory where save file
 					File directory = new OpenButtons().fileChooser(FileTypes.DIRECTORY);
@@ -114,14 +110,11 @@ public class SocketServer extends Thread{
 			//Closing Buffer in
 			byteArrayIn.close();
 			connection.close();
-		//	System.out.println("KeyExchange complited...");
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (NoSuchPaddingException e) {
-			e.printStackTrace();
-		} catch (InvalidKeyException e) {
+		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
+			//TODO
 			e.printStackTrace();
 		} catch (IOException e) {
+			//TODO controlla le eccezioni
 			e.printStackTrace();
 		}
 	}
@@ -130,7 +123,6 @@ public class SocketServer extends Thread{
 		int i;
 		try {	
 			connection = server.accept();
-			//connection =socket1.accept();
 			//Initialize new Buffer out
 			this.out = new ByteArrayOutputStream();
 			//Buffer i connected with socket
@@ -138,18 +130,11 @@ public class SocketServer extends Thread{
 	    	while ( (i = inStream.read()) != -1) {
 	            this.out.write(i);
 	        }
-		//	System.out.println("AES key from client:");
-	    	//byteArrayStamp(out.toByteArray());
-	    	
 	    	byte[] aesKeyDecrypted = aesKeyEncryptor.decode(out.toByteArray());
-	    	//byteArrayStamp(aesKeyDecrypted);
-	    	//Save decrypting key 
 	    	aesEncryptor = new AES();
 	    	this.aesEncryptor.setSymmetricKeySpec(new SecretKeySpec(aesKeyDecrypted, "AES"));
 	    	//Close Buffer in/out connection
-	    //	closeConnection();
 	    	connection.close();
-	    //	System.out.println("receiveAesKey complited...");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InvalidKeyException e) {
@@ -181,9 +166,7 @@ public class SocketServer extends Thread{
 	        }
 	    	//closeConnection();
 	    	ByteArrayOutputStream gincapa = new ByteArrayOutputStream();
-	  //  	byteArrayStamp(out.toByteArray());
 	    	aesEncryptor.decode(new ByteArrayInputStream(out.toByteArray()), gincapa);
-	 //   	byteArrayStamp(gincapa.toByteArray());
 	    	connection.close();
 	    	return gincapa.toByteArray();	
 		} catch (IOException e) {
@@ -194,30 +177,6 @@ public class SocketServer extends Thread{
 		return out.toByteArray();
 	}
 	
-	//TODO eliminate unused method
-/*	private void closeConnection(){
-		try {
-			out.close();
-			inStream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}	
-		
-	}	*/
-/*	private String textInput(){
-		  InputStreamReader reader = new InputStreamReader (System.in);
-          BufferedReader input = new BufferedReader (reader);
-          String str= new String();
-          try {
-			str = input.readLine();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-          return str;
-	}
-	
-	
-	*/
 	private void stringChatDetector(byte[] stringByte){
 		int count;
 		System.out.print("	");
@@ -227,13 +186,4 @@ public class SocketServer extends Thread{
 		String append = TypeConverter.byteArrayToString(stringByte);
 		FileExchangeController.textAppendServer(append, client);
 	}
-	
-/*	private void byteArrayStamp(byte[] stamp){
-		int i;
-		System.out.println("byte[] length: " + stamp.length);
-		for(i = 0; i < stamp.length; i++){
-			System.out.print((char)stamp[i]);
-		}
-		System.out.println("");
-	}	*/
 }

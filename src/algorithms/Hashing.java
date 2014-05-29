@@ -1,82 +1,90 @@
 package algorithms;
-
+/**
+ * @author Filippo Vimini
+ *Created 08/03/2014
+ */
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.io.BufferedInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.swing.JPanel;	//need for the interface that select the file
-
 import algorithms.interfacesandabstractclasses.IHashing;
 
-/**
- 
- * @author Filippo Vimini
- *
- */
-
-public class Hashing extends JPanel implements IHashing {
 
 
-	private static final long serialVersionUID = -5571957322765098395L;
+public class Hashing implements IHashing {
 
-	String hashingAlgorithm;
-	InputStream stream;
-	final private static int DIM_BUFFER = 1024;
+	private static final int DIM_BUFFER = 1024;
+	private static final Hashing SINGLETON = new Hashing();
 	
-	public Hashing(String hashingAlgorithm, InputStream inputData){
-		this.hashingAlgorithm = hashingAlgorithm;
-		this.stream = inputData;
+	private Hashing(){
 	}
-	public Hashing(){
+	
+	public static Hashing getInstance(){
+		return SINGLETON;
 	}
+	
 	@Override
-	public String generateHash() {
+	public String generateHash(EnumAvailableHashingAlgorithms hashingAlgorithm, InputStream stream) {
 		//create the interface for the selection of the file
 		StringBuffer sb = new StringBuffer("");
+		BufferedInputStream bufferStrem = new BufferedInputStream(stream);
+		int nread;
+		byte[] mdBytes = null;
 		try {
-			int nread;
 			//Create MessageDigest and select the sha-1 algorithm
-			MessageDigest md = MessageDigest.getInstance(this.hashingAlgorithm);
+			MessageDigest md = MessageDigest.getInstance(hashingAlgorithm.name());
 			//Select the key dimension i think (MUST SEARCH!!!)
 			byte[] dataBytes = new byte[DIM_BUFFER];
-			nread = this.stream.read(dataBytes);
+			nread = bufferStrem.read(dataBytes);
 			//Calculating sha1 with is class
 			while(nread > 0){
 				md.update(dataBytes, 0, nread);
-				nread = this.stream.read(dataBytes);
+				nread = bufferStrem.read(dataBytes);
 			}	
-			byte[] mdBytes = md.digest();
-		    for (int i = 0; i < mdBytes.length; i++) {
-		    	sb.append(Integer.toString((mdBytes[i] & 0xff) + 0x100, 16).substring(1));
-		    }
-		} catch (FileNotFoundException e) {
-			System.out.println("Can't find file Error: "+e);
+			mdBytes = md.digest();
 		} catch (IOException e) {
-			System.out.println("Stream.read error, can't read byte array");
+			System.out.println("Stream.read error, can't read byte array: "+e);
+			return null;
 		} catch (NoSuchAlgorithmException e) {
 			System.out.println("Can't select sha1 algorithm: "+e);
+			return null;
 		} catch (Exception e) {  //catch other exceptions
 			throw e;
 		} finally {
-			if (this.stream != null){
+			if (stream != null){
 		        try {
-		            this.stream.close();
+		            stream.close();
 		        } catch (IOException e) {
 		            e.printStackTrace();
 		        }
 			}
 		}
+	    for (int i = 0; i < mdBytes.length; i++) {
+	    	sb.append(Integer.toString((mdBytes[i] & 0xff) + 0x100, 16).substring(1));
+	    }
 		return sb.toString();
 	}
-
+	//Commentare nella java dc che l'utente deve usare lo stesso algorithm
 	@Override
-	public boolean compare(String st1) {
-		return st1.equalsIgnoreCase(this.generateHash());	//NO casesensitive!
+	public boolean compare(String hashOne, String hashTwo){
+		//equalIgnoreCase = no case sensitive
+		return hashOne.equalsIgnoreCase(hashTwo);
 	}
+	
 	@Override
-	public boolean compare( Hashing first ){
-		return first.generateHash().equalsIgnoreCase(this.generateHash());
+	public boolean compare(EnumAvailableHashingAlgorithms hashingAlgorithm, InputStream streamOne, InputStream streamTwo){
+		String fileOne = generateHash(hashingAlgorithm, streamOne);
+		String fileTwo = generateHash(hashingAlgorithm, streamTwo);
+		return fileOne.equals(fileTwo);
 	}
+	
+	@Override
+	public boolean compare(EnumAvailableHashingAlgorithms hashingAlgorithm, InputStream streamOne, String hashTwo){
+		String compare = generateHash(hashingAlgorithm, streamOne);
+		return compare.equals(hashTwo);
+	}
+	
 }

@@ -1,108 +1,135 @@
-/**
- * 
- */
 package algorithms;
-
-import gui.models.OpenButtons;
-import gui.models.OpenButtons.FileTypes;
-
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.awt.image.WritableRaster;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
-import org.apache.commons.lang3.StringUtils;
-
 /**
  * @author Filippo Vimini
  * @version 1.0
- * created 03/03/2014
+ * created 08/04/2014
  */
+import gui.models.OpenButtons;
+import gui.models.OpenButtons.FileTypes;
+import gui.views.FileExchangeView;
 
-/*Devo usare BufferedImage poichè preleva il file e lo inserisce in una griglia (raster), dove nel caso dell'immagine, corrisonde ai valori
- * della matrice che vengono usati per la bitmap. La griglia di BufferedImage ha infatti delle coordinate, che inziano con l'angolo altro sx (0,0)*/
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
+
+import org.apache.commons.lang3.StringUtils;
+
 public class Steganography {
 
-	public static Image icon; //Used for icon on StegaGUI
+	private static BufferedImage image;
 	/**
+	 * Take in input an image and text then hide the text inside image
 	 * 
 	 * @param rawImage			File that contains the selected image.
 	 * @param extension			String that contains the extension for the output image.
 	 * @param text				String that contains the message to encrypt.
-	 * @return					boolean which confirm the image saving.
+	 * @return boolean					confirm the image saving.
 	 * @throws IOException
 	 */
 	public boolean messageEncrypter(File rawImage, String extension, String text){
-		this.icon = TypeConverter.fileToImage(rawImage);
-		BufferedImage image;
 		try {
-			image = bufferCreator(rawImage);
+			image = TypeConverter.fileToBufferedImage(rawImage);
 			image = messageAdder(image, text);
 			String fileName = new OpenButtons().fileChooser(FileTypes.DIRECTORY)+"/Stega_"+rawImage.getName();
 			File savier = new File(fileName);
 			System.out.println("messageEncrypter done!"); //Check print
 			return ImageIO.write(image, extension, savier);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Image writing error occured during message encryprion on image: " + e);
+			JOptionPane.showMessageDialog(FileExchangeView.getDialog(),
+					"Image writing error occured during message encryprion on image: " + e);
+			return false;
+		} catch (IllegalArgumentException e){
+			System.out.println("Null pointer during ImageIO writing: " + e);
+			JOptionPane.showMessageDialog(FileExchangeView.getDialog(),
+					"Null pointer during ImageIO writing: " + e);
+			return false;
 		}
-		return false;
 	}
-	
-	public String messageBorrower(File rawPicture) throws IOException{
+	/**
+	 * Search if in the image File is hided a text
+	 * 
+	 * @param rawImage		Search a hidden message from this File
+	 * @return	String			String that represent the hidden message
+	 */
+	public String messageBorrower(File rawImage){
 		byte[] decode;
-		BufferedImage image = bufferCreator(rawPicture);
+		
+		image = TypeConverter.fileToBufferedImage(rawImage);
 		image = imageAnalizer( image );
-		decode = textFinder(getImageData(image));
+		byte[] imageByte = TypeConverter.bufferImageToByteArray(image);
+		decode = textFinder(imageByte);
 		if(decode == null || StringUtils.isBlank(new String(decode)))return null;
 		System.out.println("messageBorrower fatto!");
 		return new String(decode);
 	}
-	
+	/**
+	 * Take in input an image and text then hide the text inside image like messageEncrypter but save the file in Temp
+	 * folder because it will be send at Server and then saved on disk
+	 * 
+	 * @param rawImage
+	 * @param extension
+	 * @param text
+	 * @return
+	 */
 	public static File stegaForClient(File rawImage, String extension, String text){
-		Steganography.icon = TypeConverter.fileToImage(rawImage);
 		BufferedImage image;
 		try {
-			image = bufferCreator(rawImage);
+			image = TypeConverter.fileToBufferedImage(rawImage);
 			image = messageAdder(image, text);
-			String fileName = rawImage.getName();
 			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(rawImage));
-			File temp = TypeConverter.bufferedInputTOtempFile(bis);
+			File temp = TypeConverter.bufferedInputTOtempFile(bis, rawImage.getName());
 			System.out.println("messageEncrypter done!"); //Check print
 			return temp;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			JOptionPane.showMessageDialog(FileExchangeView.getDialog(),
+					"File doesn't exist: " + e);
+			return null;
+		} catch (SecurityException e){
+			JOptionPane.showMessageDialog(FileExchangeView.getDialog(),
+					"can't read the file: " + e);
+			return null;
 		}
-		return null;
 	}
-	
-	/*Questo metodo prende in ingresso il buffer dell'immagine e il testo, li fa trasformare in byte e li unisce restituendo un nuovo buffer
-	 * dell'immagine completo di test nascosto*/
+	/**
+	 * This method take in input a buffer that contains an image and a text, then convert in byte[] and join them, 
+	 * giving back a new buffer with image with inside and hidden text
+	 * 
+	 * @param image				Buffer that contains image
+	 * @param text				String that represent the text that will be hidden in the image
+	 * @return	BufferImage		Buffer that contains the image with hidden text
+	 */
 	private static BufferedImage messageAdder( BufferedImage image, String text ){
-		int DIMENSIONSTART = 0; //number that represent the star byte of the message
-		int MESSAGESTART = 32; //number that represent the star byte of the message length
-		/*converto messaggio, lunghezza e immagine in byte per poterli manipolare*/
+		//number that represent the star byte of the message
+		int DIMENSIONSTART = 0;
+		//number that represent the star byte of the message length
+		int MESSAGESTART = 32; 
+		// convert text, text length and image to byte[] then the text byte[] will put inside image byte[]
 		byte[] message = text.getBytes();
-		byte[] bitTextLength = bitConversion(text.length()); //un messaggio può essere al max di 255 per ora
-		byte[] imageData = getImageData(image);
-		try{
+		byte[] bitTextLength = TypeConverter.intToByteArray(text.length());
+		byte[] imageData = TypeConverter.bufferImageToByteArray(image);
+		//Hide message offset
 		textHiding(imageData, bitTextLength, DIMENSIONSTART);
+		//Hide message
 		textHiding(imageData, message, MESSAGESTART);
-		}catch(Exception e){
-			System.out.println("Can't hiding text: "+e);
-		}
-		System.out.println("messageAdder done");//print usato per debuggare, old is the best way!
+		System.out.println("messageAdder done");
 		return image;
 	}
-	
+	/**
+	 * 
+	 * 
+	 * @param image		byte[] that contains the raster of image
+	 * @param text		byte[] that contains the text in byte
+	 * @param offset	Integer that represent the offset on message start
+	 * @return	image	byte[] that contains the image with text hidden
+	 */
 	/*Questo metodo prende in ingresso l'immagine, il testo convertiti in byte e l'offset della distanza in cui incomincia il dato da 
 	 * analizzare. restituisce un array contenente i dati dell'immagine, del testo nascosto e di dove iniziare a cercare i dati*/
 	private static byte[] textHiding(byte[] image, byte[] text, int offset){
@@ -126,7 +153,7 @@ public class Steganography {
 				image[offset] = (byte)(image[offset] & 0xFE | positionBit );
 			}
 		}
-		System.out.println("textHiding done");//print usato per debuggare, old is the best way!
+		System.out.println("textHiding done");
 		return image;
 	}
 	
@@ -144,7 +171,7 @@ public class Steganography {
 				decodeLength[a] = (byte)((decodeLength[a] << 1) | (image[offset] & 1));
 			}
 		}
-		System.out.println("textFinder done");//print usato per debuggare, old is the best way!
+		System.out.println("textFinder done");
 		return decodeLength;
 	}
 
@@ -165,28 +192,4 @@ public class Steganography {
 		return rasterImage;
 	}
 	
-	private static byte[] getImageData( BufferedImage picture ){
-		WritableRaster raster   = picture.getRaster();
-		DataBufferByte buffer = (DataBufferByte)raster.getDataBuffer();
-		System.out.println("getImageData done"); //print usato per debuggare, old is the best way!
-		return buffer.getData();
-	}
-	
-	private static byte[] bitConversion(int i){
-		System.out.println("bitConversion done");//print usato per debuggare, old is the best way!
-		//FF=255
-		byte[] array = new byte[4];
-		array[3] = (byte)(i & 0x000000FF);
-		array[2] = (byte)((i & 0x0000FF00) >>> 8);
-		array[1] = (byte)((i & 0x00FF0000) >>> 16);
-		array[0] = (byte)((i & 0xFF000000) >>> 24);
-		return array;
-	}
-	
-	/*metodo creato cosicchè si possa prendere in ingresso un tipo File e risalire quindi al nome originale del file selezionato e settarlo anche per il salvataggio*/
-	private static BufferedImage bufferCreator( File rawImage ) throws IOException{
-		BufferedImage imageBuffer = ImageIO.read(rawImage);
-		System.out.println("bufferCreator fatto!");
-		return imageBuffer;
-	}
 }

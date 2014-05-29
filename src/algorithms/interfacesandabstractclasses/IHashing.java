@@ -1,21 +1,17 @@
 package algorithms.interfacesandabstractclasses;
 
-import algorithms.Hashing;
+import java.io.InputStream;
+
+import algorithms.EnumAvailableHashingAlgorithms;
 /**
  * Interface used to define mandatory methods of hashing classes.
  * @author Filippo Vimini
  */
 public interface IHashing {
-	/**
-	 * Generate Hashing from a file
-	 */
-	public String generateHash();
-	/**
-	 * Compare a file whit hash
-	 */
-	public boolean compare(String st1);
-	/**
-	 * Compare two files hashes
-	 */
-	public boolean compare(Hashing first);
+
+	 String generateHash(EnumAvailableHashingAlgorithms hashingAlgorithm, InputStream stream);
+	 boolean compare(String hashOne, String hashTwo);
+	 boolean compare(EnumAvailableHashingAlgorithms hashingAlgorithm, InputStream streamOne, InputStream streamTwo);
+	 boolean compare(EnumAvailableHashingAlgorithms hashingAlgorithm, InputStream streamOne, String hashTwo);
+	 
 }
