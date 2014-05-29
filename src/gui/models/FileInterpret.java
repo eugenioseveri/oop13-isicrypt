@@ -1,4 +1,4 @@
-package algorithms;
+package gui.models;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -11,7 +11,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-import javax.crypto.SecretKey;
+import algorithms.EnumAvailableCompressionAlgorithms;
+import algorithms.EnumAvailableHashingAlgorithms;
+import algorithms.EnumAvailableSymmetricAlgorithms;
+import algorithms.Hashing;
 
 /**
  * This class interprets the application custom file format:
@@ -24,24 +27,24 @@ import javax.crypto.SecretKey;
  * - Payload (encrypted file)
  * @author Eugenio Severi
  */
-public class FileInterpret implements Serializable {
+public class FileInterpret implements Serializable, IFileInterpret {
 	
 	transient private static final int BYTE_CONVERSION_FACTOR = 1024;
 	private static final long serialVersionUID = 7222536160521152258L;
-	private String symmetricAlgorithm;
-	private SecretKey encryptedSymmetricKey;
-	private String hashingAlgorithm;
+	private EnumAvailableSymmetricAlgorithms symmetricAlgorithm;
+	private byte[] encryptedSymmetricKey;
+	private EnumAvailableHashingAlgorithms hashingAlgorithm;
 	private String generatedHash;
-	private String compressionAlgorithm;
+	private EnumAvailableCompressionAlgorithms compressionAlgorithm;
 	private String fileName;
 	private byte[] payload;
 	
 	// Costruttore con parametri passati tramite argomenti del metodo. Da utilizzare per costruire da zero un FileInterpret.
-	public FileInterpret(String symmetricAlgorithm, SecretKey encryptedSymmetricKey, String hashingAlgorithm, String compressionAlgorithm, File payloadFile) throws FileNotFoundException, IOException {
+	public FileInterpret(EnumAvailableSymmetricAlgorithms symmetricAlgorithm, byte[] encryptedSymmetricKey, EnumAvailableHashingAlgorithms hashingAlgorithm, EnumAvailableCompressionAlgorithms compressionAlgorithm, File payloadFile) throws FileNotFoundException, IOException {
 		this.symmetricAlgorithm = symmetricAlgorithm;
 		this.encryptedSymmetricKey = encryptedSymmetricKey;
 		this.hashingAlgorithm = hashingAlgorithm;
-		this.generatedHash = new Hashing(hashingAlgorithm, new FileInputStream(payloadFile)).generateHash(); // Da cambiare appena cambia la classe Hashing
+		this.generatedHash = Hashing.getInstance().generateHash(hashingAlgorithm, new BufferedInputStream(new FileInputStream(payloadFile)));;
 		this.compressionAlgorithm = compressionAlgorithm;
 		this.fileName = payloadFile.getName();
 		loadPayloadToRAM(payloadFile);
@@ -67,58 +70,71 @@ public class FileInterpret implements Serializable {
 		file.close();*/
 	}
 	
-	public String getSymmetricAlgorithm() {
+	@Override
+	public EnumAvailableSymmetricAlgorithms getSymmetricAlgorithm() {
 		return this.symmetricAlgorithm;
 	}
 
-	public void setSymmetricAlgorithm(String symmetricAlgorithm) {
+	@Override
+	public void setSymmetricAlgorithm(EnumAvailableSymmetricAlgorithms symmetricAlgorithm) {
 		this.symmetricAlgorithm = symmetricAlgorithm;
 	}
 
-	public SecretKey getEncryptedSymmetricKey() {
+	public byte[] getEncryptedSymmetricKey() {
 		return this.encryptedSymmetricKey;
 	}
 
-	public void setEncryptedSymmetricKey(SecretKey encryptedSymmetricKey) {
+	@Override
+	public void setEncryptedSymmetricKey(byte[] encryptedSymmetricKey) {
 		this.encryptedSymmetricKey = encryptedSymmetricKey;
 	}
 
-	public String getHashingAlgorithm() {
+	@Override
+	public EnumAvailableHashingAlgorithms getHashingAlgorithm() {
 		return this.hashingAlgorithm;
 	}
 
-	public void setHashingAlgorithm(String hashingAlgorithm) {
+	@Override
+	public void setHashingAlgorithm(EnumAvailableHashingAlgorithms hashingAlgorithm) {
 		this.hashingAlgorithm = hashingAlgorithm;
 	}
 
+	@Override
 	public String getGeneratedHash() {
 		return this.generatedHash;
 	}
 
+	@Override
 	public void setGeneratedHash(String generatedHash) {
 		this.generatedHash = generatedHash;
 	}
 
-	public String getCompressionAlgorithm() {
+	@Override
+	public EnumAvailableCompressionAlgorithms getCompressionAlgorithm() {
 		return this.compressionAlgorithm;
 	}
 
-	public void setCompressionAlgorithm(String compressionAlgorithm) {
+	@Override
+	public void setCompressionAlgorithm(EnumAvailableCompressionAlgorithms compressionAlgorithm) {
 		this.compressionAlgorithm = compressionAlgorithm;
 	}
 
+	@Override
 	public String getFileName() {
 		return this.fileName;
 	}
 	
+	@Override
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
 	
+	@Override
 	public byte[] getPayload() {
 		return this.payload;
 	}
 
+	@Override
 	public void setPayload(byte[] payload) {
 		this.payload = payload;
 	}
@@ -133,6 +149,7 @@ public class FileInterpret implements Serializable {
 				+ ", payloadSize=" + payload.length/BYTE_CONVERSION_FACTOR + " KB]"; // Payload size in KB
 	}
 	
+	@Override
 	public void writeInterpretToFile(File outputFile) throws FileNotFoundException, IOException {
 		FileOutputStream file = new FileOutputStream(outputFile);
 		BufferedOutputStream buffStream = new BufferedOutputStream(file);
@@ -144,6 +161,7 @@ public class FileInterpret implements Serializable {
 	}
 	
 	// Estrae il payload da una classe e lo scrive su disco. Il file è temporaneo.
+	@Override
 	public void writePayloadToFile(File outputFile) throws FileNotFoundException, IOException {
 		FileOutputStream fos = new FileOutputStream(outputFile);
 		BufferedOutputStream buffPayload = new BufferedOutputStream(fos);

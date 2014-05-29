@@ -14,7 +14,7 @@ import java.security.NoSuchProviderException;
  * @author Eugenio Severi
  */
 public interface ICryptography {
-	void encode(InputStream input, OutputStream output) throws IOException, InvalidKeyException;
-	void decode(InputStream input, OutputStream output) throws IOException, InvalidKeyException;
-	void generateKey(int keySize) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException;
+	void encode(InputStream input, OutputStream output) throws IOException;
+	void decode(InputStream input, OutputStream output) throws IOException;
+	void generateKey(int keySize) throws InvalidKeyException;
 }
