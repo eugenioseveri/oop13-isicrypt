@@ -21,4 +21,5 @@ public interface ICryptographyView {
 	EnumAvailableSymmetricAlgorithms get_SymmetricAlgorithm();
 	EnumAvailableHashingAlgorithms get_HashingAlgorithm();
 	EnumAvailableCompressionAlgorithms getCompressionAlgorithm();
+	boolean chckbx_isWipingEnabled();
 }

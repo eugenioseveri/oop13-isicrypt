@@ -20,30 +20,63 @@ public class RSA extends AbstractAsymmetricCryptography implements IAsymmetricCr
 
 	private final static String ALGORITHM = "RSA";
 	
-	public RSA() throws NoSuchAlgorithmException, NoSuchPaddingException {
-		super.cryptoCipher = Cipher.getInstance(ALGORITHM);
+	public RSA() {
+		try {
+			super.cryptoCipher = Cipher.getInstance(ALGORITHM);
+		} catch (NoSuchAlgorithmException | NoSuchPaddingException e) { // Queste eccezioni non possono verificarsi (algorithm è costante)
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
-	public byte[] encode(byte[] input) throws IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
-		// Aggiungere try-catch
-		super.cryptoCipher.init(Cipher.ENCRYPT_MODE, super.keyPair.getPublic());
-		return super.cryptoCipher.doFinal(input);
+	public byte[] encode(byte[] input) {
+		try {
+			super.cryptoCipher.init(Cipher.ENCRYPT_MODE, super.keyPair.getPublic());
+		} catch (InvalidKeyException e) {
+			if(!super.isKeyPairInitialized()) {
+				System.out.println(NOKEY_ERROR);
+			} else {
+				e.printStackTrace();
+			}
+		}
+		try {
+			return super.cryptoCipher.doFinal(input);
+		} catch (IllegalBlockSizeException | BadPaddingException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Override
-	public byte[] decode(byte[] input) throws IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
-		// Aggiungere try-catch
-		super.cryptoCipher.init(Cipher.DECRYPT_MODE, super.keyPair.getPrivate());
-		return super.cryptoCipher.doFinal(input);
+	public byte[] decode(byte[] input) {
+		try {
+			super.cryptoCipher.init(Cipher.DECRYPT_MODE, super.keyPair.getPrivate());
+		} catch (InvalidKeyException e) {
+			if(!super.isKeyPairInitialized()) {
+				System.out.println(NOKEY_ERROR);
+			} else {
+				e.printStackTrace();
+			}
+		}
+		try {
+			return super.cryptoCipher.doFinal(input);
+		} catch (IllegalBlockSizeException | BadPaddingException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Override
-	public void generateKeyPair(int keySize) throws InvalidKeyException, NoSuchAlgorithmException {
+	public void generateKeyPair(int keySize) throws InvalidKeyException {
 		if(!checkKeySize(keySize)) {
 			throw new InvalidKeyException("Il valore di keySize deve essere una potenza di 2!");
 		}
-		KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(ALGORITHM);
+		KeyPairGenerator keyPairGenerator = null;
+		try {
+			keyPairGenerator = KeyPairGenerator.getInstance(ALGORITHM);
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
 		keyPairGenerator.initialize(keySize);
 		super.keyPair = keyPairGenerator.generateKeyPair();
 	}

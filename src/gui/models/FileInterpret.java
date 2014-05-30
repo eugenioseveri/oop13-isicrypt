@@ -40,23 +40,43 @@ public class FileInterpret implements Serializable, IFileInterpret {
 	private byte[] payload;
 	
 	// Costruttore con parametri passati tramite argomenti del metodo. Da utilizzare per costruire da zero un FileInterpret.
-	public FileInterpret(EnumAvailableSymmetricAlgorithms symmetricAlgorithm, byte[] encryptedSymmetricKey, EnumAvailableHashingAlgorithms hashingAlgorithm, EnumAvailableCompressionAlgorithms compressionAlgorithm, File payloadFile) throws FileNotFoundException, IOException {
+	public FileInterpret(EnumAvailableSymmetricAlgorithms symmetricAlgorithm, byte[] encryptedSymmetricKey, EnumAvailableHashingAlgorithms hashingAlgorithm, EnumAvailableCompressionAlgorithms compressionAlgorithm, File payloadFile) {
 		this.symmetricAlgorithm = symmetricAlgorithm;
 		this.encryptedSymmetricKey = encryptedSymmetricKey;
 		this.hashingAlgorithm = hashingAlgorithm;
-		this.generatedHash = Hashing.getInstance().generateHash(hashingAlgorithm, new BufferedInputStream(new FileInputStream(payloadFile)));;
+		try {
+			this.generatedHash = Hashing.getInstance().generateHash(hashingAlgorithm, new BufferedInputStream(new FileInputStream(payloadFile)));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		};
 		this.compressionAlgorithm = compressionAlgorithm;
 		this.fileName = payloadFile.getName();
 		loadPayloadToRAM(payloadFile);
 	}
 
 	// Costruttore con parametri letti da file. Da utilizzare per leggere un FileInterpret precedentemente scritto su disco.
-	public FileInterpret(File inputFile) throws ClassNotFoundException, FileNotFoundException, IOException {
-		FileInputStream file = new FileInputStream(inputFile);
-		BufferedInputStream buffStream = new BufferedInputStream(file);
-		ObjectInputStream objStream = new ObjectInputStream(buffStream);
-		// È proprio necessario duplicare l'oggetto? Non c'è modo di assegnare direttamente a "this" l'output di readObject()?
-		FileInterpret readFile = (FileInterpret)objStream.readObject();
+	public FileInterpret(File inputFile) {
+		FileInputStream file;
+		BufferedInputStream buffStream;
+		ObjectInputStream objStream = null;
+		FileInterpret readFile = null;
+		try {
+			file = new FileInputStream(inputFile);
+			buffStream = new BufferedInputStream(file);
+			objStream = new ObjectInputStream(buffStream);
+			// È proprio necessario duplicare l'oggetto? Non c'è modo di assegnare direttamente a "this" l'output di readObject()?
+			readFile = (FileInterpret)objStream.readObject();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				objStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		this.symmetricAlgorithm = readFile.getSymmetricAlgorithm();
 		this.encryptedSymmetricKey = readFile.getEncryptedSymmetricKey();
 		this.hashingAlgorithm = readFile.getHashingAlgorithm();
@@ -64,10 +84,6 @@ public class FileInterpret implements Serializable, IFileInterpret {
 		this.compressionAlgorithm = readFile.getCompressionAlgorithm();
 		this.fileName = readFile.getFileName();
 		this.payload = readFile.getPayload();
-		// Sono necessari tutti questi close() o ne basta uno? (Idem nel metodo writeInterpretToFile() (sotto))
-		objStream.close();
-		/*buffStream.close();
-		file.close();*/
 	}
 	
 	@Override
@@ -150,44 +166,71 @@ public class FileInterpret implements Serializable, IFileInterpret {
 	}
 	
 	@Override
-	public void writeInterpretToFile(File outputFile) throws FileNotFoundException, IOException {
-		FileOutputStream file = new FileOutputStream(outputFile);
-		BufferedOutputStream buffStream = new BufferedOutputStream(file);
-		ObjectOutputStream objStream = new ObjectOutputStream(buffStream);
-		objStream.writeObject(this);
-		objStream.close();
-		/*buffStream.close();
-		file.close();*/
+	public void writeInterpretToFile(File outputFile) {
+		FileOutputStream file;
+		BufferedOutputStream buffStream;
+		ObjectOutputStream objStream = null;
+		try {
+			file = new FileOutputStream(outputFile);
+			buffStream = new BufferedOutputStream(file);
+			objStream = new ObjectOutputStream(buffStream);
+			objStream.writeObject(this);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				objStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	// Estrae il payload da una classe e lo scrive su disco. Il file è temporaneo.
 	@Override
-	public void writePayloadToFile(File outputFile) throws FileNotFoundException, IOException {
-		FileOutputStream fos = new FileOutputStream(outputFile);
-		BufferedOutputStream buffPayload = new BufferedOutputStream(fos);
+	public void writePayloadToFile(File outputFile) {
+		FileOutputStream fos;
+		BufferedOutputStream buffPayload = null;
 		try {
+			fos = new FileOutputStream(outputFile);
+			buffPayload = new BufferedOutputStream(fos);
 			for(byte currentByte: this.payload) {
 				buffPayload.write(currentByte);
 			}
-		} catch (IOException e){
-			// Gestire l'eccezione
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		} finally {
-			buffPayload.close(); // Throws IOException
+			try {
+				buffPayload.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
-	private void loadPayloadToRAM(File payload) throws FileNotFoundException, IOException {
-		FileInputStream fis = new FileInputStream(payload);
-		BufferedInputStream buffPayload = new BufferedInputStream(fis);
+	private void loadPayloadToRAM(File payload) {
+		FileInputStream fis;
+		BufferedInputStream buffPayload = null;
 		int currentByte;
 		try {
+			fis = new FileInputStream(payload);
+			buffPayload = new BufferedInputStream(fis);
 			for(int index = 0; (currentByte = buffPayload.read()) != -1; index++) {
-			this.payload[index] = (byte)currentByte;
-			}
+				this.payload[index] = (byte)currentByte;
+			}	
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
 		} catch (IOException e) {
-			// Gestire eccezione
+			e.printStackTrace();
 		} finally {
-			buffPayload.close(); // Throws IOException
+			try {
+				buffPayload.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }

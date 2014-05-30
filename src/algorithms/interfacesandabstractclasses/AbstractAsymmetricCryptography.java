@@ -21,6 +21,8 @@ import algorithms.EnumAsymmetricKeyTypes;
  */
 public abstract class AbstractAsymmetricCryptography implements IAsymmetricCryptography { // Ha senso mettere "implements" in una classe astratta?
 	
+	protected final static String NOKEY_ERROR = "Non è stata impostata una chiave di cifratura!";
+	protected final static String WRONG_KEYSIZE_ERROR = "Il valore di keySize non è valido!";
 	protected KeyPair keyPair;
 	protected Cipher cryptoCipher;
 	
@@ -40,6 +42,10 @@ public abstract class AbstractAsymmetricCryptography implements IAsymmetricCrypt
 		this.keyPair = new KeyPair(publicKey, privateKey);
 	}
 
+	protected boolean isKeyPairInitialized() {
+		return keyPair != null;
+	}
+	
 	@Override
 	public void saveKeyToFile(EnumAsymmetricKeyTypes keyType, FileOutputStream output) throws IOException {
 		ObjectOutputStream objOutStream = null;

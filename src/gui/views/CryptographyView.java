@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import javax.swing.JCheckBox;
 
 public class CryptographyView extends JFrame implements ICryptographyView {
 
@@ -66,6 +67,7 @@ public class CryptographyView extends JFrame implements ICryptographyView {
 	private JButton button_GenerateNewKeyPair;
 	
 	private ICryptographyViewObserver controller;
+	private JCheckBox chckbx_wipingEnabled;
 
 	/**
 	 * Launch the application.
@@ -292,11 +294,18 @@ public class CryptographyView extends JFrame implements ICryptographyView {
 		
 		button_GenerateNewKeyPair = new JButton("Generate new key pair");
 		GridBagConstraints gbc_btnGenerate_newkeypair = new GridBagConstraints();
-		gbc_btnGenerate_newkeypair.gridwidth = 2;
 		gbc_btnGenerate_newkeypair.insets = new Insets(0, 0, 5, 5);
 		gbc_btnGenerate_newkeypair.gridx = 1;
 		gbc_btnGenerate_newkeypair.gridy = 4;
 		contentPane.add(button_GenerateNewKeyPair, gbc_btnGenerate_newkeypair);
+		
+		chckbx_wipingEnabled = new JCheckBox("Wipe source file");
+		GridBagConstraints gbc_chckbx_wipingEnabled = new GridBagConstraints();
+		gbc_chckbx_wipingEnabled.gridwidth = 2;
+		gbc_chckbx_wipingEnabled.insets = new Insets(0, 0, 5, 5);
+		gbc_chckbx_wipingEnabled.gridx = 2;
+		gbc_chckbx_wipingEnabled.gridy = 4;
+		contentPane.add(chckbx_wipingEnabled, gbc_chckbx_wipingEnabled);
 		
 		button_Decrypt = new JButton("Decrypt!");
 		button_Decrypt.setFont(new Font("Tahoma", Font.BOLD, 11));
@@ -338,7 +347,6 @@ public class CryptographyView extends JFrame implements ICryptographyView {
 		GridBagConstraints gbc_txtrLog = new GridBagConstraints();
 		gbc_txtrLog.gridheight = 3;
 		gbc_txtrLog.gridwidth = 4;
-		gbc_txtrLog.insets = new Insets(0, 0, 5, 0);
 		gbc_txtrLog.fill = GridBagConstraints.BOTH;
 		gbc_txtrLog.gridx = 5;
 		gbc_txtrLog.gridy = 6;
@@ -507,5 +515,10 @@ public class CryptographyView extends JFrame implements ICryptographyView {
 	@Override
 	public EnumAvailableCompressionAlgorithms getCompressionAlgorithm() {
 		return (EnumAvailableCompressionAlgorithms)this.comboBox_CompressionAlgorithm.getSelectedItem();
+	}
+
+	@Override
+	public boolean chckbx_isWipingEnabled() {
+		return chckbx_wipingEnabled.isSelected();
 	}
 }

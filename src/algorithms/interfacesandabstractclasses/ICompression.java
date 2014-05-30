@@ -9,6 +9,6 @@ import java.io.OutputStream;
  * @author Eugenio Severi
  */
 public interface ICompression {
-	void compress(InputStream origin, OutputStream destination) throws IOException;
-	void decompress(InputStream origin, OutputStream destination) throws IOException;
+	void compress(InputStream origin, OutputStream destination);
+	void decompress(InputStream origin, OutputStream destination);
 }

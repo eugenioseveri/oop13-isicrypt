@@ -23,6 +23,6 @@ public interface IFileInterpret {
 	void setFileName(String fileName);
 	byte[] getPayload();
 	void setPayload(byte[] payload);
-	void writeInterpretToFile(File outputFile) throws FileNotFoundException, IOException;
-	void writePayloadToFile(File outputFile) throws FileNotFoundException, IOException;
+	void writeInterpretToFile(File outputFile);
+	void writePayloadToFile(File outputFile);
 }

@@ -1,6 +1,7 @@
 package algorithms;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
@@ -29,24 +30,36 @@ public class Wiping implements IWiping {
 	}
 
 	@Override
-	public void wipe(File fileToWipe, int numberOfPassages) throws IOException {
+	public void wipe(File fileToWipe, int numberOfPassages) {
 		// Gestire l'eccezione e l'input dei parametri
 		if(fileToWipe.exists()) {
 			SecureRandom rand = new SecureRandom();
-			RandomAccessFile randomFile = new RandomAccessFile(fileToWipe, "rw");
-			FileChannel channel = randomFile.getChannel();
-			MappedByteBuffer buffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, randomFile.length());
-			while(numberOfPassages != 0) {
-				byte[] randomBytes = new byte[1];
-				while (buffer.hasRemaining()) { // Sovrascrittura del file con dati random
-					rand.nextBytes(randomBytes);
-					buffer.put(randomBytes[0]);
+			RandomAccessFile randomFile = null;
+			try {
+				randomFile = new RandomAccessFile(fileToWipe, "rw");
+				FileChannel channel = randomFile.getChannel();
+				MappedByteBuffer buffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, randomFile.length());
+				while(numberOfPassages != 0) {
+					byte[] randomBytes = new byte[1];
+					while (buffer.hasRemaining()) { // Sovrascrittura del file con dati random
+						rand.nextBytes(randomBytes);
+						buffer.put(randomBytes[0]);
+					}
+					buffer.force();
+				
+					numberOfPassages--;
 				}
-				buffer.force();
-				numberOfPassages--;
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					randomFile.close();
+					fileToWipe.delete(); // Al momento il file non è cancellato(?)
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
 			}
-			randomFile.close();
-			fileToWipe.delete(); //Al momento il file non è cancellato. Va messo nel finally.
 		}
 	}
 }

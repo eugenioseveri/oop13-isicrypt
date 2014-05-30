@@ -30,31 +30,48 @@ public class GZip implements ICompression {
 	}
 
 	@Override
-	public void compress(InputStream origin, OutputStream destination) throws IOException {
-		// Aggiungere try-catch
-		GZIPOutputStream zip = new GZIPOutputStream(destination);
+	public void compress(InputStream origin, OutputStream destination) {
+		GZIPOutputStream zip = null;
 		int spaceLeft;
 	    byte[] buffer = new byte[BUFFER_SIZE];
-	    while ((spaceLeft = origin.read(buffer)) > 0) {
-	    	zip.write(buffer, 0, spaceLeft);
-	    }
-	    zip.finish();
-	    zip.close();
-	    destination.close();
-	    origin.close();
+		try {
+			zip = new GZIPOutputStream(destination);
+			while ((spaceLeft = origin.read(buffer)) > 0) {
+		    	zip.write(buffer, 0, spaceLeft);
+		    }
+		    zip.finish();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			 try {
+				zip.close();
+				origin.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
-	public void decompress(InputStream origin, OutputStream destination) throws IOException {
+	public void decompress(InputStream origin, OutputStream destination) {
 		// Aggiungere try-catch
-		GZIPInputStream zip = new GZIPInputStream(origin);
+		GZIPInputStream zip = null;
 		int spaceLeft;
 		byte[] buffer = new byte[BUFFER_SIZE];
-		while ((spaceLeft = zip.read(buffer)) > 0) {
-			destination.write(buffer, 0, spaceLeft);
+		try {
+			zip = new GZIPInputStream(origin);
+			while ((spaceLeft = zip.read(buffer)) > 0) {
+				destination.write(buffer, 0, spaceLeft);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				zip.close();
+				destination.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-		zip.close();
-		destination.close();
-		origin.close();
 	}
 }

@@ -8,5 +8,5 @@ import java.io.IOException;
  * @author Eugenio
  */
 public interface IWiping {
-	void wipe(File fileToWipe, int numberOfPassages) throws IOException;
+	void wipe(File fileToWipe, int numberOfPassages);
 }

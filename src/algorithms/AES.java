@@ -17,7 +17,6 @@ import algorithms.interfacesandabstractclasses.AbstractSymmetricCryptography;
 import algorithms.interfacesandabstractclasses.ICryptography;
 
 /**
- * FARE VERSIONE THREADED
  * Class used to implement AES algorithm.
  * @author Eugenio Severi
  */
@@ -26,13 +25,11 @@ public class AES extends AbstractSymmetricCryptography implements ICryptography 
 	private final static String ALGORITHM = "AES";
 	private final static int AES_KEYSIZES[] = {128/*, 192, 256*/};  //java.security.InvalidKeyException: No installed provider supports this key: javax.crypto.spec.SecretKeySpec. Vedere https://www.google.it/?gfe_rd=cr&ei=281KU-qKGqWO8QfErIG4Aw#q=java+InvalidKeyException&safe=off
 	private final static int BUFFER_SIZE = 1024;
-	private final static String NOKEY_ERROR = "Non è stata impostata una chiave di cifratura!";
-	private final static String WRONG_KEYSIZE_ERROR = "Il valore di keySize non è valido per AES!";
 
-	public AES() { // Queste eccezioni non possono verificarsi (algorithm è costante)
+	public AES() {
 		try {
 			super.cryptoCipher = Cipher.getInstance(ALGORITHM);
-		} catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+		} catch (NoSuchAlgorithmException | NoSuchPaddingException e) { // Queste eccezioni non possono verificarsi (algorithm è costante)
 			e.printStackTrace();
 		}
 	}
@@ -44,7 +41,7 @@ public class AES extends AbstractSymmetricCryptography implements ICryptography 
 		try {
 				super.cryptoCipher.init(Cipher.ENCRYPT_MODE, super.symmetricKeySpec);
 			} catch (InvalidKeyException e) {
-				if(super.symmetricKeySpec == null) {
+				if(!super.isSymmetricKeyInitialized()) {
 					System.out.println(NOKEY_ERROR);
 				} else {
 					e.printStackTrace();
@@ -72,7 +69,7 @@ public class AES extends AbstractSymmetricCryptography implements ICryptography 
 		try {
 			super.cryptoCipher.init(Cipher.DECRYPT_MODE, super.symmetricKeySpec);
 		} catch (InvalidKeyException e) {
-			if(super.symmetricKeySpec == null) {
+			if(!super.isSymmetricKeyInitialized()) {
 				System.out.println(NOKEY_ERROR);
 			} else {
 				e.printStackTrace();

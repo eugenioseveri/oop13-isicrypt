@@ -19,6 +19,7 @@ import javax.crypto.NoSuchPaddingException;
 
 import algorithms.AES;
 import algorithms.RSA;
+import algorithms.Wiping;
 import gui.models.FileInterpret;
 import gui.models.IFileInterpret;
 import gui.models.OpenButtons;
@@ -32,10 +33,7 @@ import gui.views.ICryptographyView;
  */
 public class CryptographyController implements ICryptographyViewObserver {
 
-	//private String tempsymmetricAlgorithm = null;
-	//private SecretKey tempencryptedSymmetricKey = null;
-	//private String temphashingAlgorithm = null;
-	//private String tempcompressionAlgorithm = null;
+	private final static String TEMP_FILE_NAME = "tempCipherFile.tmp";
 	private File tempFileToEncrypt = null;
 	private File tempOutputFileEncrypt = null;
 	private File tempPublicKey = null;
@@ -43,7 +41,6 @@ public class CryptographyController implements ICryptographyViewObserver {
 	private IFileInterpret model;
 	
 	public CryptographyController(CryptographyView view) {
-		//this.view = new CryptographyView();
 		this.view = view;
 		this.view.attachViewObserver(this);
 	}
@@ -109,7 +106,7 @@ public class CryptographyController implements ICryptographyViewObserver {
 	public void command_Encrypt() throws IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, ClassNotFoundException, IllegalBlockSizeException, BadPaddingException, NullPointerException, NoSuchPaddingException {
 		if(this.tempFileToEncrypt != null && this.tempOutputFileEncrypt != null && this.tempPublicKey != null) {
 			BufferedInputStream filetoencrypt = new BufferedInputStream(new FileInputStream(tempFileToEncrypt));
-			BufferedOutputStream tempCipherFile = new BufferedOutputStream(new FileOutputStream("tempCipherFile.tmp"));
+			BufferedOutputStream tempCipherFile = new BufferedOutputStream(new FileOutputStream(TEMP_FILE_NAME));
 			BufferedOutputStream outputFile = new BufferedOutputStream(new FileOutputStream(tempOutputFileEncrypt));
 			AES newSymmetricCipher = new AES(); // TODO: reflection con AES per supportare algoritmi diversi
 			newSymmetricCipher.generateKey(128);
@@ -119,11 +116,15 @@ public class CryptographyController implements ICryptographyViewObserver {
 			newOis.close();
 			newRSA.setKeyPair((PublicKey)newOis.readObject(), null);
 			byte[] tempEncryptedSymmetricKey = newRSA.encode(newSymmetricCipher.getSymmetricKeySpec().getEncoded());
-			this.model = new FileInterpret(this.view.get_SymmetricAlgorithm(), tempEncryptedSymmetricKey, this.view.get_HashingAlgorithm(), this.view.getCompressionAlgorithm(), new File("tempCipherFile.tmp"));
+			this.model = new FileInterpret(this.view.get_SymmetricAlgorithm(), tempEncryptedSymmetricKey, this.view.get_HashingAlgorithm(), this.view.getCompressionAlgorithm(), new File(TEMP_FILE_NAME));
 			this.model.writeInterpretToFile(tempOutputFileEncrypt);
 			filetoencrypt.close();
 			tempCipherFile.close();
+			new File(TEMP_FILE_NAME).delete();
 			outputFile.close();
+			if(this.view.chckbx_isWipingEnabled()) {
+				Wiping.getInstance().wipe(tempFileToEncrypt, 1);
+			}
 			// TODO: mostrare qualcosa sulla gui
 		} else {
 			// TODO: Dialog
