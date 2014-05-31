@@ -7,9 +7,11 @@ import static gui.models.OpenButtons.FileTypes.IMAGE;
 import static gui.models.OpenButtons.FileTypes.TEXT;
 import gui.models.OpenButtons;
 import gui.views.AbstractGuiMethodSetter;
+import gui.views.FileExchangeView;
 import gui.views.SteganographyView;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -63,7 +65,11 @@ public class SteganographyController extends AbstractGuiMethodSetter implements 
 	@Override
 	public void selectText(){
 		new TypeConverter();
-		textDefault = TypeConverter.fileToString(new OpenButtons().fileChooser(TEXT));
+		try {
+			textDefault = TypeConverter.fileToString(new OpenButtons().fileChooser(TEXT));
+		} catch (FileNotFoundException e) {
+			FileExchangeView.optionPanel(e);	
+		}
 			if(textDefault != null){
 				SteganographyView.getTextArea().setText("");
 				SteganographyView.getTextArea().append(textDefault);
@@ -76,7 +82,11 @@ public class SteganographyController extends AbstractGuiMethodSetter implements 
 	}
 	@Override
 	public void start(){
-		new Steganography().messageEncrypter(imageChoosen, "png", textDefault);
+		try {
+			new Steganography().messageEncrypter(imageChoosen, "png", textDefault);
+		} catch (IOException e) {
+			FileExchangeView.optionPanel(e);	
+		}
 		JOptionPane.showMessageDialog(SteganographyView.getDialog(), "Image Steganografed");		
 	}
 	@Override

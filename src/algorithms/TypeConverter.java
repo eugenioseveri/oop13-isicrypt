@@ -18,7 +18,6 @@ import java.io.FileOutputStream;
 import java.util.Scanner;
 
 import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
 
 import org.apache.commons.io.IOUtils;
 
@@ -27,17 +26,18 @@ public class TypeConverter {
 	 * 
 	 * @param file
 	 * @return
+	 * @throws IOException 
 	 */
-	public static byte[] fileToByte(File file){
+	public static byte[] fileToByte(File file) throws IOException{
 		//Create Buffer in/out for read and write the file
 		ByteArrayOutputStream baos = null;
 		FileInputStream filebufferInput = null;
 		byte[] fileArray = null;
+		int variable = 0;
 		try{
 			//initialize buffer
 			baos = new ByteArrayOutputStream();
 			filebufferInput = new FileInputStream(file);		
-			int variable = 0;
 			//write byte after byte of file on byte[]
 			while((variable = filebufferInput.read()) != -1){
 				baos.write(variable);
@@ -46,19 +46,24 @@ public class TypeConverter {
 			fileArray = baos.toByteArray();
 			return fileArray;
 		} catch (FileNotFoundException e) {
-			//TODO controlla le eccezioni
-			e.printStackTrace();
-			return null;
+			System.out.println("File not found: " + e);
+			throw e;
 		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
+			System.out.println("an I/O error occured: " + e);
+			throw e;
 		}finally{
 				try{
 				if(baos != null)baos.close();
-			}catch(IOException e ){}
+			}catch(IOException e ){
+				System.out.println("an I/O error occured: " + e);
+				throw e;
+			}
 				try{
 					if(filebufferInput != null)filebufferInput.close();
-				}catch(IOException e){}
+				}catch(IOException e){
+					System.out.println("an I/O error occured: " + e);
+					throw e;
+				}
 		}
 	}
 	/**
@@ -67,7 +72,7 @@ public class TypeConverter {
 	 * @return
 	 * @throws FileNotFoundException
 	 */
-	public  static String fileToString(File file){
+	public  static String fileToString(File file) throws FileNotFoundException{
 		Scanner myScanner = null;
 		String contents = null;
 		try
@@ -79,8 +84,8 @@ public class TypeConverter {
 			return contents;
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
+			System.out.println("File not found: " + e);
+			throw e;
 		}
 		finally
 		{
@@ -94,16 +99,16 @@ public class TypeConverter {
 	 * 
 	 * @param rawImage
 	 * @return
+	 * @throws IOException 
 	 */
-	public static BufferedImage fileToBufferedImage( File rawImage ){
+	public static BufferedImage fileToBufferedImage( File rawImage ) throws IOException{
 		BufferedImage imageBuffer = null;
 		try {
 			imageBuffer = ImageIO.read(rawImage);
 		} catch (IOException e) {
 			System.out.println("Image writing error occured during message encryprion on image: " + e);
-			JOptionPane.showMessageDialog(FileExchangeView.getDialog(),
-					"Image writing error occured during message encryprion on image: " + e);
-			System.exit(1);
+			FileExchangeView.optionPanel("Image writing error occured during message encryprion on image: ");	
+			throw e;
 		}
 		System.out.println("bufferCreator fatto!");
 		return imageBuffer;
@@ -148,8 +153,9 @@ public class TypeConverter {
 	 * @param bis
 	 * @param name
 	 * @return
+	 * @throws IOException 
 	 */
-	public static  File bufferedInputTOtempFile(BufferedInputStream bis, String name){
+	public static  File bufferedInputTOtempFile(BufferedInputStream bis, String name) throws IOException{
 		String nomeTemp = name;
 		String tempExtension =".png";
 		 File tempFile;
@@ -160,9 +166,8 @@ public class TypeConverter {
 	        IOUtils.copy(bis, out);
 		    return tempFile;
 		} catch (IOException e) {
-			//TODO controlla le eccezioni
-			e.printStackTrace();
-	        return null;
+			System.out.println("an I/O error occured: " + e);
+			throw e;
 		}
 
 	}

@@ -8,18 +8,15 @@ import gui.models.OpenButtons;
 import gui.models.OpenButtons.FileTypes;
 
 import java.net.*;
+import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.io.*;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 import javax.swing.JOptionPane;
 
 public class SocketServer extends Thread{
-	public static void main(String[] args) throws IOException, InterruptedException{
+	public static void main(String[] args){
 		new SocketServer();
 	}
 	static Socket connection;	
@@ -31,6 +28,7 @@ public class SocketServer extends Thread{
 	String client;
 	ServerSocket server;
 
+	//Come lanciare le eccezioni a questo punto?
 	public void run(){
 		final int port = 19999;
 		try {
@@ -40,16 +38,22 @@ public class SocketServer extends Thread{
 			boolean onLine = true;
 			while(onLine){
 				connection = server.accept();
-				this.receiveFile();
+				receiveFile();
 			}
 			connection.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("an I/O error occurs when opening the socket: " + e);
+		} catch (GeneralSecurityException e) {
+			System.out.println("Key exchange or I/O errors occured " + e);
 		}
 	}
 
-	private void receiveFile(){
+	/**
+	 * 
+	 * @throws IOException
+	 * @throws GeneralSecurityException
+	 */
+	private void receiveFile() throws IOException, GeneralSecurityException{
 	    try {
 	    	//Send Public key to client for crypt data.
 	    	keyExchange();
@@ -66,16 +70,18 @@ public class SocketServer extends Thread{
 			//Get name of file for check the type.
 			String fileName = TypeConverter.byteArrayToString(nameFile);
 			//Text or file control
-			if(fileName.equals("string")) this.stringChatDetector(fileArray);
+			if(fileName.equals("string")) {
+				this.stringChatDetector(fileArray);
+			}
 			else{
 				System.out.println("Client file recived... \nfile name: "+fileName+"\nDownload?(yes|no)");
-				//Keyboard choice
 				FileExchangeController.fileAppendServer(fileName, client);
-				if(JOptionPane.showConfirmDialog(null, "choose one", "choose one", JOptionPane.YES_NO_OPTION) == 0){
+				if(JOptionPane.showConfirmDialog(null, "Download the File?", "choose one", JOptionPane.YES_NO_OPTION) == 0){
 					//Select directory where save file
 					File directory = new OpenButtons().fileChooser(FileTypes.DIRECTORY);
 					if(directory!=null){
-						BufferedOutputStream byteToFile = new BufferedOutputStream(new FileOutputStream(directory+"/"+fileName));
+						BufferedOutputStream byteToFile = new BufferedOutputStream
+								(new FileOutputStream(directory+"/"+fileName));
 						byteToFile.write(fileArray, 0, fileArray.length);
 						byteToFile.close();
 						System.out.println("file "+fileName+" saved...");
@@ -85,13 +91,18 @@ public class SocketServer extends Thread{
 				}
 				else FileExchangeController.textAppendServer("File Discarded", client);
 			}
-			System.out.println("");
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("an I/O error occured: " + e);
+			throw e;
 		}
 	}
 	
-	private void keyExchange(){
+	/**
+	 * 
+	 * @throws GeneralSecurityException
+	 * @throws IOException
+	 */
+	private void keyExchange() throws GeneralSecurityException, IOException{
 		try {
 			//connection =socket1.accept();
 			aesKeyEncryptor = new RSA();
@@ -110,16 +121,21 @@ public class SocketServer extends Thread{
 			//Closing Buffer in
 			byteArrayIn.close();
 			connection.close();
-		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
-			//TODO
-			e.printStackTrace();
+		} catch (InvalidKeyException e) {
+			System.out.println("RSA encryption error occured: " + e);
+			throw e;
 		} catch (IOException e) {
-			//TODO controlla le eccezioni
-			e.printStackTrace();
+			System.out.println("an I/O error occured: " + e);
+			throw e;
 		}
 	}
 	
-	private void receiveAesKey(){
+	/**
+	 * 
+	 * @throws IOException
+	 * @throws GeneralSecurityException
+	 */
+	private void receiveAesKey() throws IOException, GeneralSecurityException{
 		int i;
 		try {	
 			connection = server.accept();
@@ -136,26 +152,18 @@ public class SocketServer extends Thread{
 	    	//Close Buffer in/out connection
 	    	connection.close();
 		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InvalidKeyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalBlockSizeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (BadPaddingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchPaddingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("an I/O error occured: " + e);
+			throw e;
 		}
 	}
 	
-	private byte[] receiveSequence(){
+	/**
+	 * 
+	 * @return
+	 * @throws IOException
+	 * @throws InvalidKeyException
+	 */
+	private byte[] receiveSequence() throws IOException, InvalidKeyException{
 		int i;
 		try {	
 			connection = server.accept();
@@ -165,18 +173,23 @@ public class SocketServer extends Thread{
 	            this.out.write(i);
 	        }
 	    	//closeConnection();
-	    	ByteArrayOutputStream gincapa = new ByteArrayOutputStream();
-	    	aesEncryptor.decode(new ByteArrayInputStream(out.toByteArray()), gincapa);
+	    	ByteArrayOutputStream byteArrayOutBuffer = new ByteArrayOutputStream();
+	    	aesEncryptor.decode(new ByteArrayInputStream(out.toByteArray()), byteArrayOutBuffer);
 	    	connection.close();
-	    	return gincapa.toByteArray();	
+	    	return byteArrayOutBuffer.toByteArray();	
+		} catch (SocketTimeoutException e){
+			System.out.println("Socket Timeout error occured: " + e);
+			throw e;	
 		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InvalidKeyException e) {
-			e.printStackTrace();
+			System.out.println("an I/O error occured: " + e);
+			throw e;
 		}
-		return out.toByteArray();
 	}
 	
+	/**
+	 * 
+	 * @param stringByte
+	 */
 	private void stringChatDetector(byte[] stringByte){
 		int count;
 		System.out.print("	");

@@ -6,7 +6,6 @@ package algorithms;
  */
 import gui.models.OpenButtons;
 import gui.models.OpenButtons.FileTypes;
-import gui.views.FileExchangeView;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -17,7 +16,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -33,7 +31,7 @@ public class Steganography {
 	 * @return boolean					confirm the image saving.
 	 * @throws IOException
 	 */
-	public boolean messageEncrypter(File rawImage, String extension, String text){
+	public boolean messageEncrypter(File rawImage, String extension, String text) throws IOException{
 		try {
 			image = TypeConverter.fileToBufferedImage(rawImage);
 			image = messageAdder(image, text);
@@ -43,14 +41,10 @@ public class Steganography {
 			return ImageIO.write(image, extension, savier);
 		} catch (IOException e) {
 			System.out.println("Image writing error occured during message encryprion on image: " + e);
-			JOptionPane.showMessageDialog(FileExchangeView.getDialog(),
-					"Image writing error occured during message encryprion on image: " + e);
-			return false;
+			throw e;
 		} catch (IllegalArgumentException e){
 			System.out.println("Null pointer during ImageIO writing: " + e);
-			JOptionPane.showMessageDialog(FileExchangeView.getDialog(),
-					"Null pointer during ImageIO writing: " + e);
-			return false;
+			throw e;
 		}
 	}
 	/**
@@ -58,8 +52,9 @@ public class Steganography {
 	 * 
 	 * @param rawImage		Search a hidden message from this File
 	 * @return	String			String that represent the hidden message
+	 * @throws IOException 
 	 */
-	public String messageBorrower(File rawImage){
+	public String messageBorrower(File rawImage) throws IOException{
 		byte[] decode;
 		
 		image = TypeConverter.fileToBufferedImage(rawImage);
@@ -78,8 +73,9 @@ public class Steganography {
 	 * @param extension
 	 * @param text
 	 * @return
+	 * @throws IOException 
 	 */
-	public static File stegaForClient(File rawImage, String extension, String text){
+	public static File stegaForClient(File rawImage, String extension, String text) throws IOException{
 		BufferedImage image;
 		try {
 			image = TypeConverter.fileToBufferedImage(rawImage);
@@ -89,13 +85,14 @@ public class Steganography {
 			System.out.println("messageEncrypter done!"); //Check print
 			return temp;
 		} catch (FileNotFoundException e) {
-			JOptionPane.showMessageDialog(FileExchangeView.getDialog(),
-					"File doesn't exist: " + e);
-			return null;
+			System.out.println("File doesn't exist: " + e);
+			throw e;
 		} catch (SecurityException e){
-			JOptionPane.showMessageDialog(FileExchangeView.getDialog(),
-					"can't read the file: " + e);
-			return null;
+			System.out.println("Security error, can't read the file: " + e);
+			throw e;
+		} catch (IOException e) {
+			System.out.println("an I/O error occured: " + e);
+			throw e;
 		}
 	}
 	/**

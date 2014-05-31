@@ -4,7 +4,7 @@ package gui.views;
  * created 26/05/2014
  */
 import gui.controllers.FileExchangeController;
-import gui.controllers.IFileExchangeViewObserve;
+import gui.controllers.IFileExchangeViewObserver;
 import gui.models.GlobalSettings;
 
 import java.awt.Color;
@@ -23,6 +23,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -82,7 +83,7 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 	private final static JFrame frame = new JFrame();
 
 	//Initialize GUI view observer
-	private IFileExchangeViewObserve controller;
+	private IFileExchangeViewObserver controller;
 	//Builder
 	public FileExchangeView(){
 		buildLayout();
@@ -91,7 +92,7 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 		setFrame();
 	}
 	//View Observer attaccher
-	public void attacFileExchangeViewObserve(IFileExchangeViewObserve controller){
+	public void attacFileExchangeViewObserve(IFileExchangeViewObserver controller){
 		this.controller = controller;
 	}
 	//Build layout, same for all gui
@@ -310,6 +311,14 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 		frame.setVisible(true);
 	}
 	
+	public static void optionPanel( Exception error ){
+		JOptionPane.showMessageDialog(FileExchangeView.dialog, error);
+	}
+	
+	public static void optionPanel( String error ){
+		JOptionPane.showMessageDialog(FileExchangeView.dialog, error);
+	}
+	
 	//Setter and Getter
 	public void setFont(Font font) {
 		this.font = font;
@@ -356,10 +365,6 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 	}
 	public static Component getZipbutton() {
 		return zipButton;
-	}
-	
-	public static JFrame getDialog() {
-		return dialog;
 	}
 	
 	public static JFrame getFrame() {

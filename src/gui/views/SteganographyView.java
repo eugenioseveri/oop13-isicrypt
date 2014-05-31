@@ -12,6 +12,7 @@ import gui.models.GlobalSettings;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -59,6 +60,8 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 	private static final int buttonAnchor = GridBagConstraints.CENTER;
 	private static final int iconHeigth = 240;
 	private static final int iconWidth = 320;
+	private static final int textAreaYdimension = 100;
+	private static final Dimension dim = new Dimension(0,textAreaYdimension);
 	GridBagConstraints limit;
 	//Graphic Element initialization
 	private final static Component selectImageButton = new JButton("Select image");
@@ -146,6 +149,7 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 		setGridposition(limit, xPosition+2, yPosition, defaultCellArea, defaultCellArea+6,
 				noResizable, resizable, container, separator);
 		//filler2
+		((JButton)filler2).setMaximumSize(((JButton)filler2).getPreferredSize());
 		setJButton(filler2, panelBakColor, null, null, false, false);
 		setLimit(limit, zeroIpad, zeroIpad, insetsZero,
 				buttonFill, GridBagConstraints.CENTER, container, filler2);
@@ -162,7 +166,7 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 		int insetsIcon[] = { 20, 10, 10, 10 };
 		((JLabel) iconLabel).setMinimumSize(((JLabel) iconLabel).getPreferredSize());
 		setLimit(limit, zeroIpad, zeroIpad, insetsIcon, 
-				GridBagConstraints.BOTH, buttonAnchor, container, iconLabel);
+				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, iconLabel);
 		setGridposition(limit, xPosition+4, yPosition, defaultCellArea, defaultCellArea+5, 
 				resizable, resizable, container, iconLabel);
 		// JCheckBox
@@ -205,14 +209,15 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 		setGridposition(limit, xPosition, yPosition+6, defaultCellArea, defaultCellArea, 
 				noResizable, noResizable, container, insertTextButton);
 		// JScrollPane(JtextArea)
-		scrollPane.setMinimumSize(scrollPane.getPreferredSize());
+		scrollPane.setPreferredSize(dim);
+		scrollPane.setMinimumSize(dim);
 		textArea.setLineWrap(true);		//Format text on TextArea
 		textArea.setWrapStyleWord(true);	//Format text on TextArea
 		((JScrollPane) scrollPane).setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); 	//Only vertical scroll bar
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, scrollPane);
 		setGridposition(limit, xPosition, yPosition+7, defaultCellArea+4, defaultCellArea,
-				resizable, resizable, container, scrollPane);
+				resizable, noResizable, container, scrollPane);
 	}
 
 	private void setHandlers() {

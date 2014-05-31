@@ -5,8 +5,6 @@ package algorithms;
  */
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.io.BufferedInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -25,12 +23,12 @@ public class Hashing implements IHashing {
 	public static Hashing getInstance(){
 		return SINGLETON;
 	}
-	
+	//Non bufferizzo l'input perchè se viene passato un buffer ribufferizza
 	@Override
 	public String generateHash(EnumAvailableHashingAlgorithms hashingAlgorithm, InputStream stream) {
 		//create the interface for the selection of the file
 		StringBuffer sb = new StringBuffer("");
-		BufferedInputStream bufferStrem = new BufferedInputStream(stream);
+		//BufferedInputStream bufferStrem = new BufferedInputStream(stream);
 		int nread;
 		byte[] mdBytes = null;
 		try {
@@ -38,11 +36,11 @@ public class Hashing implements IHashing {
 			MessageDigest md = MessageDigest.getInstance(hashingAlgorithm.name());
 			//Select the key dimension i think (MUST SEARCH!!!)
 			byte[] dataBytes = new byte[DIM_BUFFER];
-			nread = bufferStrem.read(dataBytes);
+			nread = stream.read(dataBytes);
 			//Calculating sha1 with is class
 			while(nread > 0){
 				md.update(dataBytes, 0, nread);
-				nread = bufferStrem.read(dataBytes);
+				nread = stream.read(dataBytes);
 			}	
 			mdBytes = md.digest();
 		} catch (IOException e) {
@@ -51,17 +49,17 @@ public class Hashing implements IHashing {
 		} catch (NoSuchAlgorithmException e) {
 			System.out.println("Can't select sha1 algorithm: "+e);
 			return null;
-		} catch (Exception e) {  //catch other exceptions
-			throw e;
 		} finally {
 			if (stream != null){
 		        try {
 		            stream.close();
 		        } catch (IOException e) {
-		            e.printStackTrace();
+		        	System.out.println("Stream close error occured: "+e);
+		        	return null;
 		        }
 			}
 		}
+		//TODO Studia come funziona e al max modificala
 	    for (int i = 0; i < mdBytes.length; i++) {
 	    	sb.append(Integer.toString((mdBytes[i] & 0xff) + 0x100, 16).substring(1));
 	    }
@@ -73,7 +71,7 @@ public class Hashing implements IHashing {
 		//equalIgnoreCase = no case sensitive
 		return hashOne.equalsIgnoreCase(hashTwo);
 	}
-	
+
 	@Override
 	public boolean compare(EnumAvailableHashingAlgorithms hashingAlgorithm, InputStream streamOne, InputStream streamTwo){
 		String fileOne = generateHash(hashingAlgorithm, streamOne);
