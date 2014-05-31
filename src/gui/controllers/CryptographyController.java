@@ -9,17 +9,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.PublicKey;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-
-import algorithms.AES;
 import algorithms.RSA;
 import algorithms.Wiping;
+import algorithms.interfacesandabstractclasses.IAsymmetricCryptography;
+import algorithms.interfacesandabstractclasses.ISymmetricCryptography;
 import gui.models.FileInterpret;
 import gui.models.IFileInterpret;
 import gui.models.OpenButtons;
@@ -36,7 +31,9 @@ public class CryptographyController implements ICryptographyViewObserver {
 	private final static String TEMP_FILE_NAME = "tempCipherFile.tmp";
 	private File tempFileToEncrypt = null;
 	private File tempOutputFileEncrypt = null;
-	private File tempPublicKey = null;
+	private File tempPublicKeyFile = null;
+	private File tempPrivateKeyFile = null;
+	private File tempFileToDecrypt = null;
 	private ICryptographyView view;
 	private IFileInterpret model;
 	
@@ -61,11 +58,15 @@ public class CryptographyController implements ICryptographyViewObserver {
 
 	@Override
 	public void command_SelectFileToDecrypt() {
-		// TODO Auto-generated method stub
-		
+		File selectedFile = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
+		if(selectedFile != null) {
+			this.view.setText_textField_FileToDecrypt(selectedFile.getAbsolutePath());
+			this.tempFileToDecrypt = selectedFile;
+		}
 	}
 
 	@Override
+	// TODO: remove
 	public void command_SelectOutputFileEncrypt() {
 		File selectedFile = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
 		if(selectedFile != null) {
@@ -75,8 +76,8 @@ public class CryptographyController implements ICryptographyViewObserver {
 	}
 
 	@Override
+	// TODO: remove
 	public void command_SelectOutputFileDecrypt() {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -85,14 +86,17 @@ public class CryptographyController implements ICryptographyViewObserver {
 		File selectedFile = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
 		if(selectedFile != null) {
 			this.view.setText_textField_PublicKey(selectedFile.getAbsolutePath());
-			this.tempPublicKey = selectedFile;
+			this.tempPublicKeyFile = selectedFile;
 		}
-		
 	}
 
 	@Override
-	public void command_SelectPrivateKey() {
-		// TODO Auto-generated method stub
+	public void command_SelectPrivateKeyFile() {
+		File selectedFile = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
+		if(selectedFile != null) {
+			this.view.setText_textField_PrivateKey(selectedFile.getAbsolutePath());
+			this.tempPrivateKeyFile = selectedFile;
+		}
 		
 	}
 
@@ -103,16 +107,16 @@ public class CryptographyController implements ICryptographyViewObserver {
 	}
 
 	@Override
-	public void command_Encrypt() throws IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, ClassNotFoundException, IllegalBlockSizeException, BadPaddingException, NullPointerException, NoSuchPaddingException {
-		if(this.tempFileToEncrypt != null && this.tempOutputFileEncrypt != null && this.tempPublicKey != null) {
+	public void command_Encrypt() throws InstantiationException, IllegalAccessException, ClassNotFoundException, InvalidKeyException, IOException {
+		if(this.tempFileToEncrypt != null && this.tempOutputFileEncrypt != null && this.tempPublicKeyFile != null) {
 			BufferedInputStream filetoencrypt = new BufferedInputStream(new FileInputStream(tempFileToEncrypt));
 			BufferedOutputStream tempCipherFile = new BufferedOutputStream(new FileOutputStream(TEMP_FILE_NAME));
 			BufferedOutputStream outputFile = new BufferedOutputStream(new FileOutputStream(tempOutputFileEncrypt));
-			AES newSymmetricCipher = new AES(); // TODO: reflection con AES per supportare algoritmi diversi
-			newSymmetricCipher.generateKey(128);
+			ISymmetricCryptography newSymmetricCipher = (ISymmetricCryptography)Class.forName(this.view.get_SymmetricAlgorithm().name()).newInstance(); // Reflection
+			newSymmetricCipher.generateKey(128); // TODO: magic number
 			newSymmetricCipher.encode(filetoencrypt, outputFile);
-			RSA newRSA = new RSA();
-			ObjectInputStream newOis = new ObjectInputStream(new FileInputStream(tempPublicKey));
+			IAsymmetricCryptography newRSA = new RSA(); // Unico algoritmo simmetrico supportato (per ora)
+			ObjectInputStream newOis = new ObjectInputStream(new FileInputStream(tempPublicKeyFile));
 			newOis.close();
 			newRSA.setKeyPair((PublicKey)newOis.readObject(), null);
 			byte[] tempEncryptedSymmetricKey = newRSA.encode(newSymmetricCipher.getSymmetricKeySpec().getEncoded());
@@ -123,7 +127,7 @@ public class CryptographyController implements ICryptographyViewObserver {
 			new File(TEMP_FILE_NAME).delete();
 			outputFile.close();
 			if(this.view.chckbx_isWipingEnabled()) {
-				Wiping.getInstance().wipe(tempFileToEncrypt, 1);
+				Wiping.getInstance().wipe(tempFileToEncrypt, 1); // TODO: numero di passaggi specificato dall'utente
 			}
 			// TODO: mostrare qualcosa sulla gui
 		} else {
@@ -132,7 +136,7 @@ public class CryptographyController implements ICryptographyViewObserver {
 	}
 
 	@Override
-	public void command_GenerateNewKeyPair() throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException {
+	public void command_GenerateNewKeyPair() throws InvalidKeyException {
 		RSA newRSA = new RSA();
 		newRSA.generateKeyPair(2048);
 		// TODO: newRSA.saveKeyToFile(keyType, output);

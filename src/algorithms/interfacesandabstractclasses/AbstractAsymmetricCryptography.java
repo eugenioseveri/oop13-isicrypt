@@ -21,31 +21,39 @@ import algorithms.EnumAsymmetricKeyTypes;
  */
 public abstract class AbstractAsymmetricCryptography implements IAsymmetricCryptography { // Ha senso mettere "implements" in una classe astratta?
 	
-	protected final static String NOKEY_ERROR = "Non è stata impostata una chiave di cifratura!";
-	protected final static String WRONG_KEYSIZE_ERROR = "Il valore di keySize non è valido!";
 	protected KeyPair keyPair;
 	protected Cipher cryptoCipher;
 	
+	@Override
 	public PublicKey getPublicKey() {
 		return this.keyPair.getPublic();
 	}
 
+	@Override
 	public PrivateKey getPrivateKey() {
 		return this.keyPair.getPrivate();
 	}
 
-	public void setKeyPair(KeyPair pair) { // Due diversi modi di chiamare il metodo (vedi sotto)
+	@Override
+	public void setKeyPair(KeyPair pair) {
 		this.keyPair = pair;
 	}
 
+	@Override
 	public void setKeyPair(PublicKey publicKey, PrivateKey privateKey) {
 		this.keyPair = new KeyPair(publicKey, privateKey);
 	}
 
 	protected boolean isKeyPairInitialized() {
-		return keyPair != null;
+		return this.keyPair != null;
 	}
 	
+	/**
+	 * Saves a RSA key (public or private) to the specified output stream
+	 * @param keyType Public or private key
+	 * @param output The output stream you want to save the key to
+	 * @throws IOException If an error occurs while writing the key
+	 */
 	@Override
 	public void saveKeyToFile(EnumAsymmetricKeyTypes keyType, FileOutputStream output) throws IOException {
 		ObjectOutputStream objOutStream = null;
@@ -68,8 +76,14 @@ public abstract class AbstractAsymmetricCryptography implements IAsymmetricCrypt
 		}
 	}
 	
+	/**
+	 * Loads a RSA key (public or private) from the specified file
+	 * @param keyType Public or private key
+	 * @param input The input stream you want to read the key from
+	 * @throws IOException If an error occurs while reading the key
+	 */
 	@Override
-	public void loadKeyFromFile(EnumAsymmetricKeyTypes keyType, FileInputStream input) throws IOException, ClassNotFoundException {
+	public void loadKeyFromFile(EnumAsymmetricKeyTypes keyType, FileInputStream input) throws IOException {
 		ObjectInputStream objInStream = null;
 		try {
 			objInStream = new ObjectInputStream(new BufferedInputStream(input));

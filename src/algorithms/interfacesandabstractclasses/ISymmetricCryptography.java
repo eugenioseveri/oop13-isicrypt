@@ -3,18 +3,18 @@ package algorithms.interfacesandabstractclasses;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
+import javax.crypto.spec.SecretKeySpec;
 
 
 /**
  * Interface used to define mandatory methods of cryptography classes.
  * @author Eugenio Severi
  */
-public interface ICryptography {
+public interface ISymmetricCryptography {
 	void encode(InputStream input, OutputStream output) throws IOException;
 	void decode(InputStream input, OutputStream output) throws IOException;
 	void generateKey(int keySize) throws InvalidKeyException;
+	SecretKeySpec getSymmetricKeySpec();
+	void setSymmetricKeySpec(SecretKeySpec symmetricKeySpec);
 }

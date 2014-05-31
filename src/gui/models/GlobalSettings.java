@@ -12,6 +12,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+import static algorithms.ErrorMessages.*;
+
 /**
  * This class loads and stores the application's common settings (settings used by multiple GUIs).
  * @author Eugenio Severi
@@ -62,25 +64,66 @@ public class GlobalSettings implements Serializable {
 		this.foregroundColor = foregroundColor;
 	}
 	
-	// The constructor loads the settings from the file automatically
-	public GlobalSettings() throws FileNotFoundException, IOException, ClassNotFoundException {
-		FileInputStream file = new FileInputStream(settingsFilePath);
-		BufferedInputStream buffFile = new BufferedInputStream(file);
-		ObjectInputStream objFile = new ObjectInputStream(buffFile);
-		GlobalSettings readGlobalSettings = (GlobalSettings)objFile.readObject();
-		setFont(readGlobalSettings.getFont());
-		setPanelBakColor(readGlobalSettings.getPanelBakColor());
-		setButtonColor(readGlobalSettings.getButtonColor());
-		setForegroundColor(readGlobalSettings.getForegroundColor());
-		objFile.close();
+	/**
+	 * Automatically loads the global application settings from the settings file
+	 */
+	public GlobalSettings() {
+		FileInputStream file;
+		BufferedInputStream buffFile;
+		ObjectInputStream objFile = null;
+		try {
+			file = new FileInputStream(settingsFilePath);
+			buffFile = new BufferedInputStream(file);
+			objFile = new ObjectInputStream(buffFile);
+			GlobalSettings readGlobalSettings = (GlobalSettings)objFile.readObject();
+			setFont(readGlobalSettings.getFont());
+			setPanelBakColor(readGlobalSettings.getPanelBakColor());
+			setButtonColor(readGlobalSettings.getButtonColor());
+			setForegroundColor(readGlobalSettings.getForegroundColor());
+		} catch (FileNotFoundException e) {
+			storeSettings();
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.err.println(IO_READING_ERROR);
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} finally {
+			if(objFile != null) {
+				try {
+					objFile.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 	
+	/**
+	 * Stores the current global application settings to the settings file
+	 */
 	// Questo metodo è molto simile a quello in FileInterpret...
-	public void storeSettings() throws FileNotFoundException, IOException {
-		FileOutputStream file = new FileOutputStream(settingsFilePath);
-		BufferedOutputStream buffFile = new BufferedOutputStream(file);
-		ObjectOutputStream objFile = new ObjectOutputStream(buffFile);
-		objFile.writeObject(this);
-		objFile.close();
+	public void storeSettings() {
+		FileOutputStream file;
+		BufferedOutputStream buffFile;
+		ObjectOutputStream objFile = null;
+		try {
+			file = new FileOutputStream(settingsFilePath);
+			buffFile = new BufferedOutputStream(file);
+			objFile = new ObjectOutputStream(buffFile);
+			objFile.writeObject(this);
+		} catch (FileNotFoundException e) {
+			System.err.println(FILE_NOT_FOUND_ERROR);
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.err.println(IO_WRITING_ERROR);
+			e.printStackTrace();
+		} finally {
+			try {
+				objFile.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

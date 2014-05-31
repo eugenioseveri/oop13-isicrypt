@@ -437,7 +437,7 @@ public class CryptographyView extends JFrame implements ICryptographyView {
 		this.button_SelectPrivateKey.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				controller.command_SelectPrivateKey();
+				controller.command_SelectPrivateKeyFile();
 			}
 		});
 		this.button_Decrypt.addActionListener(new ActionListener() {

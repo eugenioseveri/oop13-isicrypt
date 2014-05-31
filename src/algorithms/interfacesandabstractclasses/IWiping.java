@@ -1,7 +1,6 @@
 package algorithms.interfacesandabstractclasses;
 
 import java.io.File;
-import java.io.IOException;
 
 /**
  * Interface used to define mandatory methods for wiping classes.

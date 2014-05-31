@@ -1,7 +1,6 @@
 package algorithms;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
@@ -9,6 +8,8 @@ import java.nio.channels.FileChannel;
 import java.security.SecureRandom;
 
 import algorithms.interfacesandabstractclasses.IWiping;
+
+import static algorithms.ErrorMessages.*;
 
 /**
  * Class used to implement wiping algorithms.
@@ -22,6 +23,9 @@ public class Wiping implements IWiping {
 	private Wiping() {
 	}
 	
+	/**
+	 * Returns an instance of this class
+	 */
 	public static Wiping getInstance() {
 		if (SINGLETON == null) {
 			SINGLETON = new Wiping();
@@ -29,6 +33,11 @@ public class Wiping implements IWiping {
 		return SINGLETON;
 	}
 
+	/**
+	 * Securely deletes a file with random generated data in multiple passages
+	 * @param fileToWipe The file you want to erase
+	 * @param numberOfPassages The times you want to overwrite the file
+	 */
 	@Override
 	public void wipe(File fileToWipe, int numberOfPassages) {
 		// Gestire l'eccezione e l'input dei parametri
@@ -50,6 +59,7 @@ public class Wiping implements IWiping {
 					numberOfPassages--;
 				}
 			} catch (IOException e) {
+				System.err.println(IO_WRITING_ERROR + " File: " + fileToWipe.getAbsolutePath());
 				e.printStackTrace();
 			} finally {
 				try {

@@ -1,9 +1,6 @@
 package gui.models;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import algorithms.EnumAvailableCompressionAlgorithms;
 import algorithms.EnumAvailableHashingAlgorithms;
 import algorithms.EnumAvailableSymmetricAlgorithms;
@@ -24,5 +21,5 @@ public interface IFileInterpret {
 	byte[] getPayload();
 	void setPayload(byte[] payload);
 	void writeInterpretToFile(File outputFile);
-	void writePayloadToFile(File outputFile);
+	void writePayloadToFile(File outputFile) throws CorruptedDataException;
 }

@@ -7,18 +7,18 @@ import javax.crypto.spec.SecretKeySpec;
  * Abstract class used to implement getters/setters methods for symmetric algorithms classes.
  * @author Eugenio Severi
  */
-public abstract class AbstractSymmetricCryptography implements ICryptography {
+public abstract class AbstractSymmetricCryptography implements ISymmetricCryptography {
 
 	// TODO: codice duplicato per la crittografia assimmetrica?
-	protected final static String NOKEY_ERROR = "Non è stata impostata una chiave di cifratura!";
-	protected final static String WRONG_KEYSIZE_ERROR = "Il valore di keySize non è valido!";
 	protected SecretKeySpec symmetricKeySpec;
 	protected Cipher cryptoCipher;
 	
+	@Override
 	public SecretKeySpec getSymmetricKeySpec() {
 		return this.symmetricKeySpec;
 	}
 
+	@Override
 	public void setSymmetricKeySpec(SecretKeySpec symmetricKeySpec) {
 		this.symmetricKeySpec = symmetricKeySpec;
 	}
