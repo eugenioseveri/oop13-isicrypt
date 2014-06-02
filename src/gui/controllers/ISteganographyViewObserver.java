@@ -7,4 +7,5 @@ public interface ISteganographyViewObserver {
 	void findText();
 	void clearSetting();
 	void insertText();
+	void showStart();
 }

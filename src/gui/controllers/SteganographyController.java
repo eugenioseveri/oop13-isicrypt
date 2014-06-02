@@ -8,6 +8,7 @@ import static gui.models.OpenButtons.FileTypes.TEXT;
 import gui.models.OpenButtons;
 import gui.views.AbstractGuiMethodSetter;
 import gui.views.FileExchangeView;
+import gui.views.StartScreenView;
 import gui.views.SteganographyView;
 
 import java.io.File;
@@ -127,6 +128,13 @@ public class SteganographyController extends AbstractGuiMethodSetter implements 
 		textDefault = null;
 		textBorrowed = null;
 		
+	}
+	
+	@Override
+	public void showStart() {
+		StartScreenController controller = new StartScreenController();
+		StartScreenView view = new StartScreenView();
+		controller.setView(view);
 	}
 	
 	public void insertText(){

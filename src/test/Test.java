@@ -24,7 +24,7 @@ public class Test {
 		GlobalSettings ciao = new GlobalSettings();
 		ciao.setButtonColor(Color.black);
 		ciao.setForegroundColor(Color.white);
-		ciao.setPanelBakColor(Color.DARK_GRAY);
+		ciao.setPanelBackColor(Color.DARK_GRAY);
 		ciao.setFont(new Font("Verdana", Font.BOLD, 12));
 		ciao.storeSettings();
 		//System.out.println(System.getProperty("user.home") + "\\.isicrypt\\globalsettings.dat");

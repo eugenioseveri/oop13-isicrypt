@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -21,7 +22,8 @@ import static algorithms.ErrorMessages.*;
  */
 public class GlobalSettings implements Serializable {
 
-	transient private final static String settingsFilePath = System.getProperty("user.home") + "\\.isicrypt\\globalsettings.dat"; // TODO: Funziona multipiattaforma?
+	transient private final static String userHomePath = System.getProperty("user.home") + "\\isicrypt";
+	transient private final static String settingsFilePath = userHomePath + "\\globalsettings.dat"; // TODO: Funziona multipiattaforma?
 	private static final long serialVersionUID = -3375259654271655816L;
 	// Default font of buttons
 	private Font font = new Font("Verdana",Font.BOLD, 12);
@@ -40,12 +42,12 @@ public class GlobalSettings implements Serializable {
 		this.font = font;
 	}
 
-	public Color getPanelBakColor() { //TODO: rinominare in "back"
+	public Color getPanelBackColor() {
 		return panelBackColor;
 	}
 
-	public void setPanelBakColor(Color panelBakColor) { //TODO: rinominare in "back"
-		this.panelBackColor = panelBakColor;
+	public void setPanelBackColor(Color panelBackColor) {
+		this.panelBackColor = panelBackColor;
 	}
 
 	public Color getButtonColor() {
@@ -77,11 +79,15 @@ public class GlobalSettings implements Serializable {
 			objFile = new ObjectInputStream(buffFile);
 			GlobalSettings readGlobalSettings = (GlobalSettings)objFile.readObject();
 			setFont(readGlobalSettings.getFont());
-			setPanelBakColor(readGlobalSettings.getPanelBakColor());
+			setPanelBackColor(readGlobalSettings.getPanelBackColor());
 			setButtonColor(readGlobalSettings.getButtonColor());
 			setForegroundColor(readGlobalSettings.getForegroundColor());
 		} catch (FileNotFoundException e) {
 			System.err.println(MISSING_SETTINGS_FILE);
+			File userHome = new File(userHomePath);
+			if(!userHome.exists()) {
+				userHome.mkdir();
+			}
 			storeSettings();
 		} catch (IOException e) {
 			System.err.println(IO_READING_ERROR);

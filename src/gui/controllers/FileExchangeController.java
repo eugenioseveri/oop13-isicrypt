@@ -40,6 +40,7 @@ import gui.models.FileExchangeModel;
 import gui.models.OpenButtons;
 import gui.models.OpenButtons.FileTypes;
 import gui.views.FileExchangeView;
+import gui.views.StartScreenView;
 
 public class FileExchangeController implements IFileExchangeViewObserver{
 	//Initialize FileEchange Gui
@@ -156,7 +157,7 @@ public class FileExchangeController implements IFileExchangeViewObserver{
 	@Override
 	public void closeConnection() {
 		FileExchangeModel.setContactInfo(null);
-		//Ristampa la Select contact TODO
+		//Ristampa la Select contact TODO da fare quando è fatta la star screen
 	}
 	/**
 	 * 
@@ -180,6 +181,12 @@ public class FileExchangeController implements IFileExchangeViewObserver{
 			FileExchangeView.getChattextarea().setText("");
 		}		
 	}
+	@Override
+	public void showStart() {
+		StartScreenController controller = new StartScreenController();
+		StartScreenView view = new StartScreenView();
+		controller.setView(view);		
+	}
 	/**
 	 * 
 	 * @param search
@@ -197,8 +204,9 @@ public class FileExchangeController implements IFileExchangeViewObserver{
 	 * 
 	 * @return
 	 */
+	//TODO da mettere in una classe neutrale
 	public static TableModel tableBuilder(){
-		DefaultTableModel model = new DefaultTableModel( new Object[] { "Host", "Name", "Status" }, 0 ){
+		DefaultTableModel model = new DefaultTableModel( new Object[] { "Host", "Name" }, 0 ){
 			/**
 			 * 
 			 */
@@ -316,4 +324,5 @@ public class FileExchangeController implements IFileExchangeViewObserver{
 			FileExchangeView.optionPanel("Server doesn't connect or portfowarding problem");	
 		}
 	}
+	
 }

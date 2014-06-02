@@ -69,23 +69,6 @@ public class CryptographyView extends JFrame implements ICryptographyView {
 	
 	private ICryptographyViewObserver controller;
 	private JCheckBox chckbx_wipingEnabled;
-
-	/**
-	 * Launch the application.
-	 */
-	/*public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					CryptographyView frame = new CryptographyView();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}*/
-
 	/**
 	 * Create the frame.
 	 */
@@ -458,7 +441,8 @@ public class CryptographyView extends JFrame implements ICryptographyView {
 			public void actionPerformed(ActionEvent arg0) {
 				try { // TODO: remove
 					controller.command_Encrypt();
-				} catch (InvalidKeyException | ClassNotFoundException | NullPointerException | IOException | InstantiationException | IllegalAccessException e) {
+				} catch (InvalidKeyException | ClassNotFoundException | NullPointerException
+						| IOException | InstantiationException | IllegalAccessException e) {
 					e.printStackTrace();
 				}
 			}

@@ -1,105 +1,194 @@
 package gui.views;
 
-import java.awt.EventQueue;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JButton;
+import gui.controllers.IStartScreenViewObserver;
+import gui.models.GlobalSettings;
+
 import java.awt.Color;
-import java.awt.SystemColor;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JTextField;
+import java.awt.Component;
 import java.awt.Font;
-import javax.swing.SwingConstants;
-import javax.swing.DropMode;
-import java.awt.Toolkit;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
-public class StartScreenView extends JFrame {
+import javax.imageio.ImageIO;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2756177018639178949L;
-	private JPanel contentPane;
-	private JTextField textField;
+public class StartScreenView extends AbstractGuiMethodSetter{
+	private Font font;
+	private Color panelBakColor;
+	private Color buttonColor;
+	private Color foregroundColor;
+	// Arrays that contains various dimension of insets
+	private static final int insetsTop[] = { -30, 10, 20, 20 };
+	private static final int insetsBotton[] = { 10, 0, 20, 20 };
+	private static final int insetsCredit[] = { 10, -40, 10, 0 };
+	private static final int noResizable  = 0;
+	private static final int ipadDefaulty = 90;
+	private static final int ipadDefaultx = 80;
+	private static final int xPosition = 0;
+	private static final int yPosition = 0;
+	private static final int defaultCellArea = 1;
+	private GridBagConstraints limit;
+	//GUI Component initialized columns x row order
+	private static final JPanel container = new JPanel();
+	private static final JFrame frame = new JFrame();
+	private static final Component cryptography = new JButton("cryptography");
+	private static final Component steganography = new JButton("steganography");
+	private static final Component keyring = new JButton("keyring");
+	private static final Component fileExchange = new JButton("fileExchange");
+	private static final Component authorName = new JLabel("<html>Filippo Vimini<br>........Eugenio Severi</html>");
+	
+	//Initialize GUI view observer
+	private IStartScreenViewObserver controller;
+	
+	public void attacStartScreenViewObserver(IStartScreenViewObserver controller){
+		this.controller = controller;
+	}
+	
+	public StartScreenView(){
+		buildLayout();
+		componentSetting();
+		setHandlers();
+		setFrame();
+	}
+	
+	private void buildLayout() {
+		GlobalSettings set = null;
+		set = new GlobalSettings();
+		this.setButtonColor(set.getButtonColor());
+		this.setFont(set.getFont());
+		this.setForegroundColor(set.getForegroundColor());
+		this.setPanelBakColor(set.getPanelBackColor());
+		GridBagLayout layout = new GridBagLayout();
+		limit = new GridBagConstraints();
+		container.setLayout(layout);
+		container.setBackground(panelBakColor);
+	}
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					StartScreenView frame = new StartScreenView();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+	private void componentSetting(){
+		//JButton CRYPTOGRAPHY
+		setJButton(cryptography, buttonColor, foregroundColor, font, false, false);
+		setLimit(limit, ipadDefaultx, ipadDefaulty, insetsTop, 
+				GridBagConstraints.BOTH, GridBagConstraints.NORTH, container, cryptography);
+		setGridposition(limit, xPosition, yPosition, defaultCellArea, defaultCellArea, 
+				noResizable, noResizable, container, cryptography);
+		//JButton STEGANOGRAPHY
+		setJButton(steganography, buttonColor, foregroundColor, font, false, false);
+		setLimit(limit, ipadDefaultx, ipadDefaulty, insetsTop, 
+				GridBagConstraints.BOTH, GridBagConstraints.NORTH, container, steganography);
+		setGridposition(limit, xPosition+1, yPosition, defaultCellArea, defaultCellArea, 
+				noResizable, noResizable, container, steganography);	
+		//JButton KEYRING
+		setJButton(keyring, buttonColor, foregroundColor, font, false, false);
+		setLimit(limit, ipadDefaultx, ipadDefaulty, insetsBotton, 
+				GridBagConstraints.BOTH, GridBagConstraints.NORTH, container, keyring);
+		setGridposition(limit, xPosition, yPosition+1, defaultCellArea, defaultCellArea, 
+				noResizable, noResizable, container, keyring);	
+		//JButton FILEEXCHANGE
+		setJButton(fileExchange, buttonColor, foregroundColor, font, false, false);
+		setLimit(limit, ipadDefaultx, ipadDefaulty, insetsBotton, 
+				GridBagConstraints.BOTH, GridBagConstraints.NORTH, container, fileExchange);
+		setGridposition(limit, xPosition+1, yPosition+1, defaultCellArea, defaultCellArea, 
+				noResizable, noResizable, container, fileExchange);	
+		//JLabel CREDITS
+		authorName.setFont(new Font("Verdana",Font.BOLD, 12));
+		authorName.setForeground(Color.white);
+		setLimit(limit, 0, 0, insetsCredit, 
+				GridBagConstraints.SOUTH, GridBagConstraints.EAST, container, authorName);
+		setGridposition(limit, xPosition+1, yPosition+2, defaultCellArea, defaultCellArea, 
+				noResizable, noResizable, container, authorName);
+		
+		
+	}
+	
+	private void setHandlers(){
+		//select CRYPTOGRAPHY
+		((JButton)cryptography).addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				controller.selectCryptography();
+			}
+		});
+		//select STEGANOGRAPHY
+		((JButton)steganography).addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				controller.selectSteganography();
+			}
+		});
+		((JButton)keyring).addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				controller.selectKeyring();
+			}
+		});
+		((JButton)fileExchange).addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				controller.selectFileExchange();
 			}
 		});
 	}
-
-	/**
-	 * Create the frame.
-	 */
-	public StartScreenView() {
-		setIconImage(Toolkit.getDefaultToolkit().getImage(StartScreenView.class.getResource("/gui/IsiCryptIcon.jpg")));
-		setResizable(false);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 451, 448);
-		contentPane = new JPanel();
-		contentPane.setBackground(new Color(51, 0, 102));
-		contentPane.setBorder(null);
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
-		
-		JButton btnCrittografiaFile = new JButton("Crittografia File");
-		btnCrittografiaFile.setBackground(new Color(240, 240, 240));
-		btnCrittografiaFile.setBounds(20, 69, 180, 100);
-		contentPane.add(btnCrittografiaFile);
-		
-		JButton btnSteganografia = new JButton("Steganografia");
-		btnSteganografia.setBackground(SystemColor.menu);
-		btnSteganografia.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		btnSteganografia.setBounds(244, 69, 180, 100);
-		contentPane.add(btnSteganografia);
-		
-		JButton btnPasswordManager = new JButton("Password Manager");
-		btnPasswordManager.setBackground(SystemColor.menu);
-		btnPasswordManager.setBounds(20, 182, 180, 100);
-		contentPane.add(btnPasswordManager);
-		
-		JButton btnScambioFile = new JButton("Scambio File");
-		btnScambioFile.setBackground(SystemColor.menu);
-		btnScambioFile.setBounds(244, 182, 180, 100);
-		contentPane.add(btnScambioFile);
-		
-		JButton btnKeyManager = new JButton("key manager");
-		btnKeyManager.setBackground(SystemColor.menu);
-		btnKeyManager.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		btnKeyManager.setBounds(20, 296, 180, 100);
-		contentPane.add(btnKeyManager);
-		
-		JButton btnInfo = new JButton("Info");
-		btnInfo.setBackground(SystemColor.menu);
-		btnInfo.setBounds(244, 296, 180, 100);
-		contentPane.add(btnInfo);
-		
-		textField = new JTextField("IsiCrypt");
-		textField.setDropMode(DropMode.INSERT);
-		textField.setForeground(SystemColor.menu);
-		textField.setHorizontalAlignment(SwingConstants.CENTER);
-		textField.setEditable(false);
-		textField.setFont(new Font("Tahoma", Font.BOLD, 23));
-		textField.setBackground(new Color(51, 0, 102));
-		textField.setBounds(166, 11, 113, 47);
-		contentPane.add(textField);
-		textField.setColumns(10);
+	
+	private void setFrame() {
+		try {
+			frame.setIconImage(ImageIO.read(new File(
+					"./res/isiCryptICON_MetroStyle.jpg")));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		frame.setTitle("FileExchange");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(450, 350);
+		frame.getContentPane().add(container);
+		//frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		frame.setVisible(true);
 	}
+	
+	//GETTERS and SETTERS
+	public Font getFont() {
+		return font;
+	}
+
+	public void setFont(Font font) {
+		this.font = font;
+	}
+
+	public Color getPanelBakColor() {
+		return panelBakColor;
+	}
+
+	public void setPanelBakColor(Color panelBakColor) {
+		this.panelBakColor = panelBakColor;
+	}
+
+	public Color getButtonColor() {
+		return buttonColor;
+	}
+
+	public void setButtonColor(Color buttonColor) {
+		this.buttonColor = buttonColor;
+	}
+
+	public Color getForegroundColor() {
+		return foregroundColor;
+	}
+
+	public void setForegroundColor(Color foregroundColor) {
+		this.foregroundColor = foregroundColor;
+	}
+
+	public static JFrame getFrame() {
+		return frame;
+	}
+
+	
 }

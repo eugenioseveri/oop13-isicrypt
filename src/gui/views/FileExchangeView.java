@@ -16,7 +16,6 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -47,7 +46,7 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 	private static final int insetsSendButton[] = {0, 10, 10, 10};
 	private static final int zeroInsets []= { 0, 0, 0, 0 };
 	private static final int labelInsets [] = {10, 0, 10, 10};
-	private static final JPanel container = new JPanel();
+	private static final int backInsets []= { 0, 0, 10, 10 };
 	private static final int zeroIpad  = 0;
 	private static final int noResizable  = 0;
 	private static final int resizable  = 1;
@@ -56,9 +55,10 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 	private static final int xPosition = 0;
 	private static final int yPosition = 0;
 	private static final int defaultCellArea = 1;
-	private static TableModel model = FileExchangeController.tableBuilder();
-	GridBagConstraints limit;
+	private GridBagConstraints limit;
 	//GUI Component initialized columns x row order
+	private static final Component backButton = new JButton("Show Start");
+	private static final JPanel container = new JPanel();
 	private final static Component datiLabel = new JLabel("Data");
 	private final static Component fileButton = new JButton("Choose file to send");
 	private final static Component stegaButton = new JButton("Send steganoghraphed image");
@@ -77,6 +77,7 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 	private final static Component scrollPaneChat = new JScrollPane(chatTextArea);
 	private final static Component filler = new JButton("");
 	private final static Component sendButton = new JButton("Send");
+	private static TableModel model = FileExchangeController.tableBuilder();
 	private static JTable contactTable = new JTable(model);
 	private final static Component scrollPaneTable = new JScrollPane(contactTable);
 	private final static JFrame dialog = new JFrame();
@@ -98,19 +99,11 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 	//Build layout, same for all gui
 	private void buildLayout() {
 		GlobalSettings set = null;
-		try {
-			set = new GlobalSettings();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		set = new GlobalSettings();
 		this.setButtonColor(set.getButtonColor());
 		this.setFont(set.getFont());
 		this.setForegroundColor(set.getForegroundColor());
-		this.setPanelBakColor(set.getPanelBakColor());
+		this.setPanelBakColor(set.getPanelBackColor());
 		GridBagLayout layout = new GridBagLayout();
 		limit = new GridBagConstraints();
 		container.setLayout(layout);
@@ -118,6 +111,12 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 	}
 
 	private void componentSetting(){
+		//JButton BACK TO START 
+		setJButton(backButton, buttonColor, foregroundColor, font, false, false);
+		setLimit(limit, ipadDefaultx-50, ipadDefaulty-10, backInsets,
+				GridBagConstraints.CENTER, GridBagConstraints.WEST, container, backButton);
+		setGridposition(limit, xPosition, yPosition , defaultCellArea, defaultCellArea,
+				noResizable, noResizable, container, backButton);		
 		//Jlabel data
 		((JLabel)datiLabel).setForeground(Color.white);
 		setLimit(limit, zeroIpad, zeroIpad, labelInsets, 
@@ -235,6 +234,13 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 	}
 	
 	private void setHandlers(){
+		//back to Start View
+		((JButton)backButton).addActionListener(new ActionListener() {	
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				controller.showStart();
+			}
+		});
 		//Select File to Send
 		((JButton)fileButton).addActionListener(new ActionListener() {	
 			@Override
@@ -304,7 +310,7 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 			e.printStackTrace();
 		}
 		frame.setTitle("FileExchange");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(920, 640);
 		frame.getContentPane().add(container);
 		//frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
