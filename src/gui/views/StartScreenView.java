@@ -2,6 +2,7 @@ package gui.views;
 
 import gui.controllers.IStartScreenViewObserver;
 import gui.models.GlobalSettings;
+import gui.models.ThemeChooser;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -59,12 +60,14 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 	}
 	
 	private void buildLayout() {
-		GlobalSettings set = null;
-		set = new GlobalSettings();
-		this.setButtonColor(set.getButtonColor());
-		this.setFont(set.getFont());
-		this.setForegroundColor(set.getForegroundColor());
-		this.setPanelBakColor(set.getPanelBackColor());
+	//	GlobalSettings set = null;
+	//	set = new GlobalSettings();
+		//Creo un nuovo ThemeChooser all'avvio della gui cosi setto tutti i parametri
+		new ThemeChooser();
+		this.setButtonColor(ThemeChooser.getButtonColor());
+		this.setFont(ThemeChooser.getFont());
+		this.setForegroundColor(ThemeChooser.getForegroundColor());
+		this.setPanelBakColor(ThemeChooser.getPanelBackColor());
 		GridBagLayout layout = new GridBagLayout();
 		limit = new GridBagConstraints();
 		container.setLayout(layout);

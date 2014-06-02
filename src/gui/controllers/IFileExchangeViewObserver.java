@@ -13,5 +13,4 @@ public interface IFileExchangeViewObserver {
 	void closeConnection();
 	void changeContact();
 	void sendText();
-	void showStart();
 }

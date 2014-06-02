@@ -21,13 +21,14 @@ public class Test {
 		myaes.encode(new ByteArrayInputStream(new byte[10]), new ByteArrayOutputStream());
 		//System.out.println(myaes.getSymmetricKeySpec().getEncoded().toString());*/
 		
-		GlobalSettings ciao = new GlobalSettings();
+		/*GlobalSettings ciao = new GlobalSettings();
 		ciao.setButtonColor(Color.black);
 		ciao.setForegroundColor(Color.white);
 		ciao.setPanelBackColor(Color.DARK_GRAY);
 		ciao.setFont(new Font("Verdana", Font.BOLD, 12));
-		ciao.storeSettings();
+		ciao.storeSettings();*/
 		//System.out.println(System.getProperty("user.home") + "\\.isicrypt\\globalsettings.dat");
+		new GlobalSettings().storeSettings();
 	}
 	
 	/*private static void byteArrayStamp(byte[] stamp){

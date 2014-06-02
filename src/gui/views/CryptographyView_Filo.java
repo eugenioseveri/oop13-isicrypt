@@ -2,6 +2,7 @@ package gui.views;
 
 import gui.controllers.ICryptographyViewObserver;
 import gui.models.GlobalSettings;
+import gui.models.ThemeChooser;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -102,11 +103,11 @@ public class CryptographyView_Filo extends AbstractGuiMethodSetter{
 	//BuildLayout same for all view
 	private void buildLayout() {
 		GlobalSettings set = null;
-		set = new GlobalSettings();
-		this.setButtonColor(set.getButtonColor());
-		this.setFont(set.getFont());
-		this.setForegroundColor(set.getForegroundColor());
-		this.setPanelBakColor(set.getPanelBackColor());
+	//	set = new GlobalSettings();
+		this.setButtonColor(ThemeChooser.getButtonColor());
+		this.setFont(ThemeChooser.getFont());
+		this.setForegroundColor(ThemeChooser.getForegroundColor());
+		this.setPanelBakColor(ThemeChooser.getPanelBackColor());
 		GridBagLayout layout = new GridBagLayout();
 		limit = new GridBagConstraints();
 		container.setLayout(layout);
@@ -169,6 +170,7 @@ public class CryptographyView_Filo extends AbstractGuiMethodSetter{
 				resizable, noResizable, container, newKeyPair);
 		//Filler 
 		((JButton)fillerOne).setEnabled(false);
+	//	((JButton)fillerOne).setVisible(false);
 		setJButton(fillerOne, panelBakColor, panelBakColor, null, false, false);
 		setLimit(limit, zeroIpad, zeroIpad, zeroInsets, 
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, fillerOne);
@@ -177,7 +179,7 @@ public class CryptographyView_Filo extends AbstractGuiMethodSetter{
 		//JLabel ALGORITHM LABLE
 		((JLabel)algorithmLabel).setForeground(Color.WHITE);
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
-				GridBagConstraints.CENTER, GridBagConstraints.CENTER, container, algorithmLabel);
+				GridBagConstraints.CENTER, GridBagConstraints.EAST, container, algorithmLabel);
 		setGridposition(limit, xPosition+1, yPosition+9, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, algorithmLabel);
 		//textFielf ALGORITHM TEXT FIELD
@@ -188,7 +190,7 @@ public class CryptographyView_Filo extends AbstractGuiMethodSetter{
 		//JLabel HASHING LABEL
 		((JLabel)hashingLabel).setForeground(Color.WHITE);
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
-				GridBagConstraints.CENTER, GridBagConstraints.CENTER, container, hashingLabel );
+				GridBagConstraints.CENTER, GridBagConstraints.EAST, container, hashingLabel );
 		setGridposition(limit, xPosition+1, yPosition+11, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, hashingLabel);
 		//TextField HASHING TEXT FIELD
@@ -196,6 +198,17 @@ public class CryptographyView_Filo extends AbstractGuiMethodSetter{
 				GridBagConstraints.HORIZONTAL, GridBagConstraints.EAST, container, hashingTextField);
 		setGridposition(limit, xPosition+2, yPosition+11, defaultCellArea, defaultCellArea,
 				resizable, noResizable, container, hashingTextField);
+		//JLabel COMPRESSION LABEL
+		((JLabel)compressionLabel).setForeground(Color.WHITE);
+		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
+				GridBagConstraints.CENTER, GridBagConstraints.EAST, container, compressionLabel);
+		setGridposition(limit, xPosition+1, yPosition+12, defaultCellArea, defaultCellArea,
+				noResizable, noResizable, container, compressionLabel);
+		//TextField COMPRESSION TEXT FIELD
+		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
+				GridBagConstraints.HORIZONTAL, GridBagConstraints.EAST, container, compressionTextField);
+		setGridposition(limit, xPosition+2, yPosition+12, defaultCellArea, defaultCellArea,
+				resizable, noResizable, container, compressionTextField);
 		//filler
 		((JButton)fillerTwo).setEnabled(false);
 		setJButton(fillerTwo, panelBakColor, panelBakColor, null, false, false);

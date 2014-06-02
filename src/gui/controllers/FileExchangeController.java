@@ -42,7 +42,7 @@ import gui.models.OpenButtons.FileTypes;
 import gui.views.FileExchangeView;
 import gui.views.StartScreenView;
 
-public class FileExchangeController implements IFileExchangeViewObserver{
+public class FileExchangeController implements IFileExchangeViewObserver, IGeneralViewObserver{
 	//Initialize FileEchange Gui
 	private static FileExchangeView view;
 	private static String textTemp;

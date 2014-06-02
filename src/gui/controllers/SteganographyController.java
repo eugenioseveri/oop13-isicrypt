@@ -25,7 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import algorithms.Steganography;
 import algorithms.TypeConverter;
 
-public class SteganographyController extends AbstractGuiMethodSetter implements ISteganographyViewObserver {
+public class SteganographyController extends AbstractGuiMethodSetter implements ISteganographyViewObserver, IGeneralViewObserver {
 
 	private static SteganographyView view;
 	//Contains the selected image. Used like ICON.

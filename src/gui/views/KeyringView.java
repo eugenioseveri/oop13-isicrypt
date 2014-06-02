@@ -2,6 +2,7 @@ package gui.views;
 
 import gui.controllers.FileExchangeController;
 import gui.models.GlobalSettings;
+import gui.models.ThemeChooser;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -75,12 +76,12 @@ public class KeyringView extends AbstractGuiMethodSetter{
 	
 	//BuildLayout same for all view
 	private void buildLayout() {
-		GlobalSettings set = null;
-		set = new GlobalSettings();
-		this.setButtonColor(set.getButtonColor());
-		this.setFont(set.getFont());
-		this.setForegroundColor(set.getForegroundColor());
-		this.setPanelBakColor(set.getPanelBackColor());
+	//	GlobalSettings set = null;
+	//	set = new GlobalSettings();
+		this.setButtonColor(ThemeChooser.getButtonColor());
+		this.setFont(ThemeChooser.getFont());
+		this.setForegroundColor(ThemeChooser.getForegroundColor());
+		this.setPanelBakColor(ThemeChooser.getPanelBackColor());
 		GridBagLayout layout = new GridBagLayout();
 		limit = new GridBagConstraints();
 		container.setLayout(layout);

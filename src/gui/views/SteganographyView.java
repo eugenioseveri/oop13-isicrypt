@@ -8,7 +8,9 @@ package gui.views;
  */
 
 import gui.controllers.ISteganographyViewObserver;
+import gui.controllers.SteganographyController;
 import gui.models.GlobalSettings;
+import gui.models.ThemeChooser;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -95,12 +97,12 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 	}
 
 	private void buildLayout() {
-		GlobalSettings set = null;
-		set = new GlobalSettings();
-		this.setButtonColor(set.getButtonColor());
-		this.setFont(set.getFont());
-		this.setForegroundColor(set.getForegroundColor());
-		this.setPanelBakColor(set.getPanelBackColor());
+	//	GlobalSettings set = null;
+		//set = new GlobalSettings();
+		this.setButtonColor(ThemeChooser.getButtonColor());
+		this.setFont(ThemeChooser.getFont());
+		this.setForegroundColor(ThemeChooser.getForegroundColor());
+		this.setPanelBakColor(ThemeChooser.getPanelBackColor());
 		GridBagLayout layout = new GridBagLayout();
 		limit = new GridBagConstraints();
 		container.setLayout(layout);
@@ -225,7 +227,7 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				controller.showStart();
+				((SteganographyController) controller).showStart();
 			}
 		});
 		// Select image button handlers

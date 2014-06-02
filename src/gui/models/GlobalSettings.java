@@ -1,7 +1,5 @@
 package gui.models;
 
-import java.awt.Color;
-import java.awt.Font;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -25,47 +23,16 @@ public class GlobalSettings implements Serializable {
 	transient private final static String userHomePath = System.getProperty("user.home") + "\\isicrypt";
 	transient private final static String settingsFilePath = userHomePath + "\\globalsettings.dat"; // TODO: Funziona multipiattaforma?
 	private static final long serialVersionUID = -3375259654271655816L;
-	// Default font of buttons
-	private Font font = new Font("Verdana",Font.BOLD, 12);
-	// Default background JPanel color
-	private Color panelBackColor = Color.DARK_GRAY;
-	// Default color of buttons
-	private Color buttonColor = Color.black;
-	// Default foreground color of JButton
-	private Color foregroundColor = Color.white;
+	private String theme = "NIGHT_WATCH";
 	
-	public Font getFont() {
-		return font;
+	public String getTheme() {
+		return theme;
 	}
 
-	public void setFont(Font font) {
-		this.font = font;
+	public void setTheme(String theme) {
+		this.theme = theme;
 	}
 
-	public Color getPanelBackColor() {
-		return panelBackColor;
-	}
-
-	public void setPanelBackColor(Color panelBackColor) {
-		this.panelBackColor = panelBackColor;
-	}
-
-	public Color getButtonColor() {
-		return buttonColor;
-	}
-
-	public void setButtonColor(Color buttonColor) {
-		this.buttonColor = buttonColor;
-	}
-
-	public Color getForegroundColor() {
-		return foregroundColor;
-	}
-
-	public void setForegroundColor(Color foregroundColor) {
-		this.foregroundColor = foregroundColor;
-	}
-	
 	/**
 	 * Automatically loads the global application settings from the settings file
 	 */
@@ -78,10 +45,7 @@ public class GlobalSettings implements Serializable {
 			buffFile = new BufferedInputStream(file);
 			objFile = new ObjectInputStream(buffFile);
 			GlobalSettings readGlobalSettings = (GlobalSettings)objFile.readObject();
-			setFont(readGlobalSettings.getFont());
-			setPanelBackColor(readGlobalSettings.getPanelBackColor());
-			setButtonColor(readGlobalSettings.getButtonColor());
-			setForegroundColor(readGlobalSettings.getForegroundColor());
+			setTheme(readGlobalSettings.getTheme());
 		} catch (FileNotFoundException e) {
 			System.err.println(MISSING_SETTINGS_FILE);
 			File userHome = new File(userHomePath);
