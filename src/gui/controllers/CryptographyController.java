@@ -13,6 +13,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 
 import javax.crypto.spec.SecretKeySpec;
+import javax.swing.JOptionPane;
 
 import algorithms.RSA;
 import algorithms.Wiping;
@@ -39,10 +40,8 @@ public class CryptographyController implements ICryptographyViewObserver {
 	private final static String TEMP_COMPRESSION_FILE_NAME = "tempCompressionFile.tmp";
 	private final static String TEMP_PAYLOAD_FILE_NAME = "tempPayloadExtracted.tmp";
 	private File tempFileToEncrypt = null;
-	private File tempOutputFileEncrypt = null;
 	private File tempPublicKeyFile = null;
 	private File tempFileToDecrypt = null;
-	private File tempOutputFileDecrypt = null;
 	private File tempPrivateKeyFile = null;
 	private ICryptographyView view;
 	private IFileInterpret model;
@@ -61,7 +60,7 @@ public class CryptographyController implements ICryptographyViewObserver {
 	public void command_SelectFileToEncrypt() throws FileNotFoundException {
 		File selectedFile = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
 		if(selectedFile != null) {
-			this.view.setText_textField_FileToEncrypt(selectedFile.getAbsolutePath());
+			this.view.setText_encryptTextField(selectedFile.getAbsolutePath());
 			this.tempFileToEncrypt = selectedFile;
 		}
 	}
@@ -70,32 +69,16 @@ public class CryptographyController implements ICryptographyViewObserver {
 	public void command_SelectFileToDecrypt() {
 		File selectedFile = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
 		if(selectedFile != null) {
-			this.view.setText_textField_FileToDecrypt(selectedFile.getAbsolutePath());
+			this.view.setText_decryptTextField(selectedFile.getAbsolutePath());
 			this.tempFileToDecrypt = selectedFile;
 		}
-	}
-
-	// TODO: remove
-	@Override
-	public void command_SelectOutputFileEncrypt() {
-		File selectedFile = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
-		if(selectedFile != null) {
-			this.view.setText_textField_OutputFileEncrypt(selectedFile.getAbsolutePath());
-			this.tempOutputFileEncrypt = selectedFile;
-		}
-	}
-
-	// TODO: remove
-	@Override
-	public void command_SelectOutputFileDecrypt() {
-		
 	}
 
 	@Override
 	public void command_SelectPublicKeyFile() {
 		File selectedFile = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
 		if(selectedFile != null) {
-			this.view.setText_textField_PublicKey(selectedFile.getAbsolutePath());
+			this.view.setText_publicKeyTextField(selectedFile.getAbsolutePath());
 			this.tempPublicKeyFile = selectedFile;
 		}
 	}
@@ -104,7 +87,7 @@ public class CryptographyController implements ICryptographyViewObserver {
 	public void command_SelectPrivateKeyFile() {
 		File selectedFile = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
 		if(selectedFile != null) {
-			this.view.setText_textField_PrivateKey(selectedFile.getAbsolutePath());
+			this.view.setText_privateKeyTextField(selectedFile.getAbsolutePath());
 			this.tempPrivateKeyFile = selectedFile;
 		}
 		
@@ -112,7 +95,8 @@ public class CryptographyController implements ICryptographyViewObserver {
 
 	@Override
 	public void command_Decrypt() {
-		if(this.tempFileToDecrypt != null && this.tempOutputFileDecrypt != null && this.tempPrivateKeyFile != null) {
+		File tempOutputFileDecrypt = new OpenButtons().fileChooser(FileTypes.DIRECTORY);
+		if(this.tempFileToDecrypt != null && tempOutputFileDecrypt != null && this.tempPrivateKeyFile != null) {
 			BufferedInputStream tempCipherFile = null;
 			BufferedOutputStream outputFile = null;
 			BufferedOutputStream tempCompressionFile = null;
@@ -120,35 +104,54 @@ public class CryptographyController implements ICryptographyViewObserver {
 			IAsymmetricCryptography newRSA = new RSA();
 			ObjectInputStream streamPrivateKeyFile = null;
 			try {
-				tempCipherFile = new BufferedInputStream(new FileInputStream(TEMP_CIPHER_FILE_NAME));
-				outputFile = new BufferedOutputStream(new FileOutputStream(tempOutputFileDecrypt));
+				this.view.setValue_progressBarDecryption(5);
+				this.view.addText_logTextArea("Objects initializazion completed.");
 				this.model = new FileInterpret(tempFileToDecrypt);
+				this.view.setValue_progressBarDecryption(25);
+				this.view.addText_logTextArea("The selected file has been loaded.");
+				outputFile = new BufferedOutputStream(new FileOutputStream(tempOutputFileDecrypt.getAbsolutePath() + "\\" + this.model.getFileName())); // Platform-independent?
 				streamPrivateKeyFile = new ObjectInputStream(new FileInputStream(tempPrivateKeyFile));
-				newRSA.setKeyPair(null, (PrivateKey)streamPrivateKeyFile.readObject());
+				newRSA.setKeyPair(null, (PrivateKey)streamPrivateKeyFile.readObject()); // controllare che la chiave sia giusta
+				this.view.setValue_progressBarDecryption(35);
+				this.view.addText_logTextArea("The private key has been loaded.");
 				byte[] tempDecryptedSymmetricKey = newRSA.decode(this.model.getEncryptedSymmetricKey());
 				String reflectionSymmetricAlgorithm = this.model.getSymmetricAlgorithm().name();
-				newSymmetricCipher = (ISymmetricCryptography)Class.forName(reflectionSymmetricAlgorithm).newInstance();
+				this.view.setValue_progressBarDecryption(45);
+				this.view.addText_logTextArea("The symmetric key has been decrypted.");
+				this.view.addText_logTextArea("Algorithm: " + reflectionSymmetricAlgorithm + ", key size:" + tempDecryptedSymmetricKey.length);
+				newSymmetricCipher = (ISymmetricCryptography)Class.forName("algorithms." + reflectionSymmetricAlgorithm).newInstance();
 				newSymmetricCipher.setSymmetricKeySpec(new SecretKeySpec(tempDecryptedSymmetricKey, reflectionSymmetricAlgorithm));
-				this.model.writePayloadToFile(new File(TEMP_PAYLOAD_FILE_NAME)); // TODO: magic strings
+				this.view.setValue_progressBarDecryption(55);
+				this.view.addText_logTextArea("The symmetric algorithm has been instantiated and the key set.");
+				this.model.writePayloadToFile(new File(TEMP_PAYLOAD_FILE_NAME));
+				this.view.setValue_progressBarDecryption(70);
+				this.view.addText_logTextArea("The payload has been written to disk.");
 				String payloadFile = TEMP_PAYLOAD_FILE_NAME;
 				if(this.model.getCompressionAlgorithm() != No_Compression) {
+					this.view.addText_logTextArea("GZip compression found: the file is going to be decompressed.");
 					tempCompressionFile = new BufferedOutputStream(new FileOutputStream(TEMP_COMPRESSION_FILE_NAME));
 					algorithms.GZip.getInstance().decompress(tempCipherFile, tempCompressionFile);
 					payloadFile = TEMP_COMPRESSION_FILE_NAME;
+					this.view.addText_logTextArea("The file has been decompressed.");
+				} else {
+					this.view.addText_logTextArea("The file is not compressed.");
 				}
-				// TODO: chiedere all'utente la cartella in cui salvare il file (output file, usando il nome nel model)
+				this.view.setValue_progressBarDecryption(80);
 				newSymmetricCipher.decode(new BufferedInputStream(new FileInputStream(payloadFile)), outputFile);
-				
+				this.view.setValue_progressBarDecryption(90);
+				this.view.addText_logTextArea("The file has been decrypted.");
 			} catch (FileNotFoundException e) {
-				System.err.println(FILE_NOT_FOUND_GENERIC_ERROR);
-				// TODO: message
+				//System.err.println(FILE_NOT_FOUND_GENERIC_ERROR);
+				JOptionPane.showMessageDialog(null, FILE_NOT_FOUND_GENERIC_ERROR);
 			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-				System.err.println(REFLECTION_ERROR);
+				//System.err.println(REFLECTION_ERROR);
+				JOptionPane.showMessageDialog(null, REFLECTION_ERROR);
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (CorruptedDataException e) {
-				System.err.println(CORRUPTED_FILE_ERROR);
+				//System.err.println(CORRUPTED_FILE_ERROR);
+				JOptionPane.showMessageDialog(null, CORRUPTED_FILE_ERROR);
 				e.printStackTrace();
 			} finally {
 				try {
@@ -170,17 +173,20 @@ public class CryptographyController implements ICryptographyViewObserver {
 					e.printStackTrace();
 				}
 			}
+			this.view.setValue_progressBarDecryption(100);
+			this.view.addText_logTextArea("Temporary files have been cleaned.");
 		} else {
-			// TODO: dialog
+			JOptionPane.showMessageDialog(null, "You must compile the form first!");
 		}
+		this.view.addText_logTextArea("Process completed!");
 	}
 
 	@Override
 	public void command_Encrypt() {
-		if(this.tempFileToEncrypt != null && this.tempOutputFileEncrypt != null && this.tempPublicKeyFile != null) {
+		File tempOutputFileEncrypt = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
+		if(this.tempFileToEncrypt != null && tempOutputFileEncrypt != null && this.tempPublicKeyFile != null) {
 			BufferedInputStream filetoencrypt = null;
 			BufferedOutputStream tempCipherFile = null;
-			BufferedOutputStream outputFile = null;
 			BufferedOutputStream tempCompressionFile = null;
 			ISymmetricCryptography newSymmetricCipher = null;
 			IAsymmetricCryptography newRSA = new RSA(); // Unico algoritmo simmetrico supportato (per ora)
@@ -188,30 +194,35 @@ public class CryptographyController implements ICryptographyViewObserver {
 			try {
 				filetoencrypt = new BufferedInputStream(new FileInputStream(tempFileToEncrypt));
 				tempCipherFile = new BufferedOutputStream(new FileOutputStream(TEMP_CIPHER_FILE_NAME));
-				outputFile = new BufferedOutputStream(new FileOutputStream(tempOutputFileEncrypt));
-				newSymmetricCipher = (ISymmetricCryptography)Class.forName(this.view.get_SymmetricAlgorithm().name()).newInstance(); // Reflection
+				this.view.setValue_progressBarEncryption(5);
+				newSymmetricCipher = (ISymmetricCryptography)Class.forName("algorithms." + this.view.getSymmetricAlgorithm().name()).newInstance(); // Reflection
 				newSymmetricCipher.generateKey(128); // TODO: magic number
-				newSymmetricCipher.encode(filetoencrypt, outputFile);
+				newSymmetricCipher.encode(filetoencrypt, tempCipherFile);
+				this.view.setValue_progressBarEncryption(30);
 				streamPublicKeyFile = new ObjectInputStream(new FileInputStream(tempPublicKeyFile));
 				newRSA.setKeyPair((PublicKey)streamPublicKeyFile.readObject(), null);
 				byte[] tempEncryptedSymmetricKey = newRSA.encode(newSymmetricCipher.getSymmetricKeySpec().getEncoded());
+				this.view.setValue_progressBarEncryption(40);
 				String payloadFile = TEMP_CIPHER_FILE_NAME;
 				if(this.view.getCompressionAlgorithm() != No_Compression) {
 					tempCompressionFile = new BufferedOutputStream(new FileOutputStream(TEMP_COMPRESSION_FILE_NAME));
 					algorithms.GZip.getInstance().compress(new BufferedInputStream(new FileInputStream(TEMP_CIPHER_FILE_NAME)), tempCompressionFile); // C'è modo di usare la reflection? Al momento funziona solo con GZip
 					payloadFile = TEMP_COMPRESSION_FILE_NAME;
 				}
-				this.model = new FileInterpret(this.view.get_SymmetricAlgorithm(), tempEncryptedSymmetricKey, this.view.get_HashingAlgorithm(), this.view.getCompressionAlgorithm(), new File(payloadFile));
+				this.view.setValue_progressBarEncryption(60);
+				this.model = new FileInterpret(this.view.getSymmetricAlgorithm(), tempEncryptedSymmetricKey, this.view.getHashingAlgorithm(), this.view.getCompressionAlgorithm(), this.tempFileToEncrypt.getName(),new File(payloadFile));
 				this.model.writeInterpretToFile(tempOutputFileEncrypt);
-				
+				this.view.setValue_progressBarEncryption(80);
 			} catch (FileNotFoundException e) {
-				System.err.println(FILE_NOT_FOUND_GENERIC_ERROR);
-				// TODO Message
+				//System.err.println(FILE_NOT_FOUND_GENERIC_ERROR);
+				JOptionPane.showMessageDialog(null, FILE_NOT_FOUND_GENERIC_ERROR);
 			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-				System.err.println(REFLECTION_ERROR);
+				//System.err.println(REFLECTION_ERROR);
+				JOptionPane.showMessageDialog(null, REFLECTION_ERROR);
 				e.printStackTrace();
 			}  catch (InvalidKeyException e) {
-				System.err.println(WRONG_KEYSIZE_ERROR);
+				//System.err.println(WRONG_KEYSIZE_ERROR);
+				JOptionPane.showMessageDialog(null, WRONG_KEYSIZE_ERROR);
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -224,9 +235,6 @@ public class CryptographyController implements ICryptographyViewObserver {
 						tempCipherFile.close();
 						new File(TEMP_CIPHER_FILE_NAME).delete();
 					}
-					if(outputFile != null) {
-						outputFile.close();
-					}
 					if(streamPublicKeyFile != null) {
 						streamPublicKeyFile.close();
 					}
@@ -238,9 +246,10 @@ public class CryptographyController implements ICryptographyViewObserver {
 					e.printStackTrace();
 				}
 			}
-			if(this.view.chckbx_isWipingEnabled()) {
-				Wiping.getInstance().wipe(tempFileToEncrypt, 1); // TODO: numero di passaggi specificato dall'utente
+			if(this.view.getNumberOfWipingPassages() > 0) {
+				Wiping.getInstance().wipe(tempFileToEncrypt, this.view.getNumberOfWipingPassages());
 			}
+			this.view.setValue_progressBarEncryption(100);
 			// TODO: mostrare qualcosa sulla gui
 		} else {
 			// TODO: Dialog
@@ -261,12 +270,12 @@ public class CryptographyController implements ICryptographyViewObserver {
 				newRSA.saveKeyToFile(PUBLIC_KEY, new FileOutputStream(selectedFile.getAbsolutePath() + ".pub"));
 				newRSA.saveKeyToFile(PRIVATE_KEY, new FileOutputStream(selectedFile.getAbsolutePath() + ".pvk"));
 			} catch (IOException e) {
-				System.err.println(IO_WRITING_ERROR);
+				//System.err.println(IO_WRITING_ERROR);
+				JOptionPane.showMessageDialog(null, IO_WRITING_ERROR);
 				e.printStackTrace();
 			}
 		} else {
 			// TODO: dialog
 		}
 	}
-
 }

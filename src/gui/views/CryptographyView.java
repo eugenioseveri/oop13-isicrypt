@@ -1,390 +1,350 @@
 package gui.views;
 
 import gui.controllers.ICryptographyViewObserver;
+import gui.models.ThemeChooser;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
-import java.awt.GridBagLayout;
-
-import javax.swing.JLabel;
-
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-
-import javax.swing.JComboBox;
-
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
-
-import javax.swing.JTextField;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.SwingConstants;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import algorithms.EnumAvailableCompressionAlgorithms;
 import algorithms.EnumAvailableHashingAlgorithms;
 import algorithms.EnumAvailableSymmetricAlgorithms;
 
-import java.awt.SystemColor;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-
-import javax.swing.JCheckBox;
-
-public class CryptographyView extends JFrame implements ICryptographyView {
-
-	private static final long serialVersionUID = 8776796811456991741L;
-	private JTextField textField_FileToEncrypt;
-	private JButton button_SelectFileToEncrypt;
-	private JTextField textField_FileToDecrypt;
-	private JButton button_SelectFileToDecrypt;
-	private JTextField textField_OutputFileEncrypt;
-	private JButton button_SelectOutputFileEncrypt;
-	private JTextField textField_OutputFileDecrypt;
-	private JButton button_SelectOutputFileDecrypt;
-	private JTextField textField_PublicKey;
-	private JButton button_SelectPublicKeyFile;
-	private JTextField textField_PrivateKey;
-	private JButton button_SelectPrivateKey;
-	private JComboBox<EnumAvailableSymmetricAlgorithms> comboBox_SymmetricAlgorithm;
-	private JButton button_Decrypt;
-	private JProgressBar progressBar_Decrypt;
-	private JComboBox<EnumAvailableSymmetricAlgorithms> comboBox_HashingAlgorithm;
-	private JTextArea txtrLog;
-	private JComboBox<EnumAvailableSymmetricAlgorithms> comboBox_CompressionAlgorithm;
-	private JButton button_Encrypt;
-	private JProgressBar progressBar_Encrypt;
-	private JButton button_GenerateNewKeyPair;
-	
+public class CryptographyView extends AbstractGuiMethodSetter implements ICryptographyView { // TODO: si può non estendere JFrame?
+	private Font font;
+	private Color panelBackColor;
+	private Color buttonColor;
+	private Color foregroundColor;
+	// Arrays that contains various dimension of insets
+	private static final int insetsDefault[] = { 10, 10, 10, 10 };
+	private static final int insetsBigButton[] = { 10, 10, 70, 70 };
+	private static final int zeroInsets []= { 0, 0, 0, 0 };
+	private static final int backInsets []= { 0, 0, 10, 10 };
+	private static final int labelInsets []= { 10, -10, 0, 0 };
+	private static final int zeroIpad  = 0;
+	private static final int noResizable  = 0;
+	private static final int resizable  = 1;
+	private static final int ipadDefaulty = 30;
+	private static final int ipadDefaultx = 65;
+	private static final int xPosition = 0;
+	private static final int yPosition = 0;
+	private static final int defaultCellArea = 1;
+	//GUI component declaration
+	//Encryption part
+	private static final Component backButton = new JButton("Show Start");
+	//private static final Component westEncryptBorderFiller = new JButton();
+	private static final Component encryptionLabel = new JLabel("Encryption");
+	private static final Component fileToEncryptButton = new JButton("File to encrypt:");
+	private static final Component encryptTextField = new JTextField();
+	private static final Component wipeSource = new JLabel("Source file wiping passages:");
+	private static final Component wipingComboBox = new JComboBox<Integer>();
+	private static final Component publicKeyButton = new JButton("Public key:");
+	private static final Component publicKeyTextField = new JTextField();
+	private static final Component newKeyPairButton = new JButton("Generate new key pair");
+	private static final Component fillerOne = new JButton();
+	private static final Component algorithmLabel = new JLabel("Algorithm:");
+	private static final Component algorithmComboBox = new JComboBox<EnumAvailableSymmetricAlgorithms>();
+	private static final Component hashingLabel = new JLabel("Hashing:");
+	private static final Component hashingComboBox = new JComboBox<EnumAvailableHashingAlgorithms>();
+	private static final Component compressionLabel = new JLabel("Compression:");
+	private static final Component compressionComboBox = new JComboBox<EnumAvailableCompressionAlgorithms>();
+	private static final Component fillerTwo = new JButton();
+	private static final Component startEncryptionButton = new JButton("Start Encryption");
+	private static final Component statusLabelEncryption = new JLabel("Status: ");
+	private static final Component progressBarEncryption = new JProgressBar();
+	private static final Component statusLabelDecryption = new JLabel("Status: ");
+	private static final Component progressBarDecryption = new JProgressBar();
+	//private static final Component eastEncryptBorderFiller = new JButton();
+	//Decryption part
+	private static final Component separator = new JSeparator(SwingConstants.VERTICAL);
+	//private static final Component westDecryptBorderFiller = new JButton();
+	private static final Component decryptionLabel = new JLabel("Decryption");
+	private static final Component fileToDecryptButton = new JButton("File to decrypt:");
+	private static final Component decryptTextField = new JTextField();
+	private static final Component privateKeyButton = new JButton("Private key:");
+	private static final Component privateKeyTextField = new JTextField();
+	private static final Component fillerThree = new JButton();
+	private static final Component startDecryptionButton = new JButton("Start Decryption");
+	//private static final Component fillerFour= new JButton();
+	private static final Component logTextArea = new JTextArea(20,20);
+	private final static Component scrollPane = new JScrollPane(logTextArea);
+	//private static final Component eastDecryptBorderFiller = new JButton();
+	//Frame and panel
+	private static final JPanel container = new JPanel();
+	private GridBagConstraints limit;
+	//private final static JFrame dialog = new JFrame();
+	private final static JFrame frame = new JFrame();
+	//Observer
 	private ICryptographyViewObserver controller;
-	private JCheckBox chckbx_wipingEnabled;
-	/**
-	 * Create the frame.
-	 */
-	public CryptographyView() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Da modificare
-		setBounds(100, 100, 600, 298);
+	
+	public void attachViewObserver(ICryptographyViewObserver listener){
+		this.controller = listener;
+	}
+	
+	public CryptographyView(){
 		buildLayout();
+		componentSetting();
+		setFrame();
 		setHandlers();
 	}
-	
+	//BuildLayout same for all view
 	private void buildLayout() {
-		JPanel contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		GridBagLayout gbl_contentPane = new GridBagLayout();
-		gbl_contentPane.columnWidths = new int[]{0, 79, 0, 0, 0, 0, 0, 0, 0, 0};
-		gbl_contentPane.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gbl_contentPane.columnWeights = new double[]{1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
-		gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-		contentPane.setLayout(gbl_contentPane);
-		
-		JLabel lblEncryption = new JLabel("Encryption");
-		lblEncryption.setFont(new Font("Tahoma", Font.BOLD, 12));
-		GridBagConstraints gbc_lblEncryption = new GridBagConstraints();
-		gbc_lblEncryption.gridwidth = 4;
-		gbc_lblEncryption.insets = new Insets(0, 0, 5, 5);
-		gbc_lblEncryption.gridx = 0;
-		gbc_lblEncryption.gridy = 0;
-		contentPane.add(lblEncryption, gbc_lblEncryption);
-		
-		JLabel lblDecryption = new JLabel("Decryption");
-		lblDecryption.setFont(new Font("Tahoma", Font.BOLD, 12));
-		GridBagConstraints gbc_lblDecryption = new GridBagConstraints();
-		gbc_lblDecryption.gridwidth = 4;
-		gbc_lblDecryption.insets = new Insets(0, 0, 5, 0);
-		gbc_lblDecryption.gridx = 5;
-		gbc_lblDecryption.gridy = 0;
-		contentPane.add(lblDecryption, gbc_lblDecryption);
-		
-		JLabel lblFileToEncrypt = new JLabel("File to encrypt:");
-		GridBagConstraints gbc_lblFileToEncrypt = new GridBagConstraints();
-		gbc_lblFileToEncrypt.anchor = GridBagConstraints.EAST;
-		gbc_lblFileToEncrypt.insets = new Insets(0, 0, 5, 5);
-		gbc_lblFileToEncrypt.gridx = 0;
-		gbc_lblFileToEncrypt.gridy = 1;
-		contentPane.add(lblFileToEncrypt, gbc_lblFileToEncrypt);
-		
-		textField_FileToEncrypt = new JTextField();
-		textField_FileToEncrypt.setEditable(false);
-		GridBagConstraints gbc_textField_FileToEncrypt = new GridBagConstraints();
-		gbc_textField_FileToEncrypt.gridwidth = 2;
-		gbc_textField_FileToEncrypt.insets = new Insets(0, 0, 5, 5);
-		gbc_textField_FileToEncrypt.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField_FileToEncrypt.gridx = 1;
-		gbc_textField_FileToEncrypt.gridy = 1;
-		contentPane.add(textField_FileToEncrypt, gbc_textField_FileToEncrypt);
-		textField_FileToEncrypt.setColumns(10);
-		
-		button_SelectFileToEncrypt = new JButton("...");
-		GridBagConstraints gbc_button_SelectFileToEncrypt = new GridBagConstraints();
-		gbc_button_SelectFileToEncrypt.insets = new Insets(0, 0, 5, 5);
-		gbc_button_SelectFileToEncrypt.gridx = 3;
-		gbc_button_SelectFileToEncrypt.gridy = 1;
-		contentPane.add(button_SelectFileToEncrypt, gbc_button_SelectFileToEncrypt);
-		
-		JSeparator separator = new JSeparator();
-		separator.setOrientation(SwingConstants.VERTICAL);
-		GridBagConstraints gbc_separator = new GridBagConstraints();
-		gbc_separator.fill = GridBagConstraints.VERTICAL;
-		gbc_separator.gridheight = 8;
-		gbc_separator.insets = new Insets(0, 0, 5, 5);
-		gbc_separator.gridx = 4;
-		gbc_separator.gridy = 0;
-		gbc_separator.weightx = 1;
-		gbc_separator.ipadx = 20;
-		contentPane.add(separator, gbc_separator);
-		
-		JLabel lblFileToDecrypt = new JLabel("File to decrypt:");
-		GridBagConstraints gbc_lblFileToDecrypt = new GridBagConstraints();
-		gbc_lblFileToDecrypt.anchor = GridBagConstraints.EAST;
-		gbc_lblFileToDecrypt.insets = new Insets(0, 0, 5, 5);
-		gbc_lblFileToDecrypt.gridx = 5;
-		gbc_lblFileToDecrypt.gridy = 1;
-		contentPane.add(lblFileToDecrypt, gbc_lblFileToDecrypt);
-		
-		textField_FileToDecrypt = new JTextField();
-		textField_FileToDecrypt.setEditable(false);
-		GridBagConstraints gbc_textField_FileToDecrypt = new GridBagConstraints();
-		gbc_textField_FileToDecrypt.gridwidth = 2;
-		gbc_textField_FileToDecrypt.insets = new Insets(0, 0, 5, 5);
-		gbc_textField_FileToDecrypt.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField_FileToDecrypt.gridx = 6;
-		gbc_textField_FileToDecrypt.gridy = 1;
-		contentPane.add(textField_FileToDecrypt, gbc_textField_FileToDecrypt);
-		textField_FileToDecrypt.setColumns(10);
-		
-		button_SelectFileToDecrypt = new JButton("...");
-		GridBagConstraints gbc_button_SelectFileToDecrypt = new GridBagConstraints();
-		gbc_button_SelectFileToDecrypt.insets = new Insets(0, 0, 5, 0);
-		gbc_button_SelectFileToDecrypt.gridx = 8;
-		gbc_button_SelectFileToDecrypt.gridy = 1;
-		contentPane.add(button_SelectFileToDecrypt, gbc_button_SelectFileToDecrypt);
-		
-		JLabel lblOutputFileEncrypt = new JLabel("Output file:");
-		GridBagConstraints gbc_lblOutputFileEncrypt = new GridBagConstraints();
-		gbc_lblOutputFileEncrypt.anchor = GridBagConstraints.EAST;
-		gbc_lblOutputFileEncrypt.insets = new Insets(0, 0, 5, 5);
-		gbc_lblOutputFileEncrypt.gridx = 0;
-		gbc_lblOutputFileEncrypt.gridy = 2;
-		contentPane.add(lblOutputFileEncrypt, gbc_lblOutputFileEncrypt);
-		
-		textField_OutputFileEncrypt = new JTextField();
-		textField_OutputFileEncrypt.setEditable(false);
-		GridBagConstraints gbc_textField_OutputFileEncrypt = new GridBagConstraints();
-		gbc_textField_OutputFileEncrypt.gridwidth = 2;
-		gbc_textField_OutputFileEncrypt.insets = new Insets(0, 0, 5, 5);
-		gbc_textField_OutputFileEncrypt.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField_OutputFileEncrypt.gridx = 1;
-		gbc_textField_OutputFileEncrypt.gridy = 2;
-		contentPane.add(textField_OutputFileEncrypt, gbc_textField_OutputFileEncrypt);
-		textField_OutputFileEncrypt.setColumns(10);
-		
-		button_SelectOutputFileEncrypt = new JButton("...");
-		GridBagConstraints gbc_button_SelectOutputFileEncrypt = new GridBagConstraints();
-		gbc_button_SelectOutputFileEncrypt.insets = new Insets(0, 0, 5, 5);
-		gbc_button_SelectOutputFileEncrypt.gridx = 3;
-		gbc_button_SelectOutputFileEncrypt.gridy = 2;
-		contentPane.add(button_SelectOutputFileEncrypt, gbc_button_SelectOutputFileEncrypt);
-		
-		JLabel lblOutputFileDecrypt = new JLabel("Output file:");
-		GridBagConstraints gbc_lblOutputFileDecrypt = new GridBagConstraints();
-		gbc_lblOutputFileDecrypt.anchor = GridBagConstraints.EAST;
-		gbc_lblOutputFileDecrypt.insets = new Insets(0, 0, 5, 5);
-		gbc_lblOutputFileDecrypt.gridx = 5;
-		gbc_lblOutputFileDecrypt.gridy = 2;
-		contentPane.add(lblOutputFileDecrypt, gbc_lblOutputFileDecrypt);
-		
-		textField_OutputFileDecrypt = new JTextField();
-		textField_OutputFileDecrypt.setEditable(false);
-		GridBagConstraints gbc_textField_OutputFileDecrypt = new GridBagConstraints();
-		gbc_textField_OutputFileDecrypt.gridwidth = 2;
-		gbc_textField_OutputFileDecrypt.insets = new Insets(0, 0, 5, 5);
-		gbc_textField_OutputFileDecrypt.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField_OutputFileDecrypt.gridx = 6;
-		gbc_textField_OutputFileDecrypt.gridy = 2;
-		contentPane.add(textField_OutputFileDecrypt, gbc_textField_OutputFileDecrypt);
-		textField_OutputFileDecrypt.setColumns(10);
-		
-		button_SelectOutputFileDecrypt = new JButton("...");
-		GridBagConstraints gbc_button_SelectOutputFileDecrypt = new GridBagConstraints();
-		gbc_button_SelectOutputFileDecrypt.insets = new Insets(0, 0, 5, 0);
-		gbc_button_SelectOutputFileDecrypt.gridx = 8;
-		gbc_button_SelectOutputFileDecrypt.gridy = 2;
-		contentPane.add(button_SelectOutputFileDecrypt, gbc_button_SelectOutputFileDecrypt);
-		
-		JLabel lblPublicKey = new JLabel("Public key:");
-		GridBagConstraints gbc_lblPublicKey = new GridBagConstraints();
-		gbc_lblPublicKey.anchor = GridBagConstraints.EAST;
-		gbc_lblPublicKey.insets = new Insets(0, 0, 5, 5);
-		gbc_lblPublicKey.gridx = 0;
-		gbc_lblPublicKey.gridy = 3;
-		contentPane.add(lblPublicKey, gbc_lblPublicKey);
-		
-		textField_PublicKey = new JTextField();
-		textField_PublicKey.setEditable(false);
-		GridBagConstraints gbc_textField_PublicKey = new GridBagConstraints();
-		gbc_textField_PublicKey.gridwidth = 2;
-		gbc_textField_PublicKey.insets = new Insets(0, 0, 5, 5);
-		gbc_textField_PublicKey.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField_PublicKey.gridx = 1;
-		gbc_textField_PublicKey.gridy = 3;
-		contentPane.add(textField_PublicKey, gbc_textField_PublicKey);
-		textField_PublicKey.setColumns(10);
-		
-		button_SelectPublicKeyFile = new JButton("...");
-		GridBagConstraints gbc_button_SelectPublicKeyFile = new GridBagConstraints();
-		gbc_button_SelectPublicKeyFile.insets = new Insets(0, 0, 5, 5);
-		gbc_button_SelectPublicKeyFile.gridx = 3;
-		gbc_button_SelectPublicKeyFile.gridy = 3;
-		contentPane.add(button_SelectPublicKeyFile, gbc_button_SelectPublicKeyFile);
-		
-		JLabel lblPrivateKey = new JLabel("Private Key:");
-		GridBagConstraints gbc_lblPrivateKey = new GridBagConstraints();
-		gbc_lblPrivateKey.anchor = GridBagConstraints.EAST;
-		gbc_lblPrivateKey.insets = new Insets(0, 0, 5, 5);
-		gbc_lblPrivateKey.gridx = 5;
-		gbc_lblPrivateKey.gridy = 3;
-		contentPane.add(lblPrivateKey, gbc_lblPrivateKey);
-		
-		textField_PrivateKey = new JTextField();
-		textField_PrivateKey.setEditable(false);
-		GridBagConstraints gbc_textField_PrivateKey = new GridBagConstraints();
-		gbc_textField_PrivateKey.gridwidth = 2;
-		gbc_textField_PrivateKey.insets = new Insets(0, 0, 5, 5);
-		gbc_textField_PrivateKey.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField_PrivateKey.gridx = 6;
-		gbc_textField_PrivateKey.gridy = 3;
-		contentPane.add(textField_PrivateKey, gbc_textField_PrivateKey);
-		textField_PrivateKey.setColumns(10);
-		
-		button_SelectPrivateKey = new JButton("...");
-		GridBagConstraints gbc_button_SelectPrivateKey = new GridBagConstraints();
-		gbc_button_SelectPrivateKey.insets = new Insets(0, 0, 5, 0);
-		gbc_button_SelectPrivateKey.gridx = 8;
-		gbc_button_SelectPrivateKey.gridy = 3;
-		contentPane.add(button_SelectPrivateKey, gbc_button_SelectPrivateKey);
-		
-		button_GenerateNewKeyPair = new JButton("Generate new key pair");
-		GridBagConstraints gbc_btnGenerate_newkeypair = new GridBagConstraints();
-		gbc_btnGenerate_newkeypair.insets = new Insets(0, 0, 5, 5);
-		gbc_btnGenerate_newkeypair.gridx = 1;
-		gbc_btnGenerate_newkeypair.gridy = 4;
-		contentPane.add(button_GenerateNewKeyPair, gbc_btnGenerate_newkeypair);
-		
-		chckbx_wipingEnabled = new JCheckBox("Wipe source file");
-		GridBagConstraints gbc_chckbx_wipingEnabled = new GridBagConstraints();
-		gbc_chckbx_wipingEnabled.gridwidth = 2;
-		gbc_chckbx_wipingEnabled.insets = new Insets(0, 0, 5, 5);
-		gbc_chckbx_wipingEnabled.gridx = 2;
-		gbc_chckbx_wipingEnabled.gridy = 4;
-		contentPane.add(chckbx_wipingEnabled, gbc_chckbx_wipingEnabled);
-		
-		button_Decrypt = new JButton("Decrypt!");
-		button_Decrypt.setFont(new Font("Tahoma", Font.BOLD, 11));
-		GridBagConstraints gbc_btnDecrypt = new GridBagConstraints();
-		gbc_btnDecrypt.anchor = GridBagConstraints.SOUTHWEST;
-		gbc_btnDecrypt.insets = new Insets(0, 0, 5, 5);
-		gbc_btnDecrypt.gridx = 5;
-		gbc_btnDecrypt.gridy = 4;
-		gbc_btnDecrypt.fill = gbc_btnDecrypt.SOUTHWEST;
-		contentPane.add(button_Decrypt, gbc_btnDecrypt);
-		
-		progressBar_Decrypt = new JProgressBar();
-		GridBagConstraints gbc_progressBar_Decrypt = new GridBagConstraints();
-		gbc_progressBar_Decrypt.insets = new Insets(0, 0, 5, 0);
-		gbc_progressBar_Decrypt.gridwidth = 3;
-		gbc_progressBar_Decrypt.gridx = 6;
-		gbc_progressBar_Decrypt.gridy = 4;
-		contentPane.add(progressBar_Decrypt, gbc_progressBar_Decrypt);
-		
-		JLabel lblSymmetricAlgorithm = new JLabel("Algorithm:");
-		GridBagConstraints gbc_lblSymmetricAlgorithm = new GridBagConstraints();
-		gbc_lblSymmetricAlgorithm.insets = new Insets(0, 0, 5, 5);
-		gbc_lblSymmetricAlgorithm.gridx = 0;
-		gbc_lblSymmetricAlgorithm.gridy = 5;
-		contentPane.add(lblSymmetricAlgorithm, gbc_lblSymmetricAlgorithm);
-		
-		comboBox_SymmetricAlgorithm = new JComboBox<EnumAvailableSymmetricAlgorithms>();
-		GridBagConstraints gbc_comboBox_SymmetricAlgorithm = new GridBagConstraints();
-		gbc_comboBox_SymmetricAlgorithm.insets = new Insets(0, 0, 5, 5);
-		gbc_comboBox_SymmetricAlgorithm.fill = GridBagConstraints.HORIZONTAL;
-		gbc_comboBox_SymmetricAlgorithm.gridx = 1;
-		gbc_comboBox_SymmetricAlgorithm.gridy = 5;
-		contentPane.add(comboBox_SymmetricAlgorithm, gbc_comboBox_SymmetricAlgorithm);
-		
-		txtrLog = new JTextArea();
-		txtrLog.setText("Log:");
-		txtrLog.setBackground(SystemColor.info);
-		txtrLog.setEditable(false);
-		GridBagConstraints gbc_txtrLog = new GridBagConstraints();
-		gbc_txtrLog.gridheight = 3;
-		gbc_txtrLog.gridwidth = 4;
-		gbc_txtrLog.fill = GridBagConstraints.BOTH;
-		gbc_txtrLog.gridx = 5;
-		gbc_txtrLog.gridy = 6;
-		contentPane.add(txtrLog, gbc_txtrLog);
-		
-		JLabel lblHashingAlgorithm = new JLabel("Hashing:");
-		GridBagConstraints gbc_lblHashingAlgorithm = new GridBagConstraints();
-		gbc_lblHashingAlgorithm.insets = new Insets(0, 0, 5, 5);
-		gbc_lblHashingAlgorithm.gridx = 0;
-		gbc_lblHashingAlgorithm.gridy = 6;
-		contentPane.add(lblHashingAlgorithm, gbc_lblHashingAlgorithm);
-		
-		comboBox_HashingAlgorithm = new JComboBox<EnumAvailableSymmetricAlgorithms>();
-		GridBagConstraints gbc_comboBox_HashingAlgorithm = new GridBagConstraints();
-		gbc_comboBox_HashingAlgorithm.insets = new Insets(0, 0, 5, 5);
-		gbc_comboBox_HashingAlgorithm.fill = GridBagConstraints.HORIZONTAL;
-		gbc_comboBox_HashingAlgorithm.gridx = 1;
-		gbc_comboBox_HashingAlgorithm.gridy = 6;
-		contentPane.add(comboBox_HashingAlgorithm, gbc_comboBox_HashingAlgorithm);
-		
-		JLabel lblCompressionAlgorithm = new JLabel("Compression:");
-		GridBagConstraints gbc_lblCompressionAlgorithm = new GridBagConstraints();
-		gbc_lblCompressionAlgorithm.insets = new Insets(0, 0, 5, 5);
-		gbc_lblCompressionAlgorithm.gridx = 0;
-		gbc_lblCompressionAlgorithm.gridy = 7;
-		contentPane.add(lblCompressionAlgorithm, gbc_lblCompressionAlgorithm);
-		
-		comboBox_CompressionAlgorithm = new JComboBox<EnumAvailableSymmetricAlgorithms>();
-		GridBagConstraints gbc_comboBox_CompressionAlgorithm = new GridBagConstraints();
-		gbc_comboBox_CompressionAlgorithm.insets = new Insets(0, 0, 5, 5);
-		gbc_comboBox_CompressionAlgorithm.fill = GridBagConstraints.HORIZONTAL;
-		gbc_comboBox_CompressionAlgorithm.gridx = 1;
-		gbc_comboBox_CompressionAlgorithm.gridy = 7;
-		contentPane.add(comboBox_CompressionAlgorithm, gbc_comboBox_CompressionAlgorithm);
-		
-		button_Encrypt = new JButton("Encrypt!");
-		button_Encrypt.setFont(new Font("Tahoma", Font.BOLD, 11));
-		GridBagConstraints gbc_btnEncrypt = new GridBagConstraints();
-		gbc_btnEncrypt.insets = new Insets(0, 0, 0, 5);
-		gbc_btnEncrypt.gridx = 0;
-		gbc_btnEncrypt.gridy = 8;
-		contentPane.add(button_Encrypt, gbc_btnEncrypt);
-		
-		progressBar_Encrypt = new JProgressBar();
-		GridBagConstraints gbc_progressBar_Encrypt = new GridBagConstraints();
-		gbc_progressBar_Encrypt.gridwidth = 3;
-		gbc_progressBar_Encrypt.insets = new Insets(0, 0, 0, 5);
-		gbc_progressBar_Encrypt.gridx = 1;
-		gbc_progressBar_Encrypt.gridy = 8;
-		contentPane.add(progressBar_Encrypt, gbc_progressBar_Encrypt);
+		//GlobalSettings set = null;
+	//	set = new GlobalSettings();
+		this.setButtonColor(ThemeChooser.getButtonColor());
+		this.setFont(ThemeChooser.getFont());
+		this.setForegroundColor(ThemeChooser.getForegroundColor());
+		this.setPanelBackColor(ThemeChooser.getPanelBackColor());
+		GridBagLayout layout = new GridBagLayout();
+		limit = new GridBagConstraints();
+		container.setLayout(layout);
+		container.setBackground(panelBackColor);
 	}
-
+	
+	//Graphic draw
+	@SuppressWarnings("unchecked") // Attenzione! (ma non dovrebbero verificarsi errori) (anche sotto)
+	private void componentSetting(){
+		//JLabel ENCRYPTION LABEL
+		((JLabel)encryptionLabel).setForeground(Color.WHITE);
+		setLimit(limit, zeroIpad, zeroIpad, labelInsets,
+				GridBagConstraints.CENTER, GridBagConstraints.CENTER, container, encryptionLabel);
+		setGridposition(limit, xPosition+1, yPosition, defaultCellArea+1, defaultCellArea,
+				noResizable, noResizable, container, encryptionLabel);
+		//JButton BACK TO START 
+		setJButton(backButton, buttonColor, foregroundColor, font, false, false);
+		setLimit(limit, ipadDefaultx-50, ipadDefaulty-10, backInsets,
+				GridBagConstraints.CENTER, GridBagConstraints.WEST, container, backButton);
+		setGridposition(limit, xPosition+1, yPosition	, defaultCellArea, defaultCellArea,
+				noResizable, noResizable, container, backButton);
+		//FILLER
+		((JButton)fillerThree).setEnabled(false);
+		setJButton(fillerThree, panelBackColor, panelBackColor, null, false, false);
+		setLimit(limit, zeroIpad, zeroIpad, zeroInsets, 
+				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, fillerThree);
+		setGridposition(limit, xPosition+1, yPosition+1, defaultCellArea+1, defaultCellArea,
+				resizable, resizable, container, fillerThree);
+		//JButton ENCRYPT BUTTON
+		setJButton(fileToEncryptButton, buttonColor, foregroundColor, font, false, false);
+		setLimit(limit, ipadDefaultx, ipadDefaulty, insetsDefault,
+				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, fileToEncryptButton);
+		setGridposition(limit, xPosition+1, yPosition+2	, defaultCellArea, defaultCellArea,
+				noResizable, noResizable, container, fileToEncryptButton);
+		//TextField ENCRYPT TEXTFIELD
+		((JTextField)encryptTextField).setEditable(false);
+		setLimit(limit, zeroIpad, zeroIpad, insetsDefault, 
+				GridBagConstraints.HORIZONTAL, GridBagConstraints.SOUTH, container, encryptTextField);
+		setGridposition(limit, xPosition+2, yPosition+2, defaultCellArea, defaultCellArea,
+				resizable, noResizable, container, encryptTextField);
+		//checkbox WIPE SOURCE CHECKBOX
+		((JLabel)wipeSource).setForeground(Color.WHITE);
+		setLimit(limit, zeroIpad, zeroIpad, zeroInsets,
+				GridBagConstraints.CENTER, GridBagConstraints.CENTER, container, wipeSource);
+		setGridposition(limit, xPosition+1, yPosition+4, defaultCellArea, defaultCellArea,
+				noResizable, noResizable, container, wipeSource);
+		// JCombobox SELECT WIPING TYPE
+		((JComboBox<Integer>)wipingComboBox).addItem(0);
+		((JComboBox<Integer>)wipingComboBox).addItem(1);
+		((JComboBox<Integer>)wipingComboBox).addItem(2);
+		((JComboBox<Integer>)wipingComboBox).addItem(7);
+		setLimit(limit, zeroIpad, zeroIpad, insetsDefault, 
+				GridBagConstraints.HORIZONTAL, GridBagConstraints.SOUTH, container, wipingComboBox);
+		setGridposition(limit, xPosition+2, yPosition+4, defaultCellArea, defaultCellArea,
+				resizable, noResizable, container, wipingComboBox);
+		//JButton PUBLIC KEY BUTTON
+		setJButton(publicKeyButton, buttonColor, foregroundColor, font, false, false);
+		setLimit(limit, ipadDefaultx, ipadDefaulty, insetsDefault,
+				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, publicKeyButton);
+		setGridposition(limit, xPosition+1, yPosition+5, defaultCellArea, defaultCellArea,
+				noResizable, noResizable, container, publicKeyButton);
+		//TextField PUBLIC KEY TEXT FIELD
+		((JTextField)publicKeyTextField).setEditable(false);
+		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
+				GridBagConstraints.HORIZONTAL, GridBagConstraints.SOUTH, container, publicKeyTextField);
+		setGridposition(limit, xPosition+2, yPosition+5, defaultCellArea, defaultCellArea,
+				resizable, noResizable, container, publicKeyTextField);
+		//JButton NEW KEY PAIR BUTTON 
+		setJButton(newKeyPairButton, buttonColor, foregroundColor, font, false, false);
+		setLimit(limit, ipadDefaultx, ipadDefaulty, insetsBigButton,
+				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, newKeyPairButton);
+		setGridposition(limit, xPosition+1, yPosition+7, defaultCellArea+1, defaultCellArea,
+				resizable, noResizable, container, newKeyPairButton);
+		//Filler 
+		((JButton)fillerOne).setEnabled(false);
+	//	((JButton)fillerOne).setVisible(false);
+		setJButton(fillerOne, panelBackColor, panelBackColor, null, false, false);
+		setLimit(limit, zeroIpad, zeroIpad, zeroInsets, 
+				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, fillerOne);
+		setGridposition(limit, xPosition+1, yPosition+8, defaultCellArea+1, defaultCellArea,
+				resizable, resizable, container, fillerOne);
+		//JLabel ALGORITHM LABLE
+		((JLabel)algorithmLabel).setForeground(Color.WHITE);
+		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
+				GridBagConstraints.CENTER, GridBagConstraints.EAST, container, algorithmLabel);
+		setGridposition(limit, xPosition+1, yPosition+9, defaultCellArea, defaultCellArea,
+				noResizable, noResizable, container, algorithmLabel);
+		//JCombobox ALGORITHM TEXT FIELD
+		for(EnumAvailableSymmetricAlgorithms item: EnumAvailableSymmetricAlgorithms.values()) {
+			((JComboBox<EnumAvailableSymmetricAlgorithms>)algorithmComboBox).addItem(item);
+		}
+		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
+				GridBagConstraints.HORIZONTAL, GridBagConstraints.EAST, container, algorithmComboBox);
+		setGridposition(limit, xPosition+2, yPosition+9, defaultCellArea, defaultCellArea,
+				resizable, noResizable, container, algorithmComboBox);
+		//JLabel HASHING LABEL
+		((JLabel)hashingLabel).setForeground(Color.WHITE);
+		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
+				GridBagConstraints.CENTER, GridBagConstraints.EAST, container, hashingLabel );
+		setGridposition(limit, xPosition+1, yPosition+11, defaultCellArea, defaultCellArea,
+				noResizable, noResizable, container, hashingLabel);
+		//JCombobox HASHING TEXT FIELD
+		for(EnumAvailableHashingAlgorithms item: EnumAvailableHashingAlgorithms.values()) {
+			((JComboBox<EnumAvailableHashingAlgorithms>)hashingComboBox).addItem(item);
+		}
+		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
+				GridBagConstraints.HORIZONTAL, GridBagConstraints.EAST, container, hashingComboBox);
+		setGridposition(limit, xPosition+2, yPosition+11, defaultCellArea, defaultCellArea,
+				resizable, noResizable, container, hashingComboBox);
+		//JLabel COMPRESSION LABEL
+		((JLabel)compressionLabel).setForeground(Color.WHITE);
+		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
+				GridBagConstraints.CENTER, GridBagConstraints.EAST, container, compressionLabel);
+		setGridposition(limit, xPosition+1, yPosition+12, defaultCellArea, defaultCellArea,
+				noResizable, noResizable, container, compressionLabel);
+		//JCombobox COMPRESSION TEXT FIELD
+		for(EnumAvailableCompressionAlgorithms item: EnumAvailableCompressionAlgorithms.values()) {
+			((JComboBox<EnumAvailableCompressionAlgorithms>)compressionComboBox).addItem(item);
+		}
+		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
+				GridBagConstraints.HORIZONTAL, GridBagConstraints.EAST, container, compressionComboBox);
+		setGridposition(limit, xPosition+2, yPosition+12, defaultCellArea, defaultCellArea,
+				resizable, noResizable, container, compressionComboBox);
+		//filler
+		((JButton)fillerTwo).setEnabled(false);
+		setJButton(fillerTwo, panelBackColor, panelBackColor, null, false, false);
+		setLimit(limit, zeroIpad, zeroIpad, zeroInsets,
+				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, fillerTwo);
+		setGridposition(limit, xPosition+1, yPosition+13, defaultCellArea+1, defaultCellArea,
+				resizable, resizable, container, fillerTwo);
+		//JButton START ENCRYPTION
+		setJButton(startEncryptionButton, buttonColor, foregroundColor, font, false, false);
+		setLimit(limit, ipadDefaultx, ipadDefaulty, insetsBigButton, 
+				GridBagConstraints.BOTH, GridBagConstraints.EAST, container, startEncryptionButton);
+		setGridposition(limit, xPosition+1, yPosition+14, defaultCellArea+1, defaultCellArea,
+				resizable, noResizable, container, startEncryptionButton);
+		//Status LABEL
+		((JLabel)statusLabelEncryption).setForeground(Color.WHITE);
+		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
+				GridBagConstraints.CENTER, GridBagConstraints.CENTER, container, statusLabelEncryption);
+		setGridposition(limit, xPosition+1, yPosition+15, defaultCellArea, defaultCellArea, 
+				noResizable, noResizable, container, statusLabelEncryption);
+		//encryption PROGRESS BAR
+		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
+				GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER, container, progressBarEncryption);
+		setGridposition(limit, xPosition+2, yPosition+15, defaultCellArea, defaultCellArea,
+				resizable, noResizable, container, progressBarEncryption);
+		
+		//DECRYPTION
+		
+		//SEPARATOR
+		setLimit(limit, zeroIpad, zeroIpad, zeroInsets, 
+				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, separator);
+		setGridposition(limit, xPosition+3, yPosition, defaultCellArea, defaultCellArea+15,
+				noResizable, resizable, container, separator);
+		//decryption LABEL
+		((JLabel)decryptionLabel).setForeground(Color.WHITE);
+		setLimit(limit, zeroIpad, zeroIpad, labelInsets,
+				GridBagConstraints.CENTER, GridBagConstraints.CENTER, container, decryptionLabel);
+		setGridposition(limit, xPosition+4, yPosition, defaultCellArea+2, defaultCellArea,
+				noResizable, noResizable, container, decryptionLabel);
+		//JButton select FILE DECRYPT
+		setJButton(fileToDecryptButton, buttonColor, foregroundColor, font, false, false);
+		setLimit(limit, ipadDefaultx, ipadDefaulty, insetsDefault,
+				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, fileToDecryptButton);
+		setGridposition(limit, xPosition+4, yPosition+2	, defaultCellArea, defaultCellArea,
+				noResizable, noResizable, container, fileToDecryptButton);
+		//TextField  DECRYPT FIELD
+		((JTextField)decryptTextField).setEditable(false);
+		setLimit(limit, zeroIpad, zeroIpad, insetsDefault, 
+				GridBagConstraints.HORIZONTAL, GridBagConstraints.SOUTH, container, decryptTextField);
+		setGridposition(limit, xPosition+5, yPosition+2, defaultCellArea+1, defaultCellArea,
+				noResizable, noResizable, container, decryptTextField);
+		//JButton PRIVATE KEY
+		setJButton(privateKeyButton, buttonColor, foregroundColor, font, false, false);
+		setLimit(limit, ipadDefaultx, ipadDefaulty, insetsDefault,
+				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, privateKeyButton);
+		setGridposition(limit, xPosition+4, yPosition+5, defaultCellArea, defaultCellArea,
+				noResizable, noResizable, container, privateKeyButton);
+		//textField PRIVATE KEY FIELD
+		((JTextField)privateKeyTextField).setEditable(false);
+		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
+				GridBagConstraints.HORIZONTAL, GridBagConstraints.SOUTH, container, privateKeyTextField);
+		setGridposition(limit, xPosition+5, yPosition+5, defaultCellArea+1, defaultCellArea,
+				resizable, noResizable, container, privateKeyTextField);
+		//Jbutton STAR DECRYPTION
+		setJButton(startDecryptionButton, buttonColor, foregroundColor, font, false, false);
+		setLimit(limit, ipadDefaultx, ipadDefaulty, insetsBigButton,
+				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, startDecryptionButton);
+		setGridposition(limit, xPosition+4, yPosition+7, defaultCellArea+2, defaultCellArea,
+				noResizable, noResizable, container, startDecryptionButton);
+		//Status LABEL
+		((JLabel)statusLabelDecryption).setForeground(Color.WHITE);
+		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
+				GridBagConstraints.CENTER, GridBagConstraints.NORTH, container, statusLabelDecryption);
+		setGridposition(limit, xPosition+4, yPosition+8, defaultCellArea, defaultCellArea, 
+				noResizable, noResizable, container, statusLabelDecryption);
+		//PROGRESS BAR
+		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
+				GridBagConstraints.HORIZONTAL, GridBagConstraints.NORTH, container, progressBarDecryption);
+		setGridposition(limit, xPosition+5, yPosition+8, defaultCellArea, defaultCellArea,
+				resizable, noResizable, container, progressBarDecryption);
+		//TextArea LOG TEXT AREA
+		((JTextArea) logTextArea).setLineWrap(true);//Format text on TextArea
+		((JTextArea) logTextArea).setWrapStyleWord(true);	//Format text on TextArea
+		scrollPane.setPreferredSize(((JTextArea) logTextArea).getSize());
+		((JScrollPane) scrollPane).setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); 	//Only vertical scroll bar
+		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
+				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, scrollPane);
+		setGridposition(limit, xPosition+4, yPosition+9, defaultCellArea+1, defaultCellArea+6,
+				resizable, resizable, container, scrollPane);
+		
+	}
+	
+	private void setFrame() {
+		try {
+			frame.setIconImage(ImageIO.read(new File(
+					"./res/isiCryptICON_MetroStyle.jpg")));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		frame.setTitle("Cryptography");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(920, 640);
+		frame.getContentPane().add(container);
+		frame.setVisible(true);
+	}
+	
 	private void setHandlers() {
-		this.button_SelectFileToEncrypt.addActionListener(new ActionListener() {
+		((JButton)CryptographyView.fileToEncryptButton).addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try { //  TODO: remove
@@ -394,119 +354,125 @@ public class CryptographyView extends JFrame implements ICryptographyView {
 				}
 			}
 		});
-		this.button_SelectFileToDecrypt.addActionListener(new ActionListener() {
+		((JButton)CryptographyView.fileToDecryptButton).addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.command_SelectFileToDecrypt();				
 			}
 		});
-		this.button_SelectOutputFileEncrypt.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				controller.command_SelectOutputFileEncrypt();
-			}
-		});
-		this.button_SelectOutputFileDecrypt.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				controller.command_SelectOutputFileDecrypt();				
-			}
-		});
-		this.button_GenerateNewKeyPair.addActionListener(new ActionListener() {
+		((JButton)CryptographyView.newKeyPairButton).addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.command_GenerateNewKeyPair();
 			}
 		});
-		this.button_SelectPublicKeyFile.addActionListener(new ActionListener() {
+		((JButton)CryptographyView.publicKeyButton).addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.command_SelectPublicKeyFile();				
 			}
 		});
-		this.button_SelectPrivateKey.addActionListener(new ActionListener() {
+		((JButton)CryptographyView.privateKeyButton).addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.command_SelectPrivateKeyFile();
 			}
 		});
-		this.button_Decrypt.addActionListener(new ActionListener() {
+		((JButton)CryptographyView.startDecryptionButton).addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.command_Decrypt();
 			}
 		});
-		this.button_Encrypt.addActionListener(new ActionListener() {
+		((JButton)CryptographyView.startEncryptionButton).addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try { // TODO: remove
 					controller.command_Encrypt();
-				} catch (InvalidKeyException | ClassNotFoundException | NullPointerException
-						| IOException | InstantiationException | IllegalAccessException e) {
+				} catch (NullPointerException e) {
 					e.printStackTrace();
 				}
 			}
 		});
 	}
+	
+	//Getters and setters
+	private void setPanelBackColor(Color panelBackColor) {
+		this.panelBackColor = panelBackColor;
+	}
 
-	@Override
-	public void attachViewObserver(ICryptographyViewObserver listener) {
-		this.controller = listener;
+	private void setForegroundColor(Color foregroundColor) {
+		this.foregroundColor = foregroundColor;
+	}
+
+	private void setFont(Font font) {
+		this.font = font;
+	}
+
+	private void setButtonColor(Color buttonColor) {
+		this.buttonColor = buttonColor;
 	}
 
 	@Override
-	public void setText_textField_FileToEncrypt(String text) {
-		this.textField_FileToEncrypt.setText(text);
-		
+	public void setText_encryptTextField(String text) {
+		((JTextField)CryptographyView.encryptTextField).setText(text);
 	}
 
 	@Override
-	public void setText_textField_OutputFileEncrypt(String text) {
-		this.textField_OutputFileEncrypt.setText(text);
+	public void setText_publicKeyTextField(String text) {
+		((JTextField)CryptographyView.publicKeyTextField).setText(text);
 	}
 
 	@Override
-	public void setText_textField_PublicKey(String text) {
-		this.textField_PublicKey.setText(text);
+	public void setText_decryptTextField(String text) {
+		((JTextField)CryptographyView.decryptTextField).setText(text);
 	}
 
 	@Override
-	public void setText_textField_FileToDecrypt(String text) {
-		this.textField_FileToDecrypt.setText(text);
+	public void setText_privateKeyTextField(String text) {
+		((JTextField)CryptographyView.privateKeyTextField).setText(text);
 	}
 
 	@Override
-	public void setText_textField_OutputFileDecrypt(String text) {
-		this.textField_OutputFileDecrypt.setText(text);
+	public void addText_logTextArea(String text) {
+		((JTextArea)CryptographyView.logTextArea).append("\n" + text);
+		//logTextArea.repaint();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void setText_textField_PrivateKey(String text) {
-		this.textField_PrivateKey.setText(text);
+	public EnumAvailableSymmetricAlgorithms getSymmetricAlgorithm() {
+		return (EnumAvailableSymmetricAlgorithms)((JComboBox<EnumAvailableSymmetricAlgorithms>) CryptographyView.algorithmComboBox).getSelectedItem();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void addText_txtrLog(String text) {
-		this.txtrLog.append("\n" + text);
+	public EnumAvailableHashingAlgorithms getHashingAlgorithm() {
+		return (EnumAvailableHashingAlgorithms)((JComboBox<EnumAvailableHashingAlgorithms>) CryptographyView.hashingComboBox).getSelectedItem();
 	}
 
-	@Override
-	public EnumAvailableSymmetricAlgorithms get_SymmetricAlgorithm() {
-		return (EnumAvailableSymmetricAlgorithms)this.comboBox_SymmetricAlgorithm.getSelectedItem();
-	}
-
-	@Override
-	public EnumAvailableHashingAlgorithms get_HashingAlgorithm() {
-		return (EnumAvailableHashingAlgorithms)this.comboBox_HashingAlgorithm.getSelectedItem();
-	}
-
+	@SuppressWarnings("unchecked")
 	@Override
 	public EnumAvailableCompressionAlgorithms getCompressionAlgorithm() {
-		return (EnumAvailableCompressionAlgorithms)this.comboBox_CompressionAlgorithm.getSelectedItem();
+		return (EnumAvailableCompressionAlgorithms)((JComboBox<Integer>) CryptographyView.compressionComboBox).getSelectedItem();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public int getNumberOfWipingPassages() {
+		return (int)((JComboBox<Integer>)CryptographyView.wipingComboBox).getSelectedItem();
 	}
 
 	@Override
-	public boolean chckbx_isWipingEnabled() {
-		return chckbx_wipingEnabled.isSelected();
+	public void setValue_progressBarEncryption(int value) {
+		((JProgressBar)progressBarEncryption).getModel().setValue(value);
 	}
+
+	@Override
+	public void setValue_progressBarDecryption(int value) {
+		((JProgressBar)progressBarDecryption).getModel().setValue(value);
+	}
+
+
+	
 }

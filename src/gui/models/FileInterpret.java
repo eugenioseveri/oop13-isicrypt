@@ -10,12 +10,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Arrays;
 
 import algorithms.EnumAvailableCompressionAlgorithms;
 import algorithms.EnumAvailableHashingAlgorithms;
 import algorithms.EnumAvailableSymmetricAlgorithms;
 import algorithms.Hashing;
-
 import static algorithms.ErrorMessages.*;
 
 /**
@@ -50,7 +50,7 @@ public class FileInterpret implements Serializable, IFileInterpret {
 	 * @param compressionAlgorithm The compression algorithm you want to use. Must be one of @link {@link EnumAvailableCompressionAlgorithms}
 	 * @param payloadFile The file you want to put inside this FileInterpret wrapper
 	 */
-	public FileInterpret(EnumAvailableSymmetricAlgorithms symmetricAlgorithm, byte[] encryptedSymmetricKey, EnumAvailableHashingAlgorithms hashingAlgorithm, EnumAvailableCompressionAlgorithms compressionAlgorithm, File payloadFile) {
+	public FileInterpret(EnumAvailableSymmetricAlgorithms symmetricAlgorithm, byte[] encryptedSymmetricKey, EnumAvailableHashingAlgorithms hashingAlgorithm, EnumAvailableCompressionAlgorithms compressionAlgorithm, String originalFileName, File payloadFile) {
 		this.symmetricAlgorithm = symmetricAlgorithm;
 		this.encryptedSymmetricKey = encryptedSymmetricKey;
 		this.hashingAlgorithm = hashingAlgorithm;
@@ -61,7 +61,7 @@ public class FileInterpret implements Serializable, IFileInterpret {
 			e.printStackTrace();
 		};
 		this.compressionAlgorithm = compressionAlgorithm;
-		this.fileName = payloadFile.getName();
+		this.fileName = originalFileName;
 		loadPayloadToRAM(payloadFile);
 	}
 
@@ -173,10 +173,10 @@ public class FileInterpret implements Serializable, IFileInterpret {
 	@Override
 	public String toString() {
 		return "FileInterpret [symmetricAlgorithm=" + symmetricAlgorithm
-				+ ", encryptedSymmetricKey=" + encryptedSymmetricKey
+				+ ", encryptedSymmetricKeySize=" + encryptedSymmetricKey.length
 				+ ", hashingAlgorithm=" + hashingAlgorithm
 				+ ", generatedHash=" + generatedHash
-				+ ", compressionEnabled=" + compressionAlgorithm
+				+ ", compressionAlgorithm=" + compressionAlgorithm
 				+ ", payloadSize=" + payload.length/BYTE_CONVERSION_FACTOR + " KB]"; // Payload size in KB
 	}
 	
@@ -240,6 +240,7 @@ public class FileInterpret implements Serializable, IFileInterpret {
 		try {
 			fis = new FileInputStream(payload);
 			buffPayload = new BufferedInputStream(fis);
+			this.payload = new byte[(int) payload.length()];
 			for(int index = 0; (currentByte = buffPayload.read()) != -1; index++) {
 				this.payload[index] = (byte)currentByte;
 			}	

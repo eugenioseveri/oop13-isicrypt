@@ -1,15 +1,22 @@
 package test;
 
+import gui.models.FileInterpret;
 import gui.models.GlobalSettings;
 
 import java.awt.Color;
 import java.awt.Font;
-
+import java.io.File;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.NoSuchPaddingException;
+import javax.swing.JOptionPane;
+
+import algorithms.AES;
+import algorithms.EnumAvailableCompressionAlgorithms;
+import algorithms.EnumAvailableHashingAlgorithms;
+import algorithms.EnumAvailableSymmetricAlgorithms;
 
 
 public class Test {
@@ -28,7 +35,12 @@ public class Test {
 		ciao.setFont(new Font("Verdana", Font.BOLD, 12));
 		ciao.storeSettings();*/
 		//System.out.println(System.getProperty("user.home") + "\\.isicrypt\\globalsettings.dat");
-		new GlobalSettings().storeSettings();
+		//new GlobalSettings().storeSettings();
+		/*AES aes = new AES();
+		aes.generateKey(128);
+		
+		FileInterpret fi = new FileInterpret(EnumAvailableSymmetricAlgorithms.AES, aes.getSymmetricKeySpec().getEncoded(), EnumAvailableHashingAlgorithms.SHA1, EnumAvailableCompressionAlgorithms.No_Compression, "originalFileName",new File("R:\\Temp\\isiCryptIIcon_Keyring.jpg"));
+		System.out.println(fi);*/
 	}
 	
 	/*private static void byteArrayStamp(byte[] stamp){

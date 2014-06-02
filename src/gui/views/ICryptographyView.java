@@ -6,20 +6,20 @@ import algorithms.EnumAvailableSymmetricAlgorithms;
 import gui.controllers.ICryptographyViewObserver;
 
 /**
- * @author Eugenio
- *
+ * 
+ * @author Eugenio Severi
  */
 public interface ICryptographyView {
 	void attachViewObserver(ICryptographyViewObserver listener);
-	void setText_textField_FileToEncrypt(String text);
-	void setText_textField_OutputFileEncrypt(String text);
-	void setText_textField_PublicKey(String text);
-	void setText_textField_FileToDecrypt(String text);
-	void setText_textField_OutputFileDecrypt(String text);
-	void setText_textField_PrivateKey(String text);
-	void addText_txtrLog(String text);
-	EnumAvailableSymmetricAlgorithms get_SymmetricAlgorithm();
-	EnumAvailableHashingAlgorithms get_HashingAlgorithm();
+	void setText_encryptTextField(String text);
+	void setText_publicKeyTextField(String text);
+	void setText_decryptTextField(String text);
+	void setText_privateKeyTextField(String text);
+	void addText_logTextArea(String text);
+	EnumAvailableSymmetricAlgorithms getSymmetricAlgorithm();
+	EnumAvailableHashingAlgorithms getHashingAlgorithm();
 	EnumAvailableCompressionAlgorithms getCompressionAlgorithm();
-	boolean chckbx_isWipingEnabled();
+	int getNumberOfWipingPassages();
+	void setValue_progressBarEncryption(int value);
+	void setValue_progressBarDecryption(int value);
 }

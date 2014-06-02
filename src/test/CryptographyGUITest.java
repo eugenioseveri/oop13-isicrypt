@@ -9,7 +9,7 @@ public class CryptographyGUITest {
 		
 		CryptographyView frame = new CryptographyView();
 		CryptographyController ccc = new CryptographyController(frame);
-		frame.setVisible(true);
+		//frame.setVisible(true);
 		
 	}
 }
