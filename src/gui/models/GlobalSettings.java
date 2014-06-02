@@ -93,4 +93,5 @@ public class GlobalSettings implements Serializable {
 			}
 		}
 	}
+	
 }

@@ -45,22 +45,26 @@ public class ThemeChooser {
 			setForegroundColor(Color.white);
 			break;
 		case WINTER_IS_COMING:
+			Color ice = new Color(55,124,217);
 			setFont(new Font("Verdana",Font.BOLD, 12));
 			setPanelBackColor(Color.WHITE);
-			setButtonColor(Color.blue);
-			setForegroundColor(Color.white);
+			setButtonColor(ice);
+			setForegroundColor(Color.black);
 			break;
 		case FIRE_AND_BLOOD:
-			Color blood = new Color(128, 3, 15);
+			Color bloodback = new Color(138, 7, 7);
+			Color blood = new Color(128, 10, 25);
 			setFont(new Font("Verdana",Font.BOLD, 12));
-			setPanelBackColor(blood);
+			setPanelBackColor(bloodback);
 			setButtonColor(Color.black);
 			setForegroundColor(blood);
 			break;
 		case OURS_IS_THE_FURY:
+			Color trashYellow = new Color(201,187,1);
+			Color green = new Color(29,91,6);
 			setFont(new Font("Verdana",Font.BOLD, 12));
-			setPanelBackColor(Color.yellow);
-			setButtonColor(Color.black);
+			setPanelBackColor(trashYellow);
+			setButtonColor(green);
 			setForegroundColor(Color.yellow);
 			break;
 		}

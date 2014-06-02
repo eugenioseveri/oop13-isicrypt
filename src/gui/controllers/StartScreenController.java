@@ -1,7 +1,10 @@
 package gui.controllers;
 
 
-import gui.views.CryptographyView_Filo;
+import javax.swing.JOptionPane;
+
+import gui.models.GlobalSettings;
+import gui.views.CryptographyView;
 import gui.views.FileExchangeView;
 import gui.views.KeyringView;
 import gui.views.StartScreenView;
@@ -18,7 +21,7 @@ public class StartScreenController implements IStartScreenViewObserver{
 	
 	@Override
 	public void selectCryptography() {
-		CryptographyView_Filo frame = new CryptographyView_Filo();		
+		CryptographyView frame = new CryptographyView();		
 		StartScreenView.getFrame().setVisible(false);
 	}
 
@@ -42,5 +45,21 @@ public class StartScreenController implements IStartScreenViewObserver{
 		FileExchangeView view = new FileExchangeView();
 		controller.setView(view);		
 		StartScreenView.getFrame().setVisible(false);
+	}
+	
+	@Override
+	public void selectTheme(){
+		Object[] possibilities = {"WINTER_IS_COMING", "NIGHT_WATCH", "FIRE_AND_BLOOD", "OURS_IS_THE_FURY"};
+		String theme = (String)JOptionPane.showInputDialog(StartScreenView.getDialog(),"Choose a theme:\n","Customized Dialog",JOptionPane.PLAIN_MESSAGE,null ,possibilities,"Lopo");
+		if(theme != null){
+			GlobalSettings settings = new GlobalSettings();
+			settings.setTheme(theme);
+			settings.storeSettings();
+			StartScreenController reloadController = new StartScreenController();
+			StartScreenView reloadView = new StartScreenView();
+			reloadController.setView(reloadView);
+			
+		}
+	//	StartScreenView.getFrame().repaint();
 	}
 }

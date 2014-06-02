@@ -1,7 +1,7 @@
 package gui.views;
 
 import gui.controllers.IStartScreenViewObserver;
-import gui.models.GlobalSettings;
+import gui.controllers.StartScreenController;
 import gui.models.ThemeChooser;
 
 import java.awt.Color;
@@ -19,6 +19,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
 
 public class StartScreenView extends AbstractGuiMethodSetter{
 	private Font font;
@@ -39,12 +40,14 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 	//GUI Component initialized columns x row order
 	private static final JPanel container = new JPanel();
 	private static final JFrame frame = new JFrame();
+	private static final Component theme = new JButton("theme");
 	private static final Component cryptography = new JButton("cryptography");
 	private static final Component steganography = new JButton("steganography");
 	private static final Component keyring = new JButton("keyring");
 	private static final Component fileExchange = new JButton("fileExchange");
 	private static final Component authorName = new JLabel("<html>Filippo Vimini<br>........Eugenio Severi</html>");
-	
+	private static final JFrame dialog = new JFrame();
+
 	//Initialize GUI view observer
 	private IStartScreenViewObserver controller;
 	
@@ -106,7 +109,12 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 				GridBagConstraints.SOUTH, GridBagConstraints.EAST, container, authorName);
 		setGridposition(limit, xPosition+1, yPosition+2, defaultCellArea, defaultCellArea, 
 				noResizable, noResizable, container, authorName);
-		
+		//JButton theme
+		setJButton(theme, buttonColor, foregroundColor, font, false, false);
+		setLimit(limit, ipadDefaultx-50, ipadDefaulty-90, insetsBotton,
+				GridBagConstraints.CENTER, GridBagConstraints.WEST, container, theme);		
+		setGridposition(limit, xPosition, yPosition+2, defaultCellArea, defaultCellArea, 
+				noResizable, noResizable, container, theme);
 		
 	}
 	
@@ -139,6 +147,15 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 				controller.selectFileExchange();
 			}
 		});
+		((JButton)theme).addActionListener(new ActionListener(	) {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				controller.selectTheme();
+	//			((JButton)theme).setEnabled(false);
+				
+			}
+		});
 	}
 	
 	private void setFrame() {
@@ -148,6 +165,7 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		frame.setResizable(false);
 		frame.setTitle("FileExchange");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(450, 350);
@@ -156,6 +174,10 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 		frame.setVisible(true);
 	}
 	
+	
+	public static void comboboxChoose(){
+		
+	}
 	//GETTERS and SETTERS
 	public Font getFont() {
 		return font;
@@ -191,6 +213,10 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 
 	public static JFrame getFrame() {
 		return frame;
+	}
+	
+	public static JFrame getDialog() {
+		return dialog;
 	}
 
 	

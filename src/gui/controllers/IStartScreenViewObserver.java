@@ -5,4 +5,5 @@ public interface IStartScreenViewObserver {
 	void selectSteganography();
 	void selectKeyring();
 	void selectFileExchange();
+	void selectTheme();
 }
