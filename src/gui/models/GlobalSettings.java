@@ -21,13 +21,13 @@ import static algorithms.ErrorMessages.*;
  */
 public class GlobalSettings implements Serializable {
 
-	transient private final static String settingsFilePath = "./globalsettings.dat";
+	transient private final static String settingsFilePath = System.getProperty("user.home") + "\\.isicrypt\\globalsettings.dat"; // TODO: Funziona multipiattaforma?
 	private static final long serialVersionUID = -3375259654271655816L;
-	// Default font for button
+	// Default font of buttons
 	private Font font = new Font("Verdana",Font.BOLD, 12);
-	// Default Background JPanel Color
-	private Color panelBakColor = Color.DARK_GRAY;
-	// Default color of button
+	// Default background JPanel color
+	private Color panelBackColor = Color.DARK_GRAY;
+	// Default color of buttons
 	private Color buttonColor = Color.black;
 	// Default foreground color of JButton
 	private Color foregroundColor = Color.white;
@@ -40,12 +40,12 @@ public class GlobalSettings implements Serializable {
 		this.font = font;
 	}
 
-	public Color getPanelBakColor() {
-		return panelBakColor;
+	public Color getPanelBakColor() { //TODO: rinominare in "back"
+		return panelBackColor;
 	}
 
-	public void setPanelBakColor(Color panelBakColor) {
-		this.panelBakColor = panelBakColor;
+	public void setPanelBakColor(Color panelBakColor) { //TODO: rinominare in "back"
+		this.panelBackColor = panelBakColor;
 	}
 
 	public Color getButtonColor() {
@@ -81,8 +81,8 @@ public class GlobalSettings implements Serializable {
 			setButtonColor(readGlobalSettings.getButtonColor());
 			setForegroundColor(readGlobalSettings.getForegroundColor());
 		} catch (FileNotFoundException e) {
+			System.err.println(MISSING_SETTINGS_FILE);
 			storeSettings();
-			e.printStackTrace();
 		} catch (IOException e) {
 			System.err.println(IO_READING_ERROR);
 			e.printStackTrace();
@@ -112,9 +112,6 @@ public class GlobalSettings implements Serializable {
 			buffFile = new BufferedOutputStream(file);
 			objFile = new ObjectOutputStream(buffFile);
 			objFile.writeObject(this);
-		} catch (FileNotFoundException e) {
-			System.err.println(FILE_NOT_FOUND_ERROR);
-			e.printStackTrace();
 		} catch (IOException e) {
 			System.err.println(IO_WRITING_ERROR);
 			e.printStackTrace();

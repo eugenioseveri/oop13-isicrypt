@@ -69,7 +69,6 @@ public class FileInterpret implements Serializable, IFileInterpret {
 	 * This constructor is meant to be used to read a previously created FileInterpret file
 	 * @param inputFile The FileInterpret file you want to read
 	 */
-	// Costruttore con parametri letti da file. Da utilizzare per leggere un FileInterpret precedentemente scritto su disco.
 	public FileInterpret(File inputFile) {
 		FileInputStream file;
 		BufferedInputStream buffStream;
@@ -181,10 +180,6 @@ public class FileInterpret implements Serializable, IFileInterpret {
 				+ ", payloadSize=" + payload.length/BYTE_CONVERSION_FACTOR + " KB]"; // Payload size in KB
 	}
 	
-	/**
-	 * Writes this FileInterpret to a file
-	 * @param outputFile The file you want to write the FileInterpret to
-	 */
 	@Override
 	public void writeInterpretToFile(File outputFile) {
 		FileOutputStream file;
@@ -208,11 +203,6 @@ public class FileInterpret implements Serializable, IFileInterpret {
 		}
 	}
 	
-	/**
-	 * Writes this payload to disk
-	 * @param outputFile The file where you want to put the payload
-	 * @throws CorruptedDataException If a file and his checksum don't match
-	 */
 	// Estrae il payload da una classe e lo scrive su disco. Il file è temporaneo.
 	@Override
 	public void writePayloadToFile(File outputFile) throws CorruptedDataException {

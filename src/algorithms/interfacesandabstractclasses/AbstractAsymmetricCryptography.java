@@ -39,6 +39,7 @@ public abstract class AbstractAsymmetricCryptography implements IAsymmetricCrypt
 		this.keyPair = pair;
 	}
 
+
 	@Override
 	public void setKeyPair(PublicKey publicKey, PrivateKey privateKey) {
 		this.keyPair = new KeyPair(publicKey, privateKey);
@@ -48,12 +49,6 @@ public abstract class AbstractAsymmetricCryptography implements IAsymmetricCrypt
 		return this.keyPair != null;
 	}
 	
-	/**
-	 * Saves a RSA key (public or private) to the specified output stream
-	 * @param keyType Public or private key
-	 * @param output The output stream you want to save the key to
-	 * @throws IOException If an error occurs while writing the key
-	 */
 	@Override
 	public void saveKeyToFile(EnumAsymmetricKeyTypes keyType, FileOutputStream output) throws IOException {
 		ObjectOutputStream objOutStream = null;
@@ -76,12 +71,6 @@ public abstract class AbstractAsymmetricCryptography implements IAsymmetricCrypt
 		}
 	}
 	
-	/**
-	 * Loads a RSA key (public or private) from the specified file
-	 * @param keyType Public or private key
-	 * @param input The input stream you want to read the key from
-	 * @throws IOException If an error occurs while reading the key
-	 */
 	@Override
 	public void loadKeyFromFile(EnumAsymmetricKeyTypes keyType, FileInputStream input) throws IOException {
 		ObjectInputStream objInStream = null;

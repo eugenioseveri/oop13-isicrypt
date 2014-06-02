@@ -4,5 +4,5 @@ package algorithms;
  * @author Eugenio Severi
  */
 public enum EnumAvailableCompressionAlgorithms {
-	GZip;
+	No_Compression, GZip;
 }

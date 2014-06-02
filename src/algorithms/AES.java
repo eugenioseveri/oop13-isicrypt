@@ -34,6 +34,7 @@ public class AES extends AbstractSymmetricCryptography implements ISymmetricCryp
 	 * This constructor instantiates a new AES cipher
 	 */
 	public AES() {
+		super();
 		try {
 			super.cryptoCipher = Cipher.getInstance(ALGORITHM);
 		} catch (NoSuchAlgorithmException | NoSuchPaddingException e) { // Queste eccezioni non possono verificarsi (algorithm è costante)
@@ -53,12 +54,6 @@ public class AES extends AbstractSymmetricCryptography implements ISymmetricCryp
 		super.symmetricKeySpec = new SecretKeySpec(key, ALGORITHM);
 	}
 	
-	/**
-	 * Encode a stream into another one, using a previously set key (via @link {@link #generateKey(int)} or @link {@link #setSymmetricKeySpec(SecretKeySpec)})
-	 * @param input The stream you want to encrypt
-	 * @param output The stream you want the encrypted stream goes to
-	 * @throws IOException If an error occurs while writing the output stream
-	 */
 	@Override
 	public void encode(InputStream input, OutputStream output) throws IOException {
 		int i;
@@ -66,10 +61,10 @@ public class AES extends AbstractSymmetricCryptography implements ISymmetricCryp
 		try {
 			super.cryptoCipher.init(Cipher.ENCRYPT_MODE, super.symmetricKeySpec);
 		} catch (InvalidKeyException e) {
-			if(!super.isSymmetricKeyInitialized()) {
-				System.err.println(NOKEY_ERROR);
-			} else {
+			if(super.isSymmetricKeyInitialized()) {
 				e.printStackTrace();
+			} else {
+				System.err.println(NOKEY_ERROR);
 			}
 		}
 		CipherOutputStream out = new CipherOutputStream(output, super.cryptoCipher);
@@ -87,12 +82,6 @@ public class AES extends AbstractSymmetricCryptography implements ISymmetricCryp
 		}
 	}
 
-	/**
-	 * Decode a stream into another one, using a previously set key (via @link {@link #generateKey(int)} or @link {@link #setSymmetricKeySpec(SecretKeySpec)})
-	 * @param input The stream you want to encrypt
-	 * @param output The stream you want the encrypted stream goes to
-	 * @throws IOException If an error occurs while writing the output stream
-	 */
 	@Override
 	public void decode(InputStream input, OutputStream output) throws IOException {
 		int i;
@@ -100,10 +89,10 @@ public class AES extends AbstractSymmetricCryptography implements ISymmetricCryp
 		try {
 			super.cryptoCipher.init(Cipher.DECRYPT_MODE, super.symmetricKeySpec);
 		} catch (InvalidKeyException e) {
-			if(!super.isSymmetricKeyInitialized()) {
-				System.err.println(NOKEY_ERROR);
-			} else {
+			if(super.isSymmetricKeyInitialized()) {
 				e.printStackTrace();
+			} else {
+				System.err.println(NOKEY_ERROR);
 			}
 		}
 		CipherInputStream in = new CipherInputStream(input, super.cryptoCipher);
@@ -120,11 +109,6 @@ public class AES extends AbstractSymmetricCryptography implements ISymmetricCryp
 		}
 	}
 
-	/**
-	 * Generates a new AES key of the specified size
-	 * @param keySize The length (in bits) of the generated key
-	 * @throws InvalidKeyException If the key size is not valid.
-	 */
 	@Override
 	public void generateKey(int keySize) throws InvalidKeyException {
 		if(!checkKeySize(keySize)) {

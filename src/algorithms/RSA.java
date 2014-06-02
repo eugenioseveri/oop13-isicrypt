@@ -26,6 +26,7 @@ public class RSA extends AbstractAsymmetricCryptography implements IAsymmetricCr
 	 * This constructor instantiates a new RSA cipher
 	 */
 	public RSA() {
+		super();
 		try {
 			super.cryptoCipher = Cipher.getInstance(ALGORITHM);
 		} catch (NoSuchAlgorithmException | NoSuchPaddingException e) { // Queste eccezioni non possono verificarsi (algorithm è costante)
@@ -33,20 +34,15 @@ public class RSA extends AbstractAsymmetricCryptography implements IAsymmetricCr
 		}
 	}
 	
-	/**
-	 * Encodes a byte array, using a previously set public key (via @link {@link #setKeyPair(java.security.KeyPair)} or @link {@link #setKeyPair(java.security.PublicKey, java.security.PrivateKey)})
-	 * @param input The byte array you want to encode
-	 * @return The encrypted byte array
-	 */
 	@Override
 	public byte[] encode(byte[] input) {
 		try {
 			super.cryptoCipher.init(Cipher.ENCRYPT_MODE, super.keyPair.getPublic());
 		} catch (InvalidKeyException e) {
-			if(!super.isKeyPairInitialized()) {
-				System.err.println(NOKEY_ERROR);
-			} else {
+			if(super.isKeyPairInitialized()) {
 				e.printStackTrace();
+			} else {
+				System.err.println(NOKEY_ERROR);
 			}
 		}
 		try {
@@ -57,20 +53,15 @@ public class RSA extends AbstractAsymmetricCryptography implements IAsymmetricCr
 		return null;
 	}
 
-	/**
-	 * Decodes a byte array, using a previously set private key (via @link {@link #setKeyPair(java.security.KeyPair)} or @link {@link #setKeyPair(java.security.PublicKey, java.security.PrivateKey)})
-	 * @param input The byte array you want to decode
-	 * @return The decrypted byte array
-	 */
 	@Override
 	public byte[] decode(byte[] input) {
 		try {
 			super.cryptoCipher.init(Cipher.DECRYPT_MODE, super.keyPair.getPrivate());
 		} catch (InvalidKeyException e) {
-			if(!super.isKeyPairInitialized()) {
-				System.err.println(NOKEY_ERROR);
-			} else {
+			if(super.isKeyPairInitialized()) {
 				e.printStackTrace();
+			} else {
+				System.err.println(NOKEY_ERROR);
 			}
 		}
 		try {
@@ -81,11 +72,6 @@ public class RSA extends AbstractAsymmetricCryptography implements IAsymmetricCr
 		return null;
 	}
 
-	/**
-	 * Generates a new RSA key pair of the specified length
-	 * @param keySize The length (in bits) of the generated key
-	 * @throws InvalidKeyException If the key size is not valid.
-	 */
 	@Override
 	public void generateKeyPair(int keySize) throws InvalidKeyException {
 		if(!checkKeySize(keySize)) {

@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+
 import javax.swing.JCheckBox;
 
 public class CryptographyView extends JFrame implements ICryptographyView {
@@ -428,6 +429,12 @@ public class CryptographyView extends JFrame implements ICryptographyView {
 				controller.command_SelectOutputFileDecrypt();				
 			}
 		});
+		this.button_GenerateNewKeyPair.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				controller.command_GenerateNewKeyPair();
+			}
+		});
 		this.button_SelectPublicKeyFile.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -451,10 +458,7 @@ public class CryptographyView extends JFrame implements ICryptographyView {
 			public void actionPerformed(ActionEvent arg0) {
 				try { // TODO: remove
 					controller.command_Encrypt();
-				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException
-						| ClassNotFoundException | IllegalBlockSizeException
-						| BadPaddingException | NullPointerException
-						| NoSuchPaddingException | IOException e) {
+				} catch (InvalidKeyException | ClassNotFoundException | NullPointerException | IOException | InstantiationException | IllegalAccessException e) {
 					e.printStackTrace();
 				}
 			}

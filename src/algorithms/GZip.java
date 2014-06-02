@@ -15,10 +15,10 @@ import static algorithms.ErrorMessages.*;
  * The Singleton pattern with lazy initialization has been used.
  * @author Eugenio Severi
  */
-public class GZip implements ICompression {
+public final class GZip implements ICompression {
 	
 	private final static int BUFFER_SIZE = 1024;
-	private static GZip SINGLETON = null;
+	private static GZip SINGLETON;
 	
 	private GZip() { // Costruttore privato
 	}
@@ -33,11 +33,6 @@ public class GZip implements ICompression {
 		return SINGLETON;
 	}
 
-	/**
-	 * Reads an input stream and compresses it into another one using GZIP algorithm.
-	 * @param input The stream you want to compress
-	 * @param output The stream you want the compressed stream goes to
-	 */
 	@Override
 	public void compress(InputStream origin, OutputStream destination) {
 		GZIPOutputStream zip = null;
@@ -62,11 +57,6 @@ public class GZip implements ICompression {
 		}
 	}
 	
-	/**
-	 * Reads an input stream and decompresses it into another one using GZIP algorithm.
-	 * @param input The stream you want to decompress
-	 * @param output The stream you want the decompressed stream goes to
-	 */
 	@Override
 	public void decompress(InputStream origin, OutputStream destination) {
 		// Aggiungere try-catch

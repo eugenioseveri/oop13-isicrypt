@@ -16,9 +16,9 @@ import static algorithms.ErrorMessages.*;
  * The Singleton pattern with lazy initialization has been used.
  * @author Eugenio Severi
  */
-public class Wiping implements IWiping {
+public final class Wiping implements IWiping {
 	
-	private static Wiping SINGLETON = null;
+	private static Wiping SINGLETON;
 	
 	private Wiping() {
 	}
@@ -33,11 +33,6 @@ public class Wiping implements IWiping {
 		return SINGLETON;
 	}
 
-	/**
-	 * Securely deletes a file with random generated data in multiple passages
-	 * @param fileToWipe The file you want to erase
-	 * @param numberOfPassages The times you want to overwrite the file
-	 */
 	@Override
 	public void wipe(File fileToWipe, int numberOfPassages) {
 		// Gestire l'eccezione e l'input dei parametri
@@ -55,7 +50,6 @@ public class Wiping implements IWiping {
 						buffer.put(randomBytes[0]);
 					}
 					buffer.force();
-				
 					numberOfPassages--;
 				}
 			} catch (IOException e) {
