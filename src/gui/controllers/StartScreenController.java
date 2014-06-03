@@ -4,6 +4,7 @@ package gui.controllers;
 import javax.swing.JOptionPane;
 
 import gui.models.GlobalSettings;
+import gui.models.KeyringModel;
 import gui.views.CryptographyView;
 import gui.views.FileExchangeView;
 import gui.views.KeyringView;
@@ -21,7 +22,8 @@ public class StartScreenController implements IStartScreenViewObserver{
 	
 	@Override
 	public void selectCryptography() {
-		CryptographyView frame = new CryptographyView();		
+		CryptographyView frame = new CryptographyView();
+		new CryptographyController(frame);
 		StartScreenView.getFrame().setVisible(false);
 	}
 
@@ -35,7 +37,9 @@ public class StartScreenController implements IStartScreenViewObserver{
 
 	@Override
 	public void selectKeyring() {
-		KeyringView frame = new KeyringView();		
+		KeyringView frame = new KeyringView();
+		KeyringModel model = new KeyringModel();
+		new KeyringController(frame, model);
 		StartScreenView.getFrame().setVisible(false);
 	}
 

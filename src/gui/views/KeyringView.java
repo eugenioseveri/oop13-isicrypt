@@ -1,7 +1,8 @@
 package gui.views;
 
 import gui.controllers.FileExchangeController;
-import gui.models.GlobalSettings;
+import gui.controllers.IKeyringViewObserver;
+import gui.controllers.KeyringController;
 import gui.models.ThemeChooser;
 
 import java.awt.Color;
@@ -9,6 +10,8 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
@@ -24,9 +27,11 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.TableModel;
 
-public class KeyringView extends AbstractGuiMethodSetter{
+public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView {
+
+	private static final long serialVersionUID = -4534574271536073257L;
 	private Font font;
-	private Color panelBakColor;
+	private Color panelBackColor;
 	private Color buttonColor;
 	private Color foregroundColor;
 	// Arrays that contains various dimension of insets
@@ -60,6 +65,13 @@ public class KeyringView extends AbstractGuiMethodSetter{
 	private static final Component fillerFive = new JButton();
 	private static final Component fillerSix = new JButton();
 	private static final Component separator = new JSeparator(SwingConstants.VERTICAL);
+	
+	private IKeyringViewObserver controller;
+	
+	@Override
+	public void attachViewObserver(IKeyringViewObserver listener){
+		this.controller = listener;
+	}
 
 	//Frame and panel
 	private static final JPanel container = new JPanel();
@@ -81,11 +93,11 @@ public class KeyringView extends AbstractGuiMethodSetter{
 		this.setButtonColor(ThemeChooser.getButtonColor());
 		this.setFont(ThemeChooser.getFont());
 		this.setForegroundColor(ThemeChooser.getForegroundColor());
-		this.setPanelBakColor(ThemeChooser.getPanelBackColor());
+		this.setPanelBackColor(ThemeChooser.getPanelBackColor());
 		GridBagLayout layout = new GridBagLayout();
 		limit = new GridBagConstraints();
 		container.setLayout(layout);
-		container.setBackground(panelBakColor);
+		container.setBackground(panelBackColor);
 	}
 	
 	private void setFrame() {
@@ -118,7 +130,7 @@ public class KeyringView extends AbstractGuiMethodSetter{
 				noResizable, noResizable, container, addButton);
 		//FILLER ONE
 		((JButton)fillerOne).setEnabled(false);
-		setJButton(fillerOne, panelBakColor, panelBakColor, null, false, false);
+		setJButton(fillerOne, panelBackColor, panelBackColor, null, false, false);
 		setLimit(limit, ipadDefaultx, ipadDefaulty, zeroInsets, 
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, fillerOne);
 		setGridposition(limit, xPosition, yPosition+2, defaultCellArea, defaultCellArea,
@@ -131,7 +143,7 @@ public class KeyringView extends AbstractGuiMethodSetter{
 				noResizable, noResizable, container, modifyButton);
 		//FILLER TWO
 		((JButton)fillerTwo).setEnabled(false);
-		setJButton(fillerTwo, panelBakColor, panelBakColor, null, false, false);
+		setJButton(fillerTwo, panelBackColor, panelBackColor, null, false, false);
 		setLimit(limit, ipadDefaultx, ipadDefaulty, zeroInsets, 
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, fillerTwo);
 		setGridposition(limit, xPosition, yPosition+4, defaultCellArea, defaultCellArea,
@@ -144,7 +156,7 @@ public class KeyringView extends AbstractGuiMethodSetter{
 				noResizable, noResizable, container, cancelButton);		
 		//FILLER THREE
 		((JButton)fillerThree).setEnabled(false);
-		setJButton(fillerThree, panelBakColor, panelBakColor, null, false, false);
+		setJButton(fillerThree, panelBackColor, panelBackColor, null, false, false);
 		setLimit(limit, ipadDefaultx, ipadDefaulty, zeroInsets, 
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, fillerThree);
 		setGridposition(limit, xPosition, yPosition+6, defaultCellArea, defaultCellArea,
@@ -157,7 +169,7 @@ public class KeyringView extends AbstractGuiMethodSetter{
 				noResizable, noResizable, container, encryptButton);	
 		//FILLER FOUR
 		((JButton)fillerFour).setEnabled(false);
-		setJButton(fillerFour, panelBakColor, panelBakColor, null, false, false);
+		setJButton(fillerFour, panelBackColor, panelBackColor, null, false, false);
 		setLimit(limit, ipadDefaultx, ipadDefaulty, zeroInsets, 
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, fillerFour);
 		setGridposition(limit, xPosition, yPosition+8, defaultCellArea, defaultCellArea,
@@ -170,7 +182,7 @@ public class KeyringView extends AbstractGuiMethodSetter{
 				noResizable, noResizable, container, saveButton);
 		//FILLER FIVE
 		((JButton)fillerFive).setEnabled(false);
-		setJButton(fillerFive, panelBakColor, panelBakColor, null, false, false);
+		setJButton(fillerFive, panelBackColor, panelBackColor, null, false, false);
 		setLimit(limit, ipadDefaultx, ipadDefaulty, zeroInsets, 
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, fillerFive);
 		setGridposition(limit, xPosition, yPosition+10, defaultCellArea, defaultCellArea,
@@ -182,7 +194,7 @@ public class KeyringView extends AbstractGuiMethodSetter{
 				noResizable, noResizable, container, iconLabel);
 		//FILLER SIX
 		((JButton)fillerSix).setEnabled(false);
-		setJButton(fillerSix, panelBakColor, panelBakColor, null, false, false);
+		setJButton(fillerSix, panelBackColor, panelBackColor, null, false, false);
 		setLimit(limit, ipadDefaultx, ipadDefaulty, zeroInsets, 
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, fillerSix);
 		setGridposition(limit, xPosition, yPosition+12, defaultCellArea, defaultCellArea,
@@ -201,39 +213,66 @@ public class KeyringView extends AbstractGuiMethodSetter{
 	}
 	
 	private void setHandlers(){
-		
+		((JButton)KeyringView.backButton).addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				((KeyringController)controller).showStart();
+			}
+		});
+		((JButton)KeyringView.addButton).addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				controller.command_addButton();
+			}
+		});
+		((JButton)KeyringView.modifyButton).addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				controller.command_modifyButton();
+			}
+		});
+		((JButton)KeyringView.cancelButton).addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				controller.command_cancelButton();
+			}
+		});
+		((JButton)KeyringView.encryptButton).addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				controller.command_encryptButton();
+			}
+		});
+		((JButton)KeyringView.saveButton).addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				controller.command_saveButton();
+			}
+		});
 	}
 	
 	//GETTERS and SETTERS
-	public Font getFont() {
-		return font;
-	}
 
 	public void setFont(Font font) {
 		this.font = font;
 	}
 
-	public Color getPanelBakColor() {
-		return panelBakColor;
-	}
-
-	public void setPanelBakColor(Color panelBakColor) {
-		this.panelBakColor = panelBakColor;
-	}
-
-	public Color getButtonColor() {
-		return buttonColor;
+	public void setPanelBackColor(Color panelBackColor) {
+		this.panelBackColor = panelBackColor;
 	}
 
 	public void setButtonColor(Color buttonColor) {
 		this.buttonColor = buttonColor;
 	}
 
-	public Color getForegroundColor() {
-		return foregroundColor;
-	}
-
 	public void setForegroundColor(Color foregroundColor) {
 		this.foregroundColor = foregroundColor;
 	}
+	
+	@Override
+	public JTable getTable() {
+		return (JTable) table;
+	}
+	
+	
 }

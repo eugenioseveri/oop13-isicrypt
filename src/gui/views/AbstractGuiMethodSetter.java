@@ -17,9 +17,12 @@ import java.io.IOException;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-public abstract class AbstractGuiMethodSetter{
+public abstract class AbstractGuiMethodSetter extends JFrame {
+
+	private static final long serialVersionUID = 2515239709227375299L;
 	/**
 	 * Class that set all the variables of GridBagConstraints,
 	 *  useful for a better views of code and for use only a one GridBagConstraints for all the elements

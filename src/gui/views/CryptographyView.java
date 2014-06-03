@@ -31,6 +31,8 @@ import algorithms.EnumAvailableHashingAlgorithms;
 import algorithms.EnumAvailableSymmetricAlgorithms;
 
 public class CryptographyView extends AbstractGuiMethodSetter implements ICryptographyView { // TODO: si può non estendere JFrame?
+
+	private static final long serialVersionUID = -162452746296023405L;
 	private Font font;
 	private Color panelBackColor;
 	private Color buttonColor;
@@ -97,6 +99,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 	//Observer
 	private ICryptographyViewObserver controller;
 	
+	@Override
 	public void attachViewObserver(ICryptographyViewObserver listener){
 		this.controller = listener;
 	}
@@ -405,7 +408,8 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		this.foregroundColor = foregroundColor;
 	}
 
-	private void setFont(Font font) {
+	@Override // TODO: ha senso ridefinirlo?
+	public void setFont(Font font) {
 		this.font = font;
 	}
 
@@ -436,7 +440,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 	@Override
 	public void addText_logTextArea(String text) {
 		((JTextArea)CryptographyView.logTextArea).append("\n" + text);
-		//logTextArea.repaint();
+		//logTextArea.repaint(); //TODO non funziona
 	}
 
 	@SuppressWarnings("unchecked")
