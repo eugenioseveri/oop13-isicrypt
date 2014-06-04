@@ -52,7 +52,7 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 	private static final Component addButton = new JButton("Add account");
 	private static final Component modifyButton = new JButton("Modify account");
 	private static final Component cancelButton = new JButton("Cancel account");
-	private static final Component encryptButton = new JButton("Encryption mode");
+	private static final Component encryptButton = new JButton("Encryption key");
 	private static final Component saveButton = new JButton("save settings");
 	private static final Component iconLabel= new JLabel();
 	private static TableModel model = FileExchangeController.tableBuilder();

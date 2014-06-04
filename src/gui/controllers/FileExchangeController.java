@@ -216,6 +216,7 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 				return false;
 			}
 		};
+		
 		FileExchangeModel.setContactList("localhost", "FiloNotebook");
 		FileExchangeModel.setContactList("Gincapa", "FiloGincapa");
 

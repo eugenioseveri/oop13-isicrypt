@@ -48,7 +48,7 @@ public class AES extends AbstractSymmetricCryptography implements ISymmetricCryp
 	 * @throws InvalidKeyException If the key size is not valid.
 	 */
 	public void setSymmetricKeySpec(byte[] key) throws InvalidKeyException {
-		if(!checkKeySize(key.length)) {
+		if(!checkKeySize(key.length * 8)) {
 			throw new InvalidKeyException(WRONG_KEYSIZE_ERROR);
 		}
 		super.symmetricKeySpec = new SecretKeySpec(key, ALGORITHM);
