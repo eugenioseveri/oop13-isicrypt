@@ -15,6 +15,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 
@@ -42,6 +44,7 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 	private Color panelBackColor;
 	private Color buttonColor;
 	private Color foregroundColor;
+	private static boolean isOpen;
 	// Arrays that contains various dimension of insets
 	private static final int insetsDefault[] = { 10, 10, 10, 10 };
 	private static final int insetsChatArea[] = { 0, 0, 10, 10 };
@@ -83,7 +86,7 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 	private static JTable contactTable = new JTable(model);
 	private final static JScrollPane scrollPaneTable = new JScrollPane(contactTable);
 	private final static JFrame dialog = new JFrame();
-	private final static JFrame frame = new JFrame();
+	private static JFrame frame = new JFrame();
 
 	//Initialize GUI view observer
 	private IFileExchangeViewObserver controller;
@@ -100,8 +103,6 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 	}
 	//Build layout, same for all gui
 	private void buildLayout() {
-	//	GlobalSettings set = null;
-	//	set = new GlobalSettings();
 		this.setButtonColor(ThemeChooser.getButtonColor());
 		this.setFont(ThemeChooser.getFont());
 		this.setForegroundColor(ThemeChooser.getForegroundColor());
@@ -112,6 +113,36 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 		container.setBackground(panelBackColor);
 	}
 
+	private void setFrame() {
+		frame = new JFrame();
+		try {
+			frame.setIconImage(ImageIO.read(new File(
+					"./res/isiCryptICON_MetroStyle.jpg")));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		WindowAdapter listener = new WindowAdapter() {
+
+	        @Override
+	        public void windowOpened(WindowEvent e) {
+	        	FileExchangeView.setOpen(true);	        }
+
+	        @Override
+	        public void windowClosing(WindowEvent e) {
+	        	FileExchangeView.setOpen(false);
+	        	//Try to close Server ad Server's thread
+	        	FileExchangeController.closeThread();
+	        	FileExchangeView.setOpen(false);
+	        	//repaint the start screen
+	        	StartScreenView.redraw();
+	        }
+	    };
+		frame.setTitle("FileExchange");
+		frame.setSize(920, 640);
+		frame.getContentPane().add(container);
+		frame.setVisible(true);
+	    frame.addWindowListener(listener);
+	}
 	private void componentSetting(){
 		//JButton BACK TO START 
 		setJButton(backButton, buttonColor, foregroundColor, font, false, false);
@@ -304,20 +335,7 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 		});
 	}
 	
-	private void setFrame() {
-		try {
-			frame.setIconImage(ImageIO.read(new File(
-					"./res/isiCryptICON_MetroStyle.jpg")));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		frame.setTitle("FileExchange");
-//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(920, 640);
-		frame.getContentPane().add(container);
-		//frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		frame.setVisible(true);
-	}
+	
 	
 	public static void optionPanel( Exception error ){
 		JOptionPane.showMessageDialog(FileExchangeView.dialog, error);
@@ -398,4 +416,13 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 	public static Component getSendbutton() {
 		return sendButton;
 	}
+	
+	public static boolean isOpen() {
+		return isOpen;
+	}
+	
+	public static void setOpen(boolean isOpen) {
+		FileExchangeView.isOpen = isOpen;
+	}
+
  }

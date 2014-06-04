@@ -59,11 +59,10 @@ public class StartScreenController implements IStartScreenViewObserver{
 			GlobalSettings settings = new GlobalSettings();
 			settings.setTheme(theme);
 			settings.storeSettings();
-			StartScreenController reloadController = new StartScreenController();
+			StartScreenView.redraw();
+			/*StartScreenController reloadController = new StartScreenController();
 			StartScreenView reloadView = new StartScreenView();
-			reloadController.setView(reloadView);
-			
+			reloadController.setView(reloadView);*/
 		}
-	//	StartScreenView.getFrame().repaint();
 	}
 }

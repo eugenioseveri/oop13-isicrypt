@@ -13,6 +13,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 
 import javax.crypto.spec.SecretKeySpec;
+
 import algorithms.RSA;
 import algorithms.Wiping;
 import algorithms.interfacesandabstractclasses.IAsymmetricCryptography;
@@ -24,6 +25,7 @@ import gui.models.OpenButtons;
 import gui.models.OpenButtons.FileTypes;
 import gui.views.CryptographyView;
 import gui.views.ICryptographyView;
+import gui.views.StartScreenView;
 import static algorithms.ErrorMessages.*;
 import static algorithms.EnumAvailableCompressionAlgorithms.*;
 import static algorithms.EnumAsymmetricKeyTypes.*;
@@ -32,7 +34,7 @@ import static algorithms.EnumAsymmetricKeyTypes.*;
  * Class used to implement the cryptography function controller.
  * @author Eugenio Severi
  */
-public class CryptographyController implements ICryptographyViewObserver {
+public class CryptographyController implements ICryptographyViewObserver, IGeneralViewObserver {
 
 	private final static String TEMP_CIPHER_FILE_NAME = "tempCipherFile.tmp"; // TODO: metterlo in una cartella temporanea
 	private final static String TEMP_COMPRESSION_FILE_NAME = "tempCompressionFile.tmp";
@@ -266,6 +268,12 @@ public class CryptographyController implements ICryptographyViewObserver {
 			this.view.showMessageDialog(FORM_NOT_COMPILED_ERROR);
 		}
 		this.view.addText_logTextArea("Process completed!");
+	}
+
+	@Override
+	public void showStart() {
+		StartScreenView.getFrame().setVisible(true);
+		StartScreenView.redraw();		
 	}
 
 	

@@ -1,5 +1,6 @@
 package gui.views;
 
+import gui.controllers.CryptographyController;
 import gui.controllers.ICryptographyViewObserver;
 import gui.models.ThemeChooser;
 
@@ -9,6 +10,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 
@@ -42,6 +45,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 	private Color panelBackColor;
 	private Color buttonColor;
 	private Color foregroundColor;
+	private static boolean isOpen = false;
 	// Arrays that contains various dimension of insets
 	private static final int insetsDefault[] = { 10, 10, 10, 10 };
 	private static final int insetsBigButton[] = { 10, 10, 70, 70 };
@@ -100,7 +104,6 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 	private static final JPanel container = new JPanel();
 	private GridBagConstraints limit;
 	//private final static JFrame dialog = new JFrame();
-	private final static JFrame frame = new JFrame();
 	//Observer
 	private ICryptographyViewObserver controller;
 	
@@ -137,13 +140,26 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 	 * Sets the properties for the frame.
 	 */
 	private void setFrame() {
+		JFrame frame = new JFrame();
 		try {
 			frame.setIconImage(ImageIO.read(new File(APPLICATION_ICON)));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		WindowAdapter listener = new WindowAdapter() {
+
+	        @Override
+	        public void windowOpened(WindowEvent e) {
+	        	CryptographyView.setOpen(true);	        }
+
+	        @Override
+	        public void windowClosing(WindowEvent e) {
+	            CryptographyView.setOpen(false);
+	            StartScreenView.redraw();
+	        }
+	    };
+	    frame.addWindowListener(listener);
 		frame.setTitle("Cryptography");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(920, 640);
 		frame.getContentPane().add(container);
 		frame.setVisible(true);
@@ -404,6 +420,13 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 				controller.command_Encrypt();
 			}
 		});
+		CryptographyView.backButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				((CryptographyController)controller).showStart();
+			}
+		});
 	}
 	
 	//Getters and setters
@@ -483,5 +506,13 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 	@Override
 	public void showMessageDialog(String message) {
 		JOptionPane.showMessageDialog(this, message);
+	}
+
+	public static boolean isOpen() {
+		return isOpen;
+	}
+
+	public static void setOpen(boolean isOpen) {
+		CryptographyView.isOpen = isOpen;
 	}
 }

@@ -46,12 +46,12 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 	//Initialize FileEchange Gui
 	private static FileExchangeView view;
 	private static String textTemp;
-	SocketServer server = new SocketServer();
 	/**
 	 * 
 	 * @param view
 	 */
 	public void setView(FileExchangeView view){
+		SocketServer server = new SocketServer();
 		FileExchangeController.view = view;
 		FileExchangeController.view.attacFileExchangeViewObserve(this);
 		server.start();
@@ -183,10 +183,13 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 	}
 	@Override
 	public void showStart() {
-		StartScreenController controller = new StartScreenController();
-		StartScreenView view = new StartScreenView();
-		controller.setView(view);		
+		StartScreenView.getFrame().setVisible(true);
+		StartScreenView.redraw();	
 	}
+	public static void closeThread(){
+		SocketServer.closeSocket();
+	}
+	
 	/**
 	 * 
 	 * @param search
@@ -325,5 +328,5 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 			FileExchangeView.optionPanel("Server doesn't connect or portfowarding problem");	
 		}
 	}
-	
+
 }

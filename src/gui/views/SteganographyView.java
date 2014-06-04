@@ -19,6 +19,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -42,6 +44,7 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 	private Color panelBackColor;
 	private Color buttonColor;
 	private Color foregroundColor;
+	private static boolean isOpen = false;
 	// Arrays that contains various dimension of insets
 	private static final int insetsDefault[] = { 10, 10, 10, 10 };
 	private static final int insetsZero[] = { 0, 0, 0, 0 };
@@ -116,6 +119,19 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		WindowAdapter listener = new WindowAdapter() {
+
+	        @Override
+	        public void windowOpened(WindowEvent e) {
+	        	SteganographyView.setOpen(true);	        }
+
+	        @Override
+	        public void windowClosing(WindowEvent e) {
+	            SteganographyView.setOpen(false);
+	            StartScreenView.redraw();
+	        }
+	    };
+	    frame.addWindowListener(listener);
 		frame.setTitle("Steganography");
 	//	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(960, 640);
@@ -317,5 +333,12 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 
 	public static JFrame getDialog() {
 		return dialog;
+	}
+	public static void setOpen(boolean isOpen) {
+		SteganographyView.isOpen = isOpen;
+	}
+	
+	public static boolean isOpen(){
+		return SteganographyView.isOpen;
 	}
 }

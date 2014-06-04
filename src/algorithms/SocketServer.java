@@ -16,9 +16,11 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.swing.JOptionPane;
 
 public class SocketServer extends Thread{
-	public static void main(String[] args){
+	
+	/*public static void main(String[] args){
 		new SocketServer();
-	}
+	}*/
+	
 	static Socket connection;	
 	InputStream inStream = null;
 	OutputStream outStream = null;
@@ -26,7 +28,10 @@ public class SocketServer extends Thread{
 	AES aesEncryptor = null;
 	RSA aesKeyEncryptor = null;
 	String client;
-	ServerSocket server;
+	static boolean onLine = true;
+
+	private static ServerSocket  server;
+
 
 	//Come lanciare le eccezioni a questo punto?
 	public void run(){
@@ -35,14 +40,15 @@ public class SocketServer extends Thread{
 			server = new ServerSocket(port);
 			System.out.println("Server initialized...\nStart to accepting connections...");
 			//Start to accept connections.
-			boolean onLine = true;
 			while(onLine){
 				connection = server.accept();
 				receiveFile();
 			}
 			connection.close();
+			System.out.println("The server if fucking closed!!!");
 		} catch (IOException e) {
-			System.out.println("an I/O error occurs when opening the socket: " + e);
+			//Error catched when you close FileExchange Frame because it force close the connection, but it does't give problem
+			System.out.println("Force close");
 		} catch (GeneralSecurityException e) {
 			System.out.println("Key exchange or I/O errors occured " + e);
 		}
@@ -198,5 +204,19 @@ public class SocketServer extends Thread{
 		}
 		String append = TypeConverter.byteArrayToString(stringByte);
 		FileExchangeController.textAppendServer(append, client);
+	}
+	
+	public static void closeSocket() {
+		 try {
+			server.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	//SETTERS
+	public static void setOnLine(boolean onLine) {
+		SocketServer.onLine = onLine;
 	}
 }

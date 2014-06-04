@@ -132,9 +132,8 @@ public class SteganographyController extends AbstractGuiMethodSetter implements 
 	
 	@Override
 	public void showStart() {
-		StartScreenController controller = new StartScreenController();
-		StartScreenView view = new StartScreenView();
-		controller.setView(view);
+		StartScreenView.getFrame().setVisible(true);
+		StartScreenView.redraw();
 	}
 	
 	public void insertText(){
