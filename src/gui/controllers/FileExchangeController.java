@@ -5,6 +5,9 @@ package gui.controllers;
  */
 import java.awt.ComponentOrientation;
 import java.awt.HeadlessException;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -50,10 +53,11 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 	 * 
 	 * @param view
 	 */
-	public void setView(FileExchangeView view){
+	public void  setView(FileExchangeView view){
 		SocketServer server = new SocketServer();
 		FileExchangeController.view = view;
 		FileExchangeController.view.attacFileExchangeViewObserve(this);
+		System.out.println("Server thread is alive: " + server.isAlive());
 		server.start();
 	}
 	/**
@@ -104,7 +108,7 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 	 * 
 	 */
 	@Override
-	public void selectCompress() {
+	public void selectCompressedFile() {
 		if(searchContact(FileExchangeModel.getContactInfo())!= null){
 			BufferedInputStream buffer = null;
 			ByteArrayOutputStream outBuffer = null;
@@ -128,14 +132,25 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 	 */
 	@Override
 	public void selectContact() {
-		JTable table = FileExchangeView.getContactTable();
-		String host = table.getValueAt(table.getSelectedRow(), 1).toString();
-		String name = table.getValueAt(table.getSelectedRow(), 0).toString(); 
-		ContactInfo contact = new ContactInfo(host, name);
-		FileExchangeModel.setContactInfo(contact);
-		FileExchangeView.getVisualtextarea().setText("");
-		FileExchangeController.setEnableButton(true);
-		FileExchangeView.getFrame().setVisible(true);
+		final JTable table = FileExchangeView.getContactTable();
+		table.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+			      if (e.getClickCount() == 2){
+		//	    	JTable lopo = (JTable) e.getSource();
+			    	Point p = e.getPoint();
+			    	int row = table.rowAtPoint(p);
+			    	String host = table.getValueAt(row, 1).toString();
+			  		String name = table.getValueAt(row, 0).toString(); 
+			  		if(host != null && name != null){
+			  			ContactInfo contact = new ContactInfo(host, name);
+			  			FileExchangeModel.setContactInfo(contact);
+				  		FileExchangeView.getVisualtextarea().setText("");
+				  		FileExchangeController.setEnableButton(true);
+				  		FileExchangeView.getFrame().setVisible(true);
+			  		}
+			      }
+			}
+		});
 	}
 	/**
 	 * 
@@ -188,6 +203,7 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 	}
 	public static void closeThread(){
 		SocketServer.closeSocket();
+		
 	}
 	
 	/**
@@ -215,7 +231,8 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 			 */
 			private static final long serialVersionUID = 737530902377505148L;
 
-			public boolean isCellEditable(int row, int column){ //TODO: questa funziona serve a qualcosa?
+			//set the cell non editable, read only table
+			public boolean isCellEditable(int row, int column){ 
 				return false;
 			}
 		};
@@ -287,7 +304,8 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 	 * 
 	 * @param state
 	 */
-	private static void setEnableButton(boolean state){
+	//Public because is used even when the FileExchange is closed (bugFix for closure after contact selection)
+	public static void setEnableButton(boolean state){
 		FileExchangeView.getScrollpanetable().setVisible(!state);
 		FileExchangeView.getScrollpanetable().setEnabled(!state);
 		FileExchangeView.getScrollpanevisual().setVisible(state);

@@ -68,6 +68,7 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 	private static void buildLayout() {
 		//Creo un nuovo ThemeChooser all'avvio della gui cosi setto tutti i parametri
 		new ThemeChooser();
+		dialog.getContentPane().setBackground(panelBackColor);;
 		setButtonColor(ThemeChooser.getButtonColor());
 		font = (ThemeChooser.getFont());
 		setForegroundColor(ThemeChooser.getForegroundColor());
@@ -111,7 +112,7 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 		else ((JButton)fileExchange).setEnabled(true);
 		//JLabel CREDITS
 		authorName.setFont(new Font("Verdana",Font.BOLD, 12));
-		authorName.setForeground(Color.white);
+		authorName.setForeground(buttonColor);
 		setLimit(limit, 0, 0, insetsCredit, 
 				GridBagConstraints.SOUTH, GridBagConstraints.EAST, container, authorName);
 		setGridposition(limit, xPosition+1, yPosition+2, defaultCellArea, defaultCellArea, 

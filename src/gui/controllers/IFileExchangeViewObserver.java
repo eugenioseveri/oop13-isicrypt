@@ -7,7 +7,7 @@ package gui.controllers;
 public interface IFileExchangeViewObserver {
 	void selectFile();
 	void stegaImage();
-	void selectCompress();
+	void selectCompressedFile();
 	void selectContact();
 	void addContact();
 	void closeConnection();

@@ -21,7 +21,6 @@ public class ThemeChooser {
 		public ThemeChooser(){
 			String name = new GlobalSettings().getTheme();
 			if(name == null)System.out.println("nome thema == null");
-			System.out.println("nome thema: "+name+"Controllo name() enum: "+FileTypes.NIGHTS_WATCH.name());
 			if(name.equals(FileTypes.WINTER_IS_COMING.name())){
 				setGraphic(FileTypes.WINTER_IS_COMING);
 			}

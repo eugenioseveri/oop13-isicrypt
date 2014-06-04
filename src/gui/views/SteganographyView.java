@@ -186,13 +186,13 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, iconLabel);
 		setGridposition(limit, xPosition+4, yPosition, defaultCellArea, defaultCellArea+6, 
 				resizable, resizable, container, iconLabel);
-		// JCheckBox
-		encryptCheckbox.setBackground(Color.DARK_GRAY);
+		// JCheckBox NOT IMPLEMETED YET
+	/*	encryptCheckbox.setBackground(Color.DARK_GRAY);
 		encryptCheckbox.setForeground(Color.white);
 		setLimit(limit,zeroIpad, zeroIpad, insetsDefault, GridBagConstraints.NONE,
 				GridBagConstraints.WEST, container, encryptCheckbox);
 		setGridposition(limit, xPosition, yPosition+2, defaultCellArea+1, defaultCellArea,
-				noResizable, noResizable, container, encryptCheckbox);
+				noResizable, noResizable, container, encryptCheckbox);							*/
 		// JButton start button
 		startButton.setEnabled(false);
 		setJButton(startButton, buttonColor, foregroundColor, font, false, false);

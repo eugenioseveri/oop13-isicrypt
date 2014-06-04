@@ -132,6 +132,7 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 	        	FileExchangeView.setOpen(false);
 	        	//Try to close Server ad Server's thread
 	        	FileExchangeController.closeThread();
+	    		FileExchangeController.setEnableButton(false);
 	        	FileExchangeView.setOpen(false);
 	        	//repaint the start screen
 	        	StartScreenView.redraw();
@@ -247,6 +248,7 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 		chatTextArea.setLineWrap(true);
 		chatTextArea.setWrapStyleWord(true);
 		chatTextArea.setFont(font);
+		//Set disable because first it must be visible the table
 		chatTextArea.setEnabled(false);
 		scrollPaneChat.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		Dimension chatAreaDimensiono = new Dimension(0,ipadDefaulty);
@@ -292,7 +294,7 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 		zipButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				controller.selectCompress();
+				controller.selectCompressedFile();
 			}
 		});
 		//Add new contact to HashSet in Model
