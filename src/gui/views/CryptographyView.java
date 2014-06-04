@@ -10,13 +10,14 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -29,9 +30,14 @@ import algorithms.EnumAvailableCompressionAlgorithms;
 import algorithms.EnumAvailableHashingAlgorithms;
 import algorithms.EnumAvailableSymmetricAlgorithms;
 
+/**
+ * Class used to implement the cryptography function view.
+ * @author Eugenio Severi
+ */
 public class CryptographyView extends AbstractGuiMethodSetter implements ICryptographyView { // TODO: si può non estendere JFrame?
 
 	private static final long serialVersionUID = -162452746296023405L;
+	private static final String APPLICATION_ICON = "./res/isiCryptICON_MetroStyle.jpg";
 	private Font font;
 	private Color panelBackColor;
 	private Color buttonColor;
@@ -103,16 +109,20 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		this.controller = listener;
 	}
 	
+	/**
+	 * Creates a new cryptography function view.
+	 */
 	public CryptographyView(){
 		buildLayout();
 		componentSetting();
 		setFrame();
 		setHandlers();
 	}
-	//BuildLayout same for all view
+	
+	/**
+	 * Creates the frame layout (same for all the views)
+	 */
 	private void buildLayout() {
-		//GlobalSettings set = null;
-	//	set = new GlobalSettings();
 		this.setButtonColor(ThemeChooser.getButtonColor());
 		this.setFont(ThemeChooser.getFont());
 		this.setForegroundColor(ThemeChooser.getForegroundColor());
@@ -123,7 +133,25 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		container.setBackground(panelBackColor);
 	}
 	
-	//Graphic draw
+	/**
+	 * Sets the properties for the frame.
+	 */
+	private void setFrame() {
+		try {
+			frame.setIconImage(ImageIO.read(new File(APPLICATION_ICON)));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		frame.setTitle("Cryptography");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(920, 640);
+		frame.getContentPane().add(container);
+		frame.setVisible(true);
+	}
+	
+	/**
+	 * Sets the properties for all the components.
+	 */
 	private void componentSetting(){
 		//JLabel ENCRYPTION LABEL
 		encryptionLabel.setForeground(Color.WHITE);
@@ -330,29 +358,14 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		
 	}
 	
-	private void setFrame() {
-		try {
-			frame.setIconImage(ImageIO.read(new File(
-					"./res/isiCryptICON_MetroStyle.jpg")));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		frame.setTitle("Cryptography");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(920, 640);
-		frame.getContentPane().add(container);
-		frame.setVisible(true);
-	}
-	
+	/**
+	 * Sets the handlers for the components that require it.
+	 */
 	private void setHandlers() {
 		CryptographyView.fileToEncryptButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				try { //  TODO: remove
-					controller.command_SelectFileToEncrypt();
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				}
+				controller.command_SelectFileToEncrypt();
 			}
 		});
 		CryptographyView.fileToDecryptButton.addActionListener(new ActionListener() {
@@ -388,11 +401,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		CryptographyView.startEncryptionButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				try { // TODO: remove
-					controller.command_Encrypt();
-				} catch (NullPointerException e) {
-					e.printStackTrace();
-				}
+				controller.command_Encrypt();
 			}
 		});
 	}
@@ -471,6 +480,8 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		progressBarDecryption.getModel().setValue(value);
 	}
 
-
-	
+	@Override
+	public void showMessageDialog(String message) {
+		JOptionPane.showMessageDialog(this, message);
+	}
 }

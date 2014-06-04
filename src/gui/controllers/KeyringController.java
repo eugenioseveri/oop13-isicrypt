@@ -24,9 +24,12 @@ import gui.models.OpenButtons;
 import gui.models.Triple;
 import gui.models.OpenButtons.FileTypes;
 import gui.views.IKeyringView;
-import gui.views.KeyringView;
 import gui.views.StartScreenView;
 
+/**
+ * Class used to implement the keyring function controller.
+ * @author Eugenio Severi
+ */
 public class KeyringController implements IKeyringViewObserver, IGeneralViewObserver {
 
 	private final static String ROW_NOT_SELECTED = "You must select a row first!";
@@ -44,6 +47,12 @@ public class KeyringController implements IKeyringViewObserver, IGeneralViewObse
 	private IKeyringView view;
 	private IKeyringModel model;
 	
+	/**
+	 * Creates a new controller and asks the user to select a key to encrypt/decrypt the database (if available).
+	 * If a correct key is specified, the controller tries to load a database if already exists.
+	 * @param view The keyring view
+	 * @param model The keyring model
+	 */
 	public KeyringController(IKeyringView view, IKeyringModel model) {
 		this.view = view;
 		this.model = model;
@@ -51,7 +60,7 @@ public class KeyringController implements IKeyringViewObserver, IGeneralViewObse
 		this.view.getTable().setModel(this.tableBuilder());
 		File selectedFile = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
 		if(selectedFile == null || !(selectedFile.exists())) {
-			JOptionPane.showMessageDialog((KeyringView)this.view, KEY_NOT_SET_WARNING);
+			this.view.showMessageDialog(KEY_NOT_SET_WARNING);
 		} else {
 			ObjectInputStream ois;
 			try {
@@ -62,13 +71,12 @@ public class KeyringController implements IKeyringViewObserver, IGeneralViewObse
 					this.model.loadData(new BufferedInputStream(new FileInputStream(KEYRING_FILE_PATH)), this.aesKey);
 					this.view.getTable().setModel(this.tableBuilder());
 				}
-				
 			} catch (IOException e) {
-				JOptionPane.showMessageDialog((KeyringView)this.view, ERROR_WHILE_LOADING);
+				this.view.showMessageDialog(ERROR_WHILE_LOADING);
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (InvalidKeyException e) {
-				JOptionPane.showMessageDialog((KeyringView)this.view, WRONG_KEYSIZE_ERROR);
+				this.view.showMessageDialog(WRONG_KEYSIZE_ERROR);
 			}
 		}
 		if(this.aesKey == null) {
@@ -84,14 +92,14 @@ public class KeyringController implements IKeyringViewObserver, IGeneralViewObse
 	
 	@Override
 	public void command_addButton() {
-		String host = JOptionPane.showInputDialog("Host name", "Enter host name:");
-		String user = JOptionPane.showInputDialog("Username", "Enter username:");
-		String pass = JOptionPane.showInputDialog("Password", "Enter password:");
+		String host = this.view.showInputDialog("Host name", "Enter host name:");
+		String user = this.view.showInputDialog("Username", "Enter username:");
+		String pass = this.view.showInputDialog("Password", "Enter password:");
 		if(host != null && user != null && pass != null) {
 			this.model.addItem(host, user, pass);
 			this.view.getTable().setModel(this.tableBuilder()); // TODO: controllare che non sia un duplicato
 		} else {
-			JOptionPane.showMessageDialog((KeyringView)this.view, EMPTY_RECORD_MESSAGE);
+			this.view.showMessageDialog(EMPTY_RECORD_MESSAGE);
 		}
 	}
 
@@ -103,14 +111,14 @@ public class KeyringController implements IKeyringViewObserver, IGeneralViewObse
 			String host = (String)getTableModel.getValueAt(selectedRow, 0);
 			String user = (String)getTableModel.getValueAt(selectedRow, 1);
 			String pass = (String)getTableModel.getValueAt(selectedRow, 2);
-			String host2 = JOptionPane.showInputDialog("Host name", host);
-			String user2 = JOptionPane.showInputDialog("Username", user);
-			String pass2 = JOptionPane.showInputDialog("Password", pass);
+			String host2 = this.view.showInputDialog("Host name", host);
+			String user2 = this.view.showInputDialog("Username", user);
+			String pass2 = this.view.showInputDialog("Password", pass);
 			this.model.removeItem(host, user, pass);
 			this.model.addItem(host2, user2, pass2);
 			this.view.getTable().setModel(this.tableBuilder());	
 		} else {
-			JOptionPane.showMessageDialog((KeyringView)this.view, ROW_NOT_SELECTED);
+			this.view.showMessageDialog(ROW_NOT_SELECTED);
 		}
 	}
 
@@ -118,8 +126,7 @@ public class KeyringController implements IKeyringViewObserver, IGeneralViewObse
 	public void command_cancelButton() {
 		int selectedRow = this.view.getTable().getSelectedRow();
 		if(selectedRow != -1) {
-			int choice = JOptionPane.showConfirmDialog((KeyringView)this.view, DELETE_RECORD_CHECK, "", JOptionPane.YES_NO_OPTION);
-			if(choice == JOptionPane.YES_OPTION) {
+			if(this.view.showYesNoOptionPane(DELETE_RECORD_CHECK)) {
 				TableModel getTableModel = tableBuilder();
 				String host = (String)getTableModel.getValueAt(selectedRow, 0);
 				String user = (String)getTableModel.getValueAt(selectedRow, 1);
@@ -128,7 +135,7 @@ public class KeyringController implements IKeyringViewObserver, IGeneralViewObse
 				this.view.getTable().setModel(this.tableBuilder());
 			}
 		} else {
-			JOptionPane.showMessageDialog((KeyringView)this.view, ROW_NOT_SELECTED);
+			this.view.showMessageDialog(ROW_NOT_SELECTED);
 		}
 		
 	}
@@ -149,11 +156,11 @@ public class KeyringController implements IKeyringViewObserver, IGeneralViewObse
 					oos.close();
 				}
 			} catch (InvalidKeyException e) {
-				JOptionPane.showMessageDialog((KeyringView)this.view, WRONG_KEYSIZE_ERROR);
+				this.view.showMessageDialog(WRONG_KEYSIZE_ERROR);
 			} catch (FileNotFoundException e) {
-				JOptionPane.showMessageDialog((KeyringView)this.view, FILE_NOT_FOUND_ERROR + selectedFile.getAbsolutePath());
+				this.view.showMessageDialog(FILE_NOT_FOUND_ERROR + selectedFile.getAbsolutePath());
 			} catch (IOException e) {
-				JOptionPane.showMessageDialog((KeyringView)this.view, IO_WRITING_ERROR);
+				this.view.showMessageDialog(IO_WRITING_ERROR);
 			}
 		} else { // Reads the key from file
 			ObjectInputStream ois;
@@ -166,41 +173,43 @@ public class KeyringController implements IKeyringViewObserver, IGeneralViewObse
 					ois.close();
 				}
 			} catch (IOException e) {
-				JOptionPane.showMessageDialog((KeyringView)this.view, IO_READING_ERROR);
+				this.view.showMessageDialog(IO_READING_ERROR);
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (InvalidKeyException e) {
-				JOptionPane.showMessageDialog((KeyringView)this.view, WRONG_KEYSIZE_ERROR);
+				this.view.showMessageDialog(WRONG_KEYSIZE_ERROR);
 			}
 		}
 		if(this.aesKey == null) {
-			JOptionPane.showMessageDialog((KeyringView)this.view, KEY_NOT_SET_WARNING);
+			this.view.showMessageDialog(KEY_NOT_SET_WARNING);
 		} else {
-			JOptionPane.showMessageDialog((KeyringView)this.view, KEY_SUCCESSFULLY_SET_MESSAGE);
+			this.view.showMessageDialog(KEY_SUCCESSFULLY_SET_MESSAGE);
 		}
 	}
 
 	@Override
 	public void command_saveButton() {
 		if(this.aesKey == null) {
-			JOptionPane.showMessageDialog((KeyringView)this.view, KEY_NOT_SET_WARNING);
+			this.view.showMessageDialog(KEY_NOT_SET_WARNING);
 		} else {
-			int choice = JOptionPane.showConfirmDialog((KeyringView)this.view, SAVE_RECORDS_CHECK, "", JOptionPane.YES_NO_OPTION);
-			if(choice == JOptionPane.YES_OPTION) {
+			if(this.view.showYesNoOptionPane(SAVE_RECORDS_CHECK)) {
 				File saveFile = new File(KEYRING_FILE_PATH);
 				try {
 					this.model.saveData(new BufferedOutputStream(new FileOutputStream(saveFile)), this.aesKey);
 				} catch (InvalidKeyException e) {
-					JOptionPane.showMessageDialog((KeyringView)this.view, WRONG_KEYSIZE_ERROR);
+					this.view.showMessageDialog(WRONG_KEYSIZE_ERROR);
 				} catch (IOException e) {
-					JOptionPane.showMessageDialog((KeyringView)this.view, ERROR_WHILE_SAVING);
+					this.view.showMessageDialog(ERROR_WHILE_SAVING);
 				}
 			}
 		}
 	}
 	
+	/**
+	 * @return A new table model, used to store data for the JTable in the view
+	 */
 	private TableModel tableBuilder(){
-		DefaultTableModel tableModel = new DefaultTableModel(TABLE_COLUMNS_NAMES, 0 ){
+		DefaultTableModel tableModel = new DefaultTableModel(TABLE_COLUMNS_NAMES, 0 ){ //TODO: forse il problema è che viene creato sempre nuovo?
 			private static final long serialVersionUID = 737530902377505148L;
 			/*public boolean isCellEditable(int row, int column){
 				return false;

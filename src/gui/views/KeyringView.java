@@ -19,6 +19,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -26,9 +27,14 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.TableModel;
 
+/**
+ * Class used to implement the keyring function view.
+ * @author Eugenio Severi
+ */
 public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView {
 
 	private static final long serialVersionUID = -4534574271536073257L;
+	private static final String APPLICATION_ICON = "./res/isiCryptICON_MetroStyle.jpg";
 	private Font font;
 	private Color panelBackColor;
 	private Color buttonColor;
@@ -78,6 +84,9 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 //	private final static JFrame dialog = new JFrame();
 	private final static JFrame frame = new JFrame();
 	
+	/**
+	 * Creates a new cryptography function view.
+	 */
 	public KeyringView(){
 		buildLayout();
 		componentSettings();
@@ -85,7 +94,9 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 		setFrame();
 	}
 	
-	//BuildLayout same for all view
+	/**
+	 * Creates the frame layout (same for all the views)
+	 */
 	private void buildLayout() {
 	//	GlobalSettings set = null;
 	//	set = new GlobalSettings();
@@ -99,10 +110,12 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 		container.setBackground(panelBackColor);
 	}
 	
+	/**
+	 * Sets the properties for the frame.
+	 */
 	private void setFrame() {
 		try {
-			frame.setIconImage(ImageIO.read(new File(
-					"./res/isiCryptICON_MetroStyle.jpg")));
+			frame.setIconImage(ImageIO.read(new File(APPLICATION_ICON)));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -113,7 +126,9 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 		frame.setVisible(true);
 	}
 	
-	//Graphic Draws
+	/**
+	 * Sets the properties for all the components.
+	 */
 	private void componentSettings(){
 		//JButton BACK TO START 
 		setJButton(backButton, buttonColor, foregroundColor, font, false, false);
@@ -210,6 +225,9 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 				resizable, resizable, container, scrollPane);
 	}
 	
+	/**
+	 * Sets the handlers for the components that require it.
+	 */
 	private void setHandlers(){
 		KeyringView.backButton.addActionListener(new ActionListener() {
 			@Override
@@ -249,8 +267,7 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 		});
 	}
 	
-	//GETTERS and SETTERS
-
+	//Getters and setters
 	public void setFont(Font font) {
 		this.font = font;
 	}
@@ -270,6 +287,25 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 	@Override
 	public JTable getTable() {
 		return (JTable) table;
+	}
+
+	@Override
+	public void showMessageDialog(String message) {
+		JOptionPane.showMessageDialog(this, message);
+	}
+
+	@Override
+	public boolean showYesNoOptionPane(String message) {
+		int choice = JOptionPane.showConfirmDialog(this, message, "", JOptionPane.YES_NO_OPTION);
+		if(choice == JOptionPane.YES_OPTION) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public String showInputDialog(String title, String editableText) {
+		return JOptionPane.showInputDialog(title, editableText);
 	}
 	
 	

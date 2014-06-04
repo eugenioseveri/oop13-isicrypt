@@ -6,7 +6,7 @@ import java.awt.Font;
 public class ThemeChooser {
 	
 	public static enum FileTypes {
-		WINTER_IS_COMING, NIGHT_WATCH, FIRE_AND_BLOOD, OURS_IS_THE_FURY
+		WINTER_IS_COMING, NIGHTS_WATCH, FIRE_AND_BLOOD, OURS_IS_THE_FURY
 	}
 	// Default font of buttons
 		private static Font font;
@@ -21,15 +21,15 @@ public class ThemeChooser {
 		public ThemeChooser(){
 			String name = new GlobalSettings().getTheme();
 			if(name == null)System.out.println("nome thema == null");
-			System.out.println("nome thema: "+name+"Controllo name() enum: "+FileTypes.NIGHT_WATCH.name());
+			System.out.println("nome thema: "+name+"Controllo name() enum: "+FileTypes.NIGHTS_WATCH.name());
 			if(name.equals(FileTypes.WINTER_IS_COMING.name())){
 				setGraphic(FileTypes.WINTER_IS_COMING);
 			}
 			else if(name.equals(FileTypes.FIRE_AND_BLOOD.name())){
 				setGraphic(FileTypes.FIRE_AND_BLOOD);
 			}
-			else if(name.equals(FileTypes.NIGHT_WATCH.name())){
-				setGraphic(FileTypes.NIGHT_WATCH);
+			else if(name.equals(FileTypes.NIGHTS_WATCH.name())){
+				setGraphic(FileTypes.NIGHTS_WATCH);
 			}
 			else if(name.equals(FileTypes.OURS_IS_THE_FURY.name())){
 				setGraphic(FileTypes.OURS_IS_THE_FURY);
@@ -38,7 +38,7 @@ public class ThemeChooser {
 		}
 	private void setGraphic(FileTypes theme){
 		switch (theme){
-		case NIGHT_WATCH:
+		case NIGHTS_WATCH:
 			setFont(new Font("Verdana",Font.BOLD, 12));
 			setPanelBackColor(Color.DARK_GRAY);
 			setButtonColor(Color.black);

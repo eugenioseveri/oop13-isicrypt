@@ -12,6 +12,10 @@ import java.util.HashSet;
 
 import algorithms.AES;
 
+/**
+ * Model for the keyring function. It stores triples of Host-Username-Password into a HashSet.
+ * @author Eugenio Severi
+ */
 public class KeyringModel extends HashSet<Triple<String, String, String>> implements IKeyringModel {
 
 	private static final long serialVersionUID = -4180040339126413292L;
@@ -19,7 +23,7 @@ public class KeyringModel extends HashSet<Triple<String, String, String>> implem
 	public KeyringModel() {
 		super();
 	}
-	
+
 	@Override
 	public void saveData(OutputStream outputFile, byte[] aesKey) throws IOException, InvalidKeyException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();

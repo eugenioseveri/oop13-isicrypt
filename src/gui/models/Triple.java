@@ -1,5 +1,9 @@
 package gui.models;
 
+/**
+ * Generic class used to store 3 objects together.
+ * @author Eugenio Severi
+ */
 public class Triple<X,Y,Z> {
 
 	private X first;

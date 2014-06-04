@@ -22,4 +22,5 @@ public interface ICryptographyView {
 	int getNumberOfWipingPassages();
 	void setValue_progressBarEncryption(int value);
 	void setValue_progressBarDecryption(int value);
+	void showMessageDialog(String message);
 }
