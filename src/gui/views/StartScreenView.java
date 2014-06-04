@@ -1,11 +1,9 @@
 package gui.views;
 
 import gui.controllers.IStartScreenViewObserver;
-import gui.controllers.StartScreenController;
 import gui.models.ThemeChooser;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -22,8 +20,10 @@ import javax.swing.JPanel;
 
 
 public class StartScreenView extends AbstractGuiMethodSetter{
+	private static final long serialVersionUID = 4934353268761561329L;
+	private final static String ICON = "./res/isiCryptICON_MetroStyle.jpg";
 	private Font font;
-	private Color panelBakColor;
+	private Color panelBackColor;
 	private Color buttonColor;
 	private Color foregroundColor;
 	// Arrays that contains various dimension of insets
@@ -40,12 +40,12 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 	//GUI Component initialized columns x row order
 	private static final JPanel container = new JPanel();
 	private static final JFrame frame = new JFrame();
-	private static final Component theme = new JButton("theme");
-	private static final Component cryptography = new JButton("cryptography");
-	private static final Component steganography = new JButton("steganography");
-	private static final Component keyring = new JButton("keyring");
-	private static final Component fileExchange = new JButton("fileExchange");
-	private static final Component authorName = new JLabel("<html>Filippo Vimini<br>........Eugenio Severi</html>");
+	private static final JButton theme = new JButton("theme");
+	private static final JButton cryptography = new JButton("cryptography");
+	private static final JButton steganography = new JButton("steganography");
+	private static final JButton keyring = new JButton("keyring");
+	private static final JButton fileExchange = new JButton("fileExchange");
+	private static final JLabel authorName = new JLabel("<html>Filippo Vimini<br>........Eugenio Severi</html>");
 	private static final JFrame dialog = new JFrame();
 
 	//Initialize GUI view observer
@@ -70,11 +70,11 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 		this.setButtonColor(ThemeChooser.getButtonColor());
 		this.setFont(ThemeChooser.getFont());
 		this.setForegroundColor(ThemeChooser.getForegroundColor());
-		this.setPanelBakColor(ThemeChooser.getPanelBackColor());
+		this.setPanelBackColor(ThemeChooser.getPanelBackColor());
 		GridBagLayout layout = new GridBagLayout();
 		limit = new GridBagConstraints();
 		container.setLayout(layout);
-		container.setBackground(panelBakColor);
+		container.setBackground(panelBackColor);
 	}
 
 	private void componentSetting(){
@@ -120,35 +120,32 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 	
 	private void setHandlers(){
 		//select CRYPTOGRAPHY
-		((JButton)cryptography).addActionListener(new ActionListener() {
+		cryptography.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.selectCryptography();
 			}
 		});
 		//select STEGANOGRAPHY
-		((JButton)steganography).addActionListener(new ActionListener() {
+		steganography.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.selectSteganography();
 			}
 		});
-		((JButton)keyring).addActionListener(new ActionListener() {
-			
+		keyring.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.selectKeyring();
 			}
 		});
-		((JButton)fileExchange).addActionListener(new ActionListener() {
-			
+		fileExchange.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.selectFileExchange();
 			}
 		});
-		((JButton)theme).addActionListener(new ActionListener(	) {
-			
+		theme.addActionListener(new ActionListener(	) {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.selectTheme();
@@ -160,8 +157,7 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 	
 	private void setFrame() {
 		try {
-			frame.setIconImage(ImageIO.read(new File(
-					"./res/isiCryptICON_MetroStyle.jpg")));
+			frame.setIconImage(ImageIO.read(new File(ICON)));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -188,11 +184,11 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 	}
 
 	public Color getPanelBakColor() {
-		return panelBakColor;
+		return panelBackColor;
 	}
 
-	public void setPanelBakColor(Color panelBakColor) {
-		this.panelBakColor = panelBakColor;
+	public void setPanelBackColor(Color panelBackColor) {
+		this.panelBackColor = panelBackColor;
 	}
 
 	public Color getButtonColor() {

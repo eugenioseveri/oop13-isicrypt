@@ -6,7 +6,6 @@ import gui.controllers.KeyringController;
 import gui.models.ThemeChooser;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -48,23 +47,23 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 	private static final int defaultCellArea = 1;
 	ImageIcon icon = new ImageIcon("./res/isiCryptIIcon_Keyring.jpg");
 	//GUI component declaration
-	private static final Component backButton = new JButton("Show Start");
-	private static final Component addButton = new JButton("Add account");
-	private static final Component modifyButton = new JButton("Modify account");
-	private static final Component cancelButton = new JButton("Cancel account");
-	private static final Component encryptButton = new JButton("Encryption key");
-	private static final Component saveButton = new JButton("save settings");
-	private static final Component iconLabel= new JLabel();
-	private static TableModel model = FileExchangeController.tableBuilder();
-	private static final Component table = new JTable(model);
-	private static final Component scrollPane = new JScrollPane(table);
-	private static final Component fillerOne = new JButton();
-	private static final Component fillerTwo = new JButton();
-	private static final Component fillerThree = new JButton();
-	private static final Component fillerFour = new JButton();
-	private static final Component fillerFive = new JButton();
-	private static final Component fillerSix = new JButton();
-	private static final Component separator = new JSeparator(SwingConstants.VERTICAL);
+	private static final JButton backButton = new JButton("Show Start");
+	private static final JButton addButton = new JButton("Add account");
+	private static final JButton modifyButton = new JButton("Modify account");
+	private static final JButton cancelButton = new JButton("Cancel account");
+	private static final JButton encryptButton = new JButton("Encryption key");
+	private static final JButton saveButton = new JButton("save settings");
+	private static final JLabel iconLabel= new JLabel();
+	private static final TableModel tableModel = FileExchangeController.tableBuilder(); // TODO: sacrilegio!
+	private static final JTable table = new JTable(tableModel);
+	private static final JScrollPane scrollPane = new JScrollPane(table);
+	private static final JButton fillerOne = new JButton();
+	private static final JButton fillerTwo = new JButton();
+	private static final JButton fillerThree = new JButton();
+	private static final JButton fillerFour = new JButton();
+	private static final JButton fillerFive = new JButton();
+	private static final JButton fillerSix = new JButton();
+	private static final JSeparator separator = new JSeparator(SwingConstants.VERTICAL);
 	
 	private IKeyringViewObserver controller;
 	
@@ -129,7 +128,7 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 		setGridposition(limit, xPosition, yPosition+1, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, addButton);
 		//FILLER ONE
-		((JButton)fillerOne).setEnabled(false);
+		fillerOne.setEnabled(false);
 		setJButton(fillerOne, panelBackColor, panelBackColor, null, false, false);
 		setLimit(limit, ipadDefaultx, ipadDefaulty, zeroInsets, 
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, fillerOne);
@@ -142,7 +141,7 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 		setGridposition(limit, xPosition, yPosition+3, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, modifyButton);
 		//FILLER TWO
-		((JButton)fillerTwo).setEnabled(false);
+		fillerTwo.setEnabled(false);
 		setJButton(fillerTwo, panelBackColor, panelBackColor, null, false, false);
 		setLimit(limit, ipadDefaultx, ipadDefaulty, zeroInsets, 
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, fillerTwo);
@@ -155,7 +154,7 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 		setGridposition(limit, xPosition, yPosition+5, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, cancelButton);		
 		//FILLER THREE
-		((JButton)fillerThree).setEnabled(false);
+		fillerThree.setEnabled(false);
 		setJButton(fillerThree, panelBackColor, panelBackColor, null, false, false);
 		setLimit(limit, ipadDefaultx, ipadDefaulty, zeroInsets, 
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, fillerThree);
@@ -168,7 +167,7 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 		setGridposition(limit, xPosition, yPosition+7, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, encryptButton);	
 		//FILLER FOUR
-		((JButton)fillerFour).setEnabled(false);
+		fillerFour.setEnabled(false);
 		setJButton(fillerFour, panelBackColor, panelBackColor, null, false, false);
 		setLimit(limit, ipadDefaultx, ipadDefaulty, zeroInsets, 
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, fillerFour);
@@ -181,19 +180,19 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 		setGridposition(limit, xPosition, yPosition+9, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, saveButton);
 		//FILLER FIVE
-		((JButton)fillerFive).setEnabled(false);
+		fillerFive.setEnabled(false);
 		setJButton(fillerFive, panelBackColor, panelBackColor, null, false, false);
 		setLimit(limit, ipadDefaultx, ipadDefaulty, zeroInsets, 
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, fillerFive);
 		setGridposition(limit, xPosition, yPosition+10, defaultCellArea, defaultCellArea,
 				noResizable, resizable, container, fillerFive);		
-		((JLabel)iconLabel).setIcon(icon);
+		iconLabel.setIcon(icon);
 		setLimit(limit, zeroIpad, zeroIpad, zeroInsets, 
 				GridBagConstraints.CENTER, GridBagConstraints.CENTER, container, iconLabel);
 		setGridposition(limit, xPosition, yPosition+11, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, iconLabel);
 		//FILLER SIX
-		((JButton)fillerSix).setEnabled(false);
+		fillerSix.setEnabled(false);
 		setJButton(fillerSix, panelBackColor, panelBackColor, null, false, false);
 		setLimit(limit, ipadDefaultx, ipadDefaulty, zeroInsets, 
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, fillerSix);
@@ -208,42 +207,41 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault, 
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, scrollPane);
 		setGridposition(limit, xPosition+2, yPosition, defaultCellArea, defaultCellArea+11,
-				resizable, resizable, container, scrollPane);	
-		
+				resizable, resizable, container, scrollPane);
 	}
 	
 	private void setHandlers(){
-		((JButton)KeyringView.backButton).addActionListener(new ActionListener() {
+		KeyringView.backButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				((KeyringController)controller).showStart();
 			}
 		});
-		((JButton)KeyringView.addButton).addActionListener(new ActionListener() {
+		KeyringView.addButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.command_addButton();
 			}
 		});
-		((JButton)KeyringView.modifyButton).addActionListener(new ActionListener() {
+		KeyringView.modifyButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.command_modifyButton();
 			}
 		});
-		((JButton)KeyringView.cancelButton).addActionListener(new ActionListener() {
+		KeyringView.cancelButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.command_cancelButton();
 			}
 		});
-		((JButton)KeyringView.encryptButton).addActionListener(new ActionListener() {
+		KeyringView.encryptButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.command_encryptButton();
 			}
 		});
-		((JButton)KeyringView.saveButton).addActionListener(new ActionListener() {
+		KeyringView.saveButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.command_saveButton();

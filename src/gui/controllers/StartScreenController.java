@@ -53,7 +53,7 @@ public class StartScreenController implements IStartScreenViewObserver{
 	
 	@Override
 	public void selectTheme(){
-		Object[] possibilities = {"WINTER_IS_COMING", "NIGHT_WATCH", "FIRE_AND_BLOOD", "OURS_IS_THE_FURY"};
+		Object[] possibilities = {"WINTER_IS_COMING", "NIGHTS_WATCH", "FIRE_AND_BLOOD", "OURS_IS_THE_FURY"};
 		String theme = (String)JOptionPane.showInputDialog(StartScreenView.getDialog(),"Choose a theme:\n","Customized Dialog",JOptionPane.PLAIN_MESSAGE,null ,possibilities,"Lopo");
 		if(theme != null){
 			GlobalSettings settings = new GlobalSettings();

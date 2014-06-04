@@ -4,7 +4,6 @@ import gui.controllers.ICryptographyViewObserver;
 import gui.models.ThemeChooser;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -53,43 +52,43 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 	private static final int defaultCellArea = 1;
 	//GUI component declaration
 	//Encryption part
-	private static final Component backButton = new JButton("Show Start");
+	private static final JButton backButton = new JButton("Show Start");
 	//private static final Component westEncryptBorderFiller = new JButton();
-	private static final Component encryptionLabel = new JLabel("Encryption");
-	private static final Component fileToEncryptButton = new JButton("File to encrypt:");
-	private static final Component encryptTextField = new JTextField();
-	private static final Component wipeSource = new JLabel("Source file wiping passages:");
-	private static final Component wipingComboBox = new JComboBox<Integer>();
-	private static final Component publicKeyButton = new JButton("Public key:");
-	private static final Component publicKeyTextField = new JTextField();
-	private static final Component newKeyPairButton = new JButton("Generate new key pair");
-	private static final Component fillerOne = new JButton();
-	private static final Component algorithmLabel = new JLabel("Algorithm:");
-	private static final Component algorithmComboBox = new JComboBox<EnumAvailableSymmetricAlgorithms>();
-	private static final Component hashingLabel = new JLabel("Hashing:");
-	private static final Component hashingComboBox = new JComboBox<EnumAvailableHashingAlgorithms>();
-	private static final Component compressionLabel = new JLabel("Compression:");
-	private static final Component compressionComboBox = new JComboBox<EnumAvailableCompressionAlgorithms>();
-	private static final Component fillerTwo = new JButton();
-	private static final Component startEncryptionButton = new JButton("Start Encryption");
-	private static final Component statusLabelEncryption = new JLabel("Status: ");
-	private static final Component progressBarEncryption = new JProgressBar();
-	private static final Component statusLabelDecryption = new JLabel("Status: ");
-	private static final Component progressBarDecryption = new JProgressBar();
+	private static final JLabel encryptionLabel = new JLabel("Encryption");
+	private static final JButton fileToEncryptButton = new JButton("File to encrypt:");
+	private static final JTextField encryptTextField = new JTextField();
+	private static final JLabel wipeSource = new JLabel("Source file wiping passages:");
+	private static final JComboBox<Integer> wipingComboBox = new JComboBox<Integer>();
+	private static final JButton publicKeyButton = new JButton("Public key:");
+	private static final JTextField publicKeyTextField = new JTextField();
+	private static final JButton newKeyPairButton = new JButton("Generate new key pair");
+	private static final JButton fillerOne = new JButton();
+	private static final JLabel algorithmLabel = new JLabel("Algorithm:");
+	private static final JComboBox<EnumAvailableSymmetricAlgorithms> algorithmComboBox = new JComboBox<EnumAvailableSymmetricAlgorithms>();
+	private static final JLabel hashingLabel = new JLabel("Hashing:");
+	private static final JComboBox<EnumAvailableHashingAlgorithms> hashingComboBox = new JComboBox<EnumAvailableHashingAlgorithms>();
+	private static final JLabel compressionLabel = new JLabel("Compression:");
+	private static final JComboBox<EnumAvailableCompressionAlgorithms> compressionComboBox = new JComboBox<EnumAvailableCompressionAlgorithms>();
+	private static final JButton fillerTwo = new JButton();
+	private static final JButton startEncryptionButton = new JButton("Start Encryption");
+	private static final JLabel statusLabelEncryption = new JLabel("Status: ");
+	private static final JProgressBar progressBarEncryption = new JProgressBar();
+	private static final JLabel statusLabelDecryption = new JLabel("Status: ");
+	private static final JProgressBar progressBarDecryption = new JProgressBar();
 	//private static final Component eastEncryptBorderFiller = new JButton();
 	//Decryption part
-	private static final Component separator = new JSeparator(SwingConstants.VERTICAL);
+	private static final JSeparator separator = new JSeparator(SwingConstants.VERTICAL);
 	//private static final Component westDecryptBorderFiller = new JButton();
-	private static final Component decryptionLabel = new JLabel("Decryption");
-	private static final Component fileToDecryptButton = new JButton("File to decrypt:");
-	private static final Component decryptTextField = new JTextField();
-	private static final Component privateKeyButton = new JButton("Private key:");
-	private static final Component privateKeyTextField = new JTextField();
-	private static final Component fillerThree = new JButton();
-	private static final Component startDecryptionButton = new JButton("Start Decryption");
+	private static final JLabel decryptionLabel = new JLabel("Decryption");
+	private static final JButton fileToDecryptButton = new JButton("File to decrypt:");
+	private static final JTextField decryptTextField = new JTextField();
+	private static final JButton privateKeyButton = new JButton("Private key:");
+	private static final JTextField privateKeyTextField = new JTextField();
+	private static final JButton fillerThree = new JButton();
+	private static final JButton startDecryptionButton = new JButton("Start Decryption");
 	//private static final Component fillerFour= new JButton();
-	private static final Component logTextArea = new JTextArea(20,20);
-	private final static Component scrollPane = new JScrollPane(logTextArea);
+	private static final JTextArea logTextArea = new JTextArea(20,20);
+	private final static JScrollPane scrollPane = new JScrollPane(logTextArea);
 	//private static final Component eastDecryptBorderFiller = new JButton();
 	//Frame and panel
 	private static final JPanel container = new JPanel();
@@ -125,10 +124,9 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 	}
 	
 	//Graphic draw
-	@SuppressWarnings("unchecked") // Attenzione! (ma non dovrebbero verificarsi errori) (anche sotto)
 	private void componentSetting(){
 		//JLabel ENCRYPTION LABEL
-		((JLabel)encryptionLabel).setForeground(Color.WHITE);
+		encryptionLabel.setForeground(Color.WHITE);
 		setLimit(limit, zeroIpad, zeroIpad, labelInsets,
 				GridBagConstraints.CENTER, GridBagConstraints.CENTER, container, encryptionLabel);
 		setGridposition(limit, xPosition+1, yPosition, defaultCellArea+1, defaultCellArea,
@@ -140,7 +138,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		setGridposition(limit, xPosition+1, yPosition	, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, backButton);
 		//FILLER
-		((JButton)fillerThree).setEnabled(false);
+		fillerThree.setEnabled(false);
 		setJButton(fillerThree, panelBackColor, panelBackColor, null, false, false);
 		setLimit(limit, zeroIpad, zeroIpad, zeroInsets, 
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, fillerThree);
@@ -153,22 +151,22 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		setGridposition(limit, xPosition+1, yPosition+2	, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, fileToEncryptButton);
 		//TextField ENCRYPT TEXTFIELD
-		((JTextField)encryptTextField).setEditable(false);
+		encryptTextField.setEditable(false);
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault, 
 				GridBagConstraints.HORIZONTAL, GridBagConstraints.SOUTH, container, encryptTextField);
 		setGridposition(limit, xPosition+2, yPosition+2, defaultCellArea, defaultCellArea,
 				resizable, noResizable, container, encryptTextField);
 		//checkbox WIPE SOURCE CHECKBOX
-		((JLabel)wipeSource).setForeground(Color.WHITE);
+		wipeSource.setForeground(Color.WHITE);
 		setLimit(limit, zeroIpad, zeroIpad, zeroInsets,
 				GridBagConstraints.CENTER, GridBagConstraints.CENTER, container, wipeSource);
 		setGridposition(limit, xPosition+1, yPosition+4, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, wipeSource);
 		// JCombobox SELECT WIPING TYPE
-		((JComboBox<Integer>)wipingComboBox).addItem(0);
-		((JComboBox<Integer>)wipingComboBox).addItem(1);
-		((JComboBox<Integer>)wipingComboBox).addItem(2);
-		((JComboBox<Integer>)wipingComboBox).addItem(7);
+		wipingComboBox.addItem(0);
+		wipingComboBox.addItem(1);
+		wipingComboBox.addItem(2);
+		wipingComboBox.addItem(7);
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault, 
 				GridBagConstraints.HORIZONTAL, GridBagConstraints.SOUTH, container, wipingComboBox);
 		setGridposition(limit, xPosition+2, yPosition+4, defaultCellArea, defaultCellArea,
@@ -180,7 +178,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		setGridposition(limit, xPosition+1, yPosition+5, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, publicKeyButton);
 		//TextField PUBLIC KEY TEXT FIELD
-		((JTextField)publicKeyTextField).setEditable(false);
+		publicKeyTextField.setEditable(false);
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
 				GridBagConstraints.HORIZONTAL, GridBagConstraints.SOUTH, container, publicKeyTextField);
 		setGridposition(limit, xPosition+2, yPosition+5, defaultCellArea, defaultCellArea,
@@ -192,7 +190,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		setGridposition(limit, xPosition+1, yPosition+7, defaultCellArea+1, defaultCellArea,
 				resizable, noResizable, container, newKeyPairButton);
 		//Filler 
-		((JButton)fillerOne).setEnabled(false);
+		fillerOne.setEnabled(false);
 	//	((JButton)fillerOne).setVisible(false);
 		setJButton(fillerOne, panelBackColor, panelBackColor, null, false, false);
 		setLimit(limit, zeroIpad, zeroIpad, zeroInsets, 
@@ -200,49 +198,49 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		setGridposition(limit, xPosition+1, yPosition+8, defaultCellArea+1, defaultCellArea,
 				resizable, resizable, container, fillerOne);
 		//JLabel ALGORITHM LABLE
-		((JLabel)algorithmLabel).setForeground(Color.WHITE);
+		algorithmLabel.setForeground(Color.WHITE);
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
 				GridBagConstraints.CENTER, GridBagConstraints.EAST, container, algorithmLabel);
 		setGridposition(limit, xPosition+1, yPosition+9, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, algorithmLabel);
 		//JCombobox ALGORITHM TEXT FIELD
 		for(EnumAvailableSymmetricAlgorithms item: EnumAvailableSymmetricAlgorithms.values()) {
-			((JComboBox<EnumAvailableSymmetricAlgorithms>)algorithmComboBox).addItem(item);
+			algorithmComboBox.addItem(item);
 		}
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
 				GridBagConstraints.HORIZONTAL, GridBagConstraints.EAST, container, algorithmComboBox);
 		setGridposition(limit, xPosition+2, yPosition+9, defaultCellArea, defaultCellArea,
 				resizable, noResizable, container, algorithmComboBox);
 		//JLabel HASHING LABEL
-		((JLabel)hashingLabel).setForeground(Color.WHITE);
+		hashingLabel.setForeground(Color.WHITE);
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
 				GridBagConstraints.CENTER, GridBagConstraints.EAST, container, hashingLabel );
 		setGridposition(limit, xPosition+1, yPosition+11, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, hashingLabel);
 		//JCombobox HASHING TEXT FIELD
 		for(EnumAvailableHashingAlgorithms item: EnumAvailableHashingAlgorithms.values()) {
-			((JComboBox<EnumAvailableHashingAlgorithms>)hashingComboBox).addItem(item);
+			hashingComboBox.addItem(item);
 		}
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
 				GridBagConstraints.HORIZONTAL, GridBagConstraints.EAST, container, hashingComboBox);
 		setGridposition(limit, xPosition+2, yPosition+11, defaultCellArea, defaultCellArea,
 				resizable, noResizable, container, hashingComboBox);
 		//JLabel COMPRESSION LABEL
-		((JLabel)compressionLabel).setForeground(Color.WHITE);
+		compressionLabel.setForeground(Color.WHITE);
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
 				GridBagConstraints.CENTER, GridBagConstraints.EAST, container, compressionLabel);
 		setGridposition(limit, xPosition+1, yPosition+12, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, compressionLabel);
 		//JCombobox COMPRESSION TEXT FIELD
 		for(EnumAvailableCompressionAlgorithms item: EnumAvailableCompressionAlgorithms.values()) {
-			((JComboBox<EnumAvailableCompressionAlgorithms>)compressionComboBox).addItem(item);
+			compressionComboBox.addItem(item);
 		}
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
 				GridBagConstraints.HORIZONTAL, GridBagConstraints.EAST, container, compressionComboBox);
 		setGridposition(limit, xPosition+2, yPosition+12, defaultCellArea, defaultCellArea,
 				resizable, noResizable, container, compressionComboBox);
 		//filler
-		((JButton)fillerTwo).setEnabled(false);
+		fillerTwo.setEnabled(false);
 		setJButton(fillerTwo, panelBackColor, panelBackColor, null, false, false);
 		setLimit(limit, zeroIpad, zeroIpad, zeroInsets,
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, fillerTwo);
@@ -255,7 +253,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		setGridposition(limit, xPosition+1, yPosition+14, defaultCellArea+1, defaultCellArea,
 				resizable, noResizable, container, startEncryptionButton);
 		//Status LABEL
-		((JLabel)statusLabelEncryption).setForeground(Color.WHITE);
+		statusLabelEncryption.setForeground(Color.WHITE);
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
 				GridBagConstraints.CENTER, GridBagConstraints.CENTER, container, statusLabelEncryption);
 		setGridposition(limit, xPosition+1, yPosition+15, defaultCellArea, defaultCellArea, 
@@ -274,7 +272,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		setGridposition(limit, xPosition+3, yPosition, defaultCellArea, defaultCellArea+15,
 				noResizable, resizable, container, separator);
 		//decryption LABEL
-		((JLabel)decryptionLabel).setForeground(Color.WHITE);
+		decryptionLabel.setForeground(Color.WHITE);
 		setLimit(limit, zeroIpad, zeroIpad, labelInsets,
 				GridBagConstraints.CENTER, GridBagConstraints.CENTER, container, decryptionLabel);
 		setGridposition(limit, xPosition+4, yPosition, defaultCellArea+2, defaultCellArea,
@@ -286,7 +284,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		setGridposition(limit, xPosition+4, yPosition+2	, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, fileToDecryptButton);
 		//TextField  DECRYPT FIELD
-		((JTextField)decryptTextField).setEditable(false);
+		decryptTextField.setEditable(false);
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault, 
 				GridBagConstraints.HORIZONTAL, GridBagConstraints.SOUTH, container, decryptTextField);
 		setGridposition(limit, xPosition+5, yPosition+2, defaultCellArea+1, defaultCellArea,
@@ -298,7 +296,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		setGridposition(limit, xPosition+4, yPosition+5, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, privateKeyButton);
 		//textField PRIVATE KEY FIELD
-		((JTextField)privateKeyTextField).setEditable(false);
+		privateKeyTextField.setEditable(false);
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
 				GridBagConstraints.HORIZONTAL, GridBagConstraints.SOUTH, container, privateKeyTextField);
 		setGridposition(limit, xPosition+5, yPosition+5, defaultCellArea+1, defaultCellArea,
@@ -310,7 +308,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		setGridposition(limit, xPosition+4, yPosition+7, defaultCellArea+2, defaultCellArea,
 				noResizable, noResizable, container, startDecryptionButton);
 		//Status LABEL
-		((JLabel)statusLabelDecryption).setForeground(Color.WHITE);
+		statusLabelDecryption.setForeground(Color.WHITE);
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
 				GridBagConstraints.CENTER, GridBagConstraints.NORTH, container, statusLabelDecryption);
 		setGridposition(limit, xPosition+4, yPosition+8, defaultCellArea, defaultCellArea, 
@@ -321,10 +319,10 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		setGridposition(limit, xPosition+5, yPosition+8, defaultCellArea, defaultCellArea,
 				resizable, noResizable, container, progressBarDecryption);
 		//TextArea LOG TEXT AREA
-		((JTextArea) logTextArea).setLineWrap(true);//Format text on TextArea
-		((JTextArea) logTextArea).setWrapStyleWord(true);	//Format text on TextArea
+		logTextArea.setLineWrap(true);//Format text on TextArea
+		logTextArea.setWrapStyleWord(true);	//Format text on TextArea
 		scrollPane.setPreferredSize(((JTextArea) logTextArea).getSize());
-		((JScrollPane) scrollPane).setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); 	//Only vertical scroll bar
+		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); 	//Only vertical scroll bar
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, scrollPane);
 		setGridposition(limit, xPosition+4, yPosition+9, defaultCellArea+1, defaultCellArea+6,
@@ -347,7 +345,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 	}
 	
 	private void setHandlers() {
-		((JButton)CryptographyView.fileToEncryptButton).addActionListener(new ActionListener() {
+		CryptographyView.fileToEncryptButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try { //  TODO: remove
@@ -357,37 +355,37 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 				}
 			}
 		});
-		((JButton)CryptographyView.fileToDecryptButton).addActionListener(new ActionListener() {
+		CryptographyView.fileToDecryptButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.command_SelectFileToDecrypt();				
 			}
 		});
-		((JButton)CryptographyView.newKeyPairButton).addActionListener(new ActionListener() {
+		CryptographyView.newKeyPairButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.command_GenerateNewKeyPair();
 			}
 		});
-		((JButton)CryptographyView.publicKeyButton).addActionListener(new ActionListener() {
+		CryptographyView.publicKeyButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.command_SelectPublicKeyFile();				
 			}
 		});
-		((JButton)CryptographyView.privateKeyButton).addActionListener(new ActionListener() {
+		CryptographyView.privateKeyButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.command_SelectPrivateKeyFile();
 			}
 		});
-		((JButton)CryptographyView.startDecryptionButton).addActionListener(new ActionListener() {
+		CryptographyView.startDecryptionButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.command_Decrypt();
 			}
 		});
-		((JButton)CryptographyView.startEncryptionButton).addActionListener(new ActionListener() {
+		CryptographyView.startEncryptionButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try { // TODO: remove
@@ -419,62 +417,58 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 
 	@Override
 	public void setText_encryptTextField(String text) {
-		((JTextField)CryptographyView.encryptTextField).setText(text);
+		CryptographyView.encryptTextField.setText(text);
 	}
 
 	@Override
 	public void setText_publicKeyTextField(String text) {
-		((JTextField)CryptographyView.publicKeyTextField).setText(text);
+		CryptographyView.publicKeyTextField.setText(text);
 	}
 
 	@Override
 	public void setText_decryptTextField(String text) {
-		((JTextField)CryptographyView.decryptTextField).setText(text);
+		CryptographyView.decryptTextField.setText(text);
 	}
 
 	@Override
 	public void setText_privateKeyTextField(String text) {
-		((JTextField)CryptographyView.privateKeyTextField).setText(text);
+		CryptographyView.privateKeyTextField.setText(text);
 	}
 
 	@Override
 	public void addText_logTextArea(String text) {
-		((JTextArea)CryptographyView.logTextArea).append("\n" + text);
+		CryptographyView.logTextArea.append("\n" + text);
 		//logTextArea.repaint(); //TODO non funziona
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public EnumAvailableSymmetricAlgorithms getSymmetricAlgorithm() {
-		return (EnumAvailableSymmetricAlgorithms)((JComboBox<EnumAvailableSymmetricAlgorithms>) CryptographyView.algorithmComboBox).getSelectedItem();
+		return (EnumAvailableSymmetricAlgorithms)CryptographyView.algorithmComboBox.getSelectedItem();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public EnumAvailableHashingAlgorithms getHashingAlgorithm() {
-		return (EnumAvailableHashingAlgorithms)((JComboBox<EnumAvailableHashingAlgorithms>) CryptographyView.hashingComboBox).getSelectedItem();
+		return (EnumAvailableHashingAlgorithms)CryptographyView.hashingComboBox.getSelectedItem();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public EnumAvailableCompressionAlgorithms getCompressionAlgorithm() {
-		return (EnumAvailableCompressionAlgorithms)((JComboBox<Integer>) CryptographyView.compressionComboBox).getSelectedItem();
+		return (EnumAvailableCompressionAlgorithms)CryptographyView.compressionComboBox.getSelectedItem();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public int getNumberOfWipingPassages() {
-		return (int)((JComboBox<Integer>)CryptographyView.wipingComboBox).getSelectedItem();
+		return (int)CryptographyView.wipingComboBox.getSelectedItem();
 	}
 
 	@Override
 	public void setValue_progressBarEncryption(int value) {
-		((JProgressBar)progressBarEncryption).getModel().setValue(value);
+		progressBarEncryption.getModel().setValue(value);
 	}
 
 	@Override
 	public void setValue_progressBarDecryption(int value) {
-		((JProgressBar)progressBarDecryption).getModel().setValue(value);
+		progressBarDecryption.getModel().setValue(value);
 	}
 
 

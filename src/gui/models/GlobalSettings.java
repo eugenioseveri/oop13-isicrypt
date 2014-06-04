@@ -23,14 +23,14 @@ public class GlobalSettings implements Serializable {
 	transient private final static String userHomePath = System.getProperty("user.home") + "\\isicrypt";
 	transient private final static String settingsFilePath = userHomePath + "\\globalsettings.dat"; // TODO: Funziona multipiattaforma?
 	private static final long serialVersionUID = -3375259654271655816L;
-	private String theme = "NIGHT_WATCH";
+	private String defaultTheme = "NIGHTS_WATCH";
 	
 	public String getTheme() {
-		return theme;
+		return defaultTheme;
 	}
 
 	public void setTheme(String theme) {
-		this.theme = theme;
+		this.defaultTheme = theme;
 	}
 
 	/**
@@ -72,7 +72,6 @@ public class GlobalSettings implements Serializable {
 	/**
 	 * Stores the current global application settings to the settings file
 	 */
-	// Questo metodo è molto simile a quello in FileInterpret...
 	public void storeSettings() {
 		FileOutputStream file;
 		BufferedOutputStream buffFile;

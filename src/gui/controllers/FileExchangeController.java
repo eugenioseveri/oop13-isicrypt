@@ -212,7 +212,7 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 			 */
 			private static final long serialVersionUID = 737530902377505148L;
 
-			public boolean isCellEditable(int row, int column){
+			public boolean isCellEditable(int row, int column){ //TODO: questa funziona serve a qualcosa?
 				return false;
 			}
 		};
