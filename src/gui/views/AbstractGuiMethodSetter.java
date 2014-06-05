@@ -56,7 +56,7 @@ public abstract class AbstractGuiMethodSetter extends JFrame {
 	 * @return imageIcon	optimized height and width ImageIcon.
 	 * @throws IOException
 	 */
-	public ImageIcon iconOptimizer(JLabel label, BufferedImage srcImage, int height, int width){
+	public static ImageIcon iconOptimizer(JLabel label, BufferedImage srcImage, int height, int width){
 		Dimension iconDimension = new Dimension();
 		iconDimension.height = height;
 		iconDimension.width = width;

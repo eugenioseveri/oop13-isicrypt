@@ -144,7 +144,7 @@ public class TypeConverter {
 	 * @param text
 	 * @return
 	 */
-	public  static String byteArrayToString(byte[] text){			
+	public static String byteArrayToString(byte[] text){			
 		StringBuilder sb = new StringBuilder(new String(text));
 		return sb.toString();
 	}
@@ -155,21 +155,15 @@ public class TypeConverter {
 	 * @return
 	 * @throws IOException 
 	 */
-	public static  File bufferedInputTOtempFile(BufferedInputStream bis, String name) throws IOException{
+	public static File bufferedInputTOtempFile(BufferedInputStream bis, String name, String extension) throws IOException{
 		String nomeTemp = name;
-		String tempExtension =".png";
-		 File tempFile;
-		try {
-			tempFile = File.createTempFile(nomeTemp, tempExtension);
-			tempFile.deleteOnExit();
-	        FileOutputStream out = new FileOutputStream(tempFile);
-	        IOUtils.copy(bis, out);
-		    return tempFile;
-		} catch (IOException e) {
-			System.out.println("an I/O error occured: " + e);
-			throw e;
-		}
-
+		String tempExtension = extension;
+		File tempFile;
+		tempFile = File.createTempFile(nomeTemp, tempExtension);
+		tempFile.deleteOnExit();
+        FileOutputStream out = new FileOutputStream(tempFile);
+        IOUtils.copy(bis, out);
+	    return tempFile;
 	}
 	/**
 	 * 

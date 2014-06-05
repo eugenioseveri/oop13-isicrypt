@@ -3,8 +3,6 @@ package algorithms.interfacesandabstractclasses;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import algorithms.GZip;
-
 /**
  * Interface used to define mandatory methods for compression classes.
  * @author Eugenio Severi

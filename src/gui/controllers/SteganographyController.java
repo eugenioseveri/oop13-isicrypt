@@ -25,7 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import algorithms.Steganography;
 import algorithms.TypeConverter;
 
-public class SteganographyController extends AbstractGuiMethodSetter implements ISteganographyViewObserver, IGeneralViewObserver {
+public class SteganographyController implements ISteganographyViewObserver, IGeneralViewObserver {
 
 	private static SteganographyView view;
 	//Contains the selected image. Used like ICON.
@@ -52,7 +52,7 @@ public class SteganographyController extends AbstractGuiMethodSetter implements 
 			if(imageIcon != null){
 				imageChoosen = imageIcon;
 				((JLabel) SteganographyView.getIconLabel()).
-					setIcon(iconOptimizer((JLabel)SteganographyView.getIconLabel(), ImageIO.read(imageIcon), iconHeigth, iconWidth));
+					setIcon(AbstractGuiMethodSetter.iconOptimizer((JLabel)SteganographyView.getIconLabel(), ImageIO.read(imageIcon), iconHeigth, iconWidth));
 				if(!StringUtils.isEmpty(SteganographyView.getTextArea().getText())){
 					((JButton)SteganographyView.getStartButton()).setEnabled(true);
 				}
@@ -96,7 +96,7 @@ public class SteganographyController extends AbstractGuiMethodSetter implements 
 			File iconFinder = new OpenButtons().fileChooser(IMAGE);
 			if(iconFinder != null){
 				((JLabel) SteganographyView.getIconLabel()).
-					setIcon(iconOptimizer((JLabel)SteganographyView.getIconLabel(), ImageIO.read(imageIcon), iconHeigth, iconWidth));
+					setIcon(AbstractGuiMethodSetter.iconOptimizer((JLabel)SteganographyView.getIconLabel(), ImageIO.read(imageIcon), iconHeigth, iconWidth));
 				textBorrowed = new Steganography().messageBorrower(iconFinder);
 				if(SteganographyView.getTextArea() != null)SteganographyView.getTextArea().setText("");
 				if(textBorrowed != null)SteganographyView.getTextArea().append(textBorrowed);
@@ -114,7 +114,7 @@ public class SteganographyController extends AbstractGuiMethodSetter implements 
 	public void clearSetting(){
 		try {
 			((JLabel) SteganographyView.getIconLabel()).
-				setIcon(iconOptimizer((JLabel)SteganographyView.getIconLabel(), ImageIO.read(new File(pathDefault)), iconHeigth, iconWidth));	
+				setIcon(AbstractGuiMethodSetter.iconOptimizer((JLabel)SteganographyView.getIconLabel(), ImageIO.read(new File(pathDefault)), iconHeigth, iconWidth));	
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

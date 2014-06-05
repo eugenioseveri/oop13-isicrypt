@@ -75,13 +75,13 @@ public class Steganography {
 	 * @return
 	 * @throws IOException 
 	 */
-	public static File stegaForClient(File rawImage, String extension, String text) throws IOException{
+	public static File stegaForClient(File rawImage, String extension, String text) throws IOException, SecurityException{
 		BufferedImage image;
 		try {
 			image = TypeConverter.fileToBufferedImage(rawImage);
 			image = messageAdder(image, text);
 			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(rawImage));
-			File temp = TypeConverter.bufferedInputTOtempFile(bis, rawImage.getName());
+			File temp = TypeConverter.bufferedInputTOtempFile(bis, rawImage.getName(), ".png");
 			System.out.println("messageEncrypter done!"); //Check print
 			return temp;
 		} catch (FileNotFoundException e) {

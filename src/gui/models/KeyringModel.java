@@ -2,11 +2,13 @@ package gui.models;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.security.InvalidKeyException;
 import java.util.HashSet;
 
@@ -16,7 +18,7 @@ import algorithms.AES;
  * Model for the keyring function. It stores triples of Host-Username-Password into a HashSet.
  * @author Eugenio Severi
  */
-public class KeyringModel extends HashSet<Triple<String, String, String>> implements IKeyringModel {
+public class KeyringModel extends HashSet<Triple<String, String, String>> implements IKeyringModel, Serializable {
 
 	private static final long serialVersionUID = -4180040339126413292L;
 	

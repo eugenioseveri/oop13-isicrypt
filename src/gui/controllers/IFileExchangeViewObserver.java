@@ -10,7 +10,7 @@ public interface IFileExchangeViewObserver {
 	void selectCompressedFile();
 	void selectContact();
 	void addContact();
-	void closeConnection();
+	void deleteContact();
 	void changeContact();
 	void sendText();
 }

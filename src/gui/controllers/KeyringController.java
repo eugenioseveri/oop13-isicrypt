@@ -13,7 +13,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.security.InvalidKeyException;
 
-import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -87,7 +86,7 @@ public class KeyringController implements IKeyringViewObserver, IGeneralViewObse
 	@Override
 	public void showStart() {
 		StartScreenView.getFrame().setVisible(true);
-		//StartScreenView.redraw(); // TODO: uncomment quando arriva il metodo redraw()
+		StartScreenView.redraw();
 	}
 	
 	@Override
@@ -211,9 +210,9 @@ public class KeyringController implements IKeyringViewObserver, IGeneralViewObse
 	private TableModel tableBuilder(){
 		DefaultTableModel tableModel = new DefaultTableModel(TABLE_COLUMNS_NAMES, 0 ){ //TODO: forse il problema è che viene creato sempre nuovo?
 			private static final long serialVersionUID = 737530902377505148L;
-			/*public boolean isCellEditable(int row, int column){
+			public boolean isCellEditable(int row, int column){
 				return false;
-			}*/
+			}
 		};
 		for(Triple<String, String, String> entry: (KeyringModel)this.model) {
 			tableModel.addRow(new Object[] { entry.getFirst(), entry.getSecond(), entry.getThird() });

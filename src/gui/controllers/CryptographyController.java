@@ -93,6 +93,7 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 		}
 	}
 	
+	//TODO: aggiungere commenti textarea
 	@Override
 	public void command_Encrypt() {
 		File tempOutputFileEncrypt = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
@@ -163,7 +164,7 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 		} else {
 			this.view.showMessageDialog(FORM_NOT_COMPILED_ERROR);
 		}
-		this.view.addText_logTextArea("Process completed!");
+		this.view.getTextArea().append("\nProcess completed!");
 	}
 
 	@Override
@@ -197,41 +198,41 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 			ObjectInputStream streamPrivateKeyFile = null;
 			try {
 				this.view.setValue_progressBarDecryption(5);
-				this.view.addText_logTextArea("Objects initializazion completed.");
+				this.view.getTextArea().append("\nObjects initializazion completed.");
 				this.model = new FileInterpret(tempFileToDecrypt);
 				this.view.setValue_progressBarDecryption(25);
-				this.view.addText_logTextArea("The selected file has been loaded.");
+				this.view.getTextArea().append("\nThe selected file has been loaded.");
 				outputFile = new BufferedOutputStream(new FileOutputStream(tempOutputFileDecrypt.getAbsolutePath() + "\\" + this.model.getFileName())); // Platform-independent?
 				streamPrivateKeyFile = new ObjectInputStream(new FileInputStream(tempPrivateKeyFile));
 				newRSA.setKeyPair(null, (PrivateKey)streamPrivateKeyFile.readObject()); // controllare che la chiave sia giusta
 				this.view.setValue_progressBarDecryption(35);
-				this.view.addText_logTextArea("The private key has been loaded.");
+				this.view.getTextArea().append("\nThe private key has been loaded.");
 				byte[] tempDecryptedSymmetricKey = newRSA.decode(this.model.getEncryptedSymmetricKey());
 				String reflectionSymmetricAlgorithm = this.model.getSymmetricAlgorithm().name();
 				this.view.setValue_progressBarDecryption(45);
-				this.view.addText_logTextArea("The symmetric key has been decrypted.");
-				this.view.addText_logTextArea("Algorithm: " + reflectionSymmetricAlgorithm + ", key size:" + tempDecryptedSymmetricKey.length);
+				this.view.getTextArea().append("\nThe symmetric key has been decrypted.");
+				this.view.getTextArea().append("\nAlgorithm: " + reflectionSymmetricAlgorithm + ", key size:" + tempDecryptedSymmetricKey.length);
 				newSymmetricCipher = (ISymmetricCryptography)Class.forName("algorithms." + reflectionSymmetricAlgorithm).newInstance();
 				newSymmetricCipher.setSymmetricKeySpec(new SecretKeySpec(tempDecryptedSymmetricKey, reflectionSymmetricAlgorithm));
 				this.view.setValue_progressBarDecryption(55);
-				this.view.addText_logTextArea("The symmetric algorithm has been instantiated and the key set.");
+				this.view.getTextArea().append("\nThe symmetric algorithm has been instantiated and the key set.");
 				this.model.writePayloadToFile(new File(TEMP_PAYLOAD_FILE_NAME));
 				this.view.setValue_progressBarDecryption(70);
-				this.view.addText_logTextArea("The payload has been written to disk.");
+				this.view.getTextArea().append("\nThe payload has been written to disk.");
 				String payloadFile = TEMP_PAYLOAD_FILE_NAME;
 				if(this.model.getCompressionAlgorithm() != No_Compression) {
-					this.view.addText_logTextArea("GZip compression found: the file is going to be decompressed.");
+					this.view.getTextArea().append("\nGZip compression found: the file is going to be decompressed.");
 					tempCompressionFile = new BufferedOutputStream(new FileOutputStream(TEMP_COMPRESSION_FILE_NAME));
 					algorithms.GZip.getInstance().decompress(tempCipherFile, tempCompressionFile);
 					payloadFile = TEMP_COMPRESSION_FILE_NAME;
-					this.view.addText_logTextArea("The file has been decompressed.");
+					this.view.getTextArea().append("\nThe file has been decompressed.");
 				} else {
-					this.view.addText_logTextArea("The file is not compressed.");
+					this.view.getTextArea().append("\nThe file is not compressed.");
 				}
 				this.view.setValue_progressBarDecryption(80);
 				newSymmetricCipher.decode(new BufferedInputStream(new FileInputStream(payloadFile)), outputFile);
 				this.view.setValue_progressBarDecryption(90);
-				this.view.addText_logTextArea("The file has been decrypted.");
+				this.view.getTextArea().append("\nThe file has been decrypted.");
 			} catch (FileNotFoundException e) {
 				this.view.showMessageDialog(FILE_NOT_FOUND_GENERIC_ERROR);
 			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
@@ -263,11 +264,11 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 				}
 			}
 			this.view.setValue_progressBarDecryption(100);
-			this.view.addText_logTextArea("Temporary files have been cleaned.");
+			this.view.getTextArea().append("\nTemporary files have been cleaned.");
 		} else {
 			this.view.showMessageDialog(FORM_NOT_COMPILED_ERROR);
 		}
-		this.view.addText_logTextArea("Process completed!");
+		this.view.getTextArea().append("\nProcess completed!");
 	}
 
 	@Override

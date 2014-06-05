@@ -1,11 +1,14 @@
 package gui.models;
 
+import java.io.Serializable;
+
 /**
  * Generic class used to store 3 objects together.
  * @author Eugenio Severi
  */
-public class Triple<X,Y,Z> {
-
+public class Triple<X,Y,Z> implements Serializable {
+	
+	private static final long serialVersionUID = -1366233459051462780L;
 	private X first;
 	private Y second;
 	private Z third;

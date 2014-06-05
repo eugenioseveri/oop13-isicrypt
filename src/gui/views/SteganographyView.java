@@ -28,7 +28,6 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -74,7 +73,8 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 	private final static JButton selectTextButton = new JButton("Text from File");
 	private final static JSeparator separator = new JSeparator(SwingConstants.VERTICAL);
 	private final static JLabel iconLabel = new JLabel();
-	private final static JCheckBox encryptCheckbox = new JCheckBox("Encrypt");
+/*	not implemented yet
+	private final static JCheckBox encryptCheckbox = new JCheckBox("Encrypt");		*/
 	private final static JButton startButton = new JButton("START");
 	private final static JTextArea textArea = new JTextArea(10, 10);
 	private final static JScrollPane scrollPane = new JScrollPane(textArea);
@@ -133,7 +133,6 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 	    };
 	    frame.addWindowListener(listener);
 		frame.setTitle("Steganography");
-	//	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(960, 640);
 		frame.getContentPane().add(container);
 		frame.setVisible(true);

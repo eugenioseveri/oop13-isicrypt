@@ -59,12 +59,12 @@ public class ThemeChooser {
 			setForegroundColor(blood);
 			break;
 		case OURS_IS_THE_FURY:
-			Color trashYellow = new Color(201,187,1);
-			Color green = new Color(29,91,6);
+			Color gold = new Color(207,181,59);
+			Color royalGreen = new Color(29,91,6);
 			setFont(new Font("Verdana",Font.BOLD, 12));
-			setPanelBackColor(trashYellow);
-			setButtonColor(green);
-			setForegroundColor(Color.yellow);
+			setPanelBackColor(gold);
+			setButtonColor(royalGreen);
+			setForegroundColor(gold);
 			break;
 		}
 			

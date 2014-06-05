@@ -467,12 +467,16 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		CryptographyView.privateKeyTextField.setText(text);
 	}
 
-	@Override
+/*	@Override
 	public void addText_logTextArea(String text) {
 		CryptographyView.logTextArea.append("\n" + text);
-		//logTextArea.repaint(); //TODO non funziona
+	}*/
+	
+	@Override
+	public JTextArea getTextArea(){
+		return CryptographyView.logTextArea;
 	}
-
+	
 	@Override
 	public EnumAvailableSymmetricAlgorithms getSymmetricAlgorithm() {
 		return (EnumAvailableSymmetricAlgorithms)CryptographyView.algorithmComboBox.getSelectedItem();
@@ -507,12 +511,13 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 	public void showMessageDialog(String message) {
 		JOptionPane.showMessageDialog(this, message);
 	}
-
-	public static boolean isOpen() {
+	
+	public static boolean isOpen(){
 		return isOpen;
 	}
 
 	public static void setOpen(boolean isOpen) {
 		CryptographyView.isOpen = isOpen;
 	}
+
 }

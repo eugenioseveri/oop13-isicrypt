@@ -1,6 +1,5 @@
 package gui.views;
 
-import gui.controllers.FileExchangeController;
 import gui.controllers.IKeyringViewObserver;
 import gui.controllers.KeyringController;
 import gui.models.ThemeChooser;
@@ -11,6 +10,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 
@@ -25,6 +26,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 /**
@@ -39,6 +41,7 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 	private Color panelBackColor;
 	private Color buttonColor;
 	private Color foregroundColor;
+	private static boolean isOpen = false;
 	// Arrays that contains various dimension of insets
 	private static final int insetsDefault[] = { 10, 10, 10, 10 };
 	private static final int zeroInsets []= { 0, 0, 0, 0 };
@@ -60,7 +63,7 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 	private static final JButton encryptButton = new JButton("Encryption key");
 	private static final JButton saveButton = new JButton("save settings");
 	private static final JLabel iconLabel= new JLabel();
-	private static final TableModel tableModel = FileExchangeController.tableBuilder(); // TODO: sacrilegio!
+	private static final TableModel tableModel = new DefaultTableModel();
 	private static final JTable table = new JTable(tableModel);
 	private static final JScrollPane scrollPane = new JScrollPane(table);
 	private static final JButton fillerOne = new JButton();
@@ -82,7 +85,6 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 	private static final JPanel container = new JPanel();
 	private GridBagConstraints limit;
 //	private final static JFrame dialog = new JFrame();
-	private final static JFrame frame = new JFrame();
 	
 	/**
 	 * Creates a new cryptography function view.
@@ -114,13 +116,26 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 	 * Sets the properties for the frame.
 	 */
 	private void setFrame() {
+		JFrame frame = new JFrame();
 		try {
 			frame.setIconImage(ImageIO.read(new File(APPLICATION_ICON)));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		WindowAdapter listener = new WindowAdapter() {
+
+	        @Override
+	        public void windowOpened(WindowEvent e) {
+	        	KeyringView.setOpen(true);	        }
+
+	        @Override
+	        public void windowClosing(WindowEvent e) {
+	        	KeyringView.setOpen(false);
+	            StartScreenView.redraw();
+	        }
+	    };
+	    frame.addWindowListener(listener);
 		frame.setTitle("Keyring");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(920, 640);
 		frame.getContentPane().add(container);
 		frame.setVisible(true);
@@ -308,5 +323,12 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 		return JOptionPane.showInputDialog(title, editableText);
 	}
 	
+	public static void setOpen(boolean isOpen) {
+		KeyringView.isOpen = isOpen;
+	}
+	
+	public static boolean isOpen(){
+		return KeyringView.isOpen;
+	}
 	
 }

@@ -28,9 +28,9 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 	private static Color buttonColor;
 	private static Color foregroundColor;
 	// Arrays that contains various dimension of insets
-	private static final int insetsTop[] = { -30, 10, 20, 20 };
-	private static final int insetsBotton[] = { 10, 0, 20, 20 };
-	private static final int insetsCredit[] = { 10, -40, 10, 0 };
+	private static final int insetsTop[] = { 0, 10, 20, 20 };
+	private static final int insetsBotton[] = { 20, 0, 20, 20 };
+	private static final int insetsCredit[] = { -20, -40, 10, 0 };
 	private static final int noResizable  = 0;
 	private static final int ipadDefaulty = 90;
 	private static final int ipadDefaultx = 80;
@@ -86,30 +86,32 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 				GridBagConstraints.BOTH, GridBagConstraints.NORTH, container, cryptography);
 		setGridposition(limit, xPosition, yPosition, defaultCellArea, defaultCellArea, 
 				noResizable, noResizable, container, cryptography);
-		if(CryptographyView.isOpen())((JButton)cryptography).setEnabled(false);
-		else ((JButton)cryptography).setEnabled(true);
+		if(CryptographyView.isOpen())cryptography.setEnabled(false);
+		else cryptography.setEnabled(true);
 		//JButton STEGANOGRAPHY
 		setJButton(steganography, buttonColor, foregroundColor, font, false, false);
 		setLimit(limit, ipadDefaultx, ipadDefaulty, insetsTop, 
 				GridBagConstraints.BOTH, GridBagConstraints.NORTH, container, steganography);
 		setGridposition(limit, xPosition+1, yPosition, defaultCellArea, defaultCellArea, 
 				noResizable, noResizable, container, steganography);	
-		if(SteganographyView.isOpen())((JButton)steganography).setEnabled(false);
-		else ((JButton)steganography).setEnabled(true);
+		if(SteganographyView.isOpen())steganography.setEnabled(false);
+		else steganography.setEnabled(true);
 		//JButton KEYRING
 		setJButton(keyring, buttonColor, foregroundColor, font, false, false);
 		setLimit(limit, ipadDefaultx, ipadDefaulty, insetsBotton, 
 				GridBagConstraints.BOTH, GridBagConstraints.NORTH, container, keyring);
 		setGridposition(limit, xPosition, yPosition+1, defaultCellArea, defaultCellArea, 
 				noResizable, noResizable, container, keyring);	
+		if(KeyringView.isOpen())keyring.setEnabled(false);
+		else keyring.setEnabled(true);
 		//JButton FILEEXCHANGE
 		setJButton(fileExchange, buttonColor, foregroundColor, font, false, false);
 		setLimit(limit, ipadDefaultx, ipadDefaulty, insetsBotton, 
 				GridBagConstraints.BOTH, GridBagConstraints.NORTH, container, fileExchange);
 		setGridposition(limit, xPosition+1, yPosition+1, defaultCellArea, defaultCellArea, 
 				noResizable, noResizable, container, fileExchange);	
-		if(FileExchangeView.isOpen())((JButton)fileExchange).setEnabled(false);
-		else ((JButton)fileExchange).setEnabled(true);
+		if(FileExchangeView.isOpen())fileExchange.setEnabled(false);
+		else fileExchange.setEnabled(true);
 		//JLabel CREDITS
 		authorName.setFont(new Font("Verdana",Font.BOLD, 12));
 		authorName.setForeground(buttonColor);

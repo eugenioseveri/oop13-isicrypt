@@ -70,12 +70,11 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 	private final static JButton zipButton = new JButton("Send compressed file");
 	private final static JLabel contactLabel = new JLabel("Contact");
 	private final static JButton addContactButton = new JButton("Add new Contact");
-	private final static JButton closeContactButton = new JButton("Back to Start");
+	private final static JButton deleteContactButton = new JButton("Delete contact");
 	private final static JButton changeContactButton = new JButton("Change contact");
 	private final static JLabel sendStateLabel = new JLabel("Send state");
 	private final static JProgressBar sendProgress = new JProgressBar();
 	private final static JSeparator separator = new JSeparator(SwingConstants.VERTICAL);
-//	private final static JTextField visualTextArea = new JTextField();
 	private final static JTextArea visualTextArea = new JTextArea();
 	private final static JScrollPane scrollPaneVisual = new JScrollPane(visualTextArea);
 	private final static JTextArea chatTextArea = new JTextArea(10,10);
@@ -197,13 +196,13 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 		setGridposition(limit, xPosition, yPosition+6, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, changeContactButton);
 		changeContactButton.setEnabled(false);
-		//JButton close connection
-		setJButton(closeContactButton, buttonColor, foregroundColor, font, false, false);
+		//JButton delete contact
+		setJButton(deleteContactButton, buttonColor, foregroundColor, font, false, false);
 		setLimit(limit, ipadDefaultx, ipadDefaulty, insetsDefault,
-				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, closeContactButton);
+				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, deleteContactButton);
 		setGridposition(limit, xPosition, yPosition+7, defaultCellArea, defaultCellArea,
-				noResizable, noResizable, container, closeContactButton);
-		closeContactButton.setEnabled(false);
+				noResizable, noResizable, container, deleteContactButton);
+		deleteContactButton.setEnabled(true);
 		//filler
 		setLimit(limit, zeroIpad, zeroIpad, zeroInsets, 
 				GridBagConstraints.NONE, GridBagConstraints.SOUTH, container, filler);
@@ -305,10 +304,10 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 			}
 		});
 		//Close current connection with abstract server
-		closeContactButton.addActionListener(new ActionListener() {
+		deleteContactButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				controller.closeConnection();
+				controller.deleteContact();
 			}
 		});
 		changeContactButton.addActionListener(new ActionListener() {
@@ -328,16 +327,10 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 		contactTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {	
 			@Override
 			public void valueChanged(ListSelectionEvent arg0) {
-				if(contactTable.getSelectedRow() >= 0){
 					controller.selectContact();
-					contactTable.clearSelection();
-					contactTable.getSelectionModel().clearSelection();
-				}
 			}
 		});
 	}
-	
-	
 	
 	public static void optionPanel( Exception error ){
 		JOptionPane.showMessageDialog(FileExchangeView.dialog, error);
@@ -389,9 +382,11 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 	public static Component getFilebutton() {
 		return fileButton;
 	}
+	
 	public static Component getStegabutton() {
 		return stegaButton;
 	}
+	
 	public static Component getZipbutton() {
 		return zipButton;
 	}
@@ -404,9 +399,10 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 		FileExchangeView.contactTable = contactTable;
 	}
 
-	public static Component getClosecontactbutton() {
-		return closeContactButton;
+	public static Component deleteContactButton() {
+		return deleteContactButton;
 	}
+	
 	public static Component getChangecontactbutton() {
 		return changeContactButton;
 	}

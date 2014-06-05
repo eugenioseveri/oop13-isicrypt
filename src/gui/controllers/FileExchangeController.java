@@ -49,6 +49,8 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 	//Initialize FileEchange Gui
 	private static FileExchangeView view;
 	private static String textTemp;
+	private final static String userHomePath = System.getProperty("user.home") + "\\isicrypt";
+	private final static String fileExchangeSettings = userHomePath + "\\accountContacts.dat";
 	/**
 	 * 
 	 * @param view
@@ -136,18 +138,18 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 		table.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 			      if (e.getClickCount() == 2){
-		//	    	JTable lopo = (JTable) e.getSource();
-			    	Point p = e.getPoint();
-			    	int row = table.rowAtPoint(p);
-			    	String host = table.getValueAt(row, 1).toString();
-			  		String name = table.getValueAt(row, 0).toString(); 
-			  		if(host != null && name != null){
-			  			ContactInfo contact = new ContactInfo(host, name);
-			  			FileExchangeModel.setContactInfo(contact);
-				  		FileExchangeView.getVisualtextarea().setText("");
-				  		FileExchangeController.setEnableButton(true);
-				  		FileExchangeView.getFrame().setVisible(true);
-			  		}
+			//	    	JTable lopo = (JTable) e.getSource();
+				    	Point p = e.getPoint();
+				    	int row = table.rowAtPoint(p);
+				    	String host = table.getValueAt(row, 1).toString();
+				  		String name = table.getValueAt(row, 0).toString(); 
+				  		if(host != null && name != null){
+				  			ContactInfo contact = new ContactInfo(host, name);
+				  			FileExchangeModel.setContactInfo(contact);
+					  		FileExchangeView.getVisualtextarea().setText("");
+					  		FileExchangeController.setEnableButton(true);
+					  		FileExchangeView.getFrame().setVisible(true);
+				  		}
 			      }
 			}
 		});
@@ -158,22 +160,43 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 	@Override
 	public void addContact() {
 		//Input dialog with a text field
-		String name =  JOptionPane.showInputDialog("Name" 
-		       ,"Enter in some text:");
-		String host =  JOptionPane.showInputDialog("Host" 
-			       ,"Enter in some text:");
+		String name =  JOptionPane.showInputDialog("Name", "Enter in some text:");
+		String host =  JOptionPane.showInputDialog("Host", "Enter in some text:");
 		FileExchangeModel.setContactList(host, name);
-		FileExchangeView.getContactTable().setModel(FileExchangeController.tableBuilder());
+		try {
+			FileExchangeModel.saveContacts(new File(fileExchangeSettings));
+		} catch (FileNotFoundException e) {
+			FileExchangeView.optionPanel("Contact file not found");
+		} catch (IOException e) {
+			FileExchangeView.optionPanel("i/o error occured");
+		}
 		FileExchangeController.setEnableButton(false);
+		FileExchangeView.getContactTable().setModel(tableBuilder());
+		
 	}
 	/**
 	 * 
 	 */
 	@Override
-	public void closeConnection() {
-		FileExchangeModel.setContactInfo(null);
-		//Ristampa la Select contact TODO da fare quando è fatta la star screen
+	public void deleteContact() {
+		JTable table = FileExchangeView.getContactTable();
+		int selectedRow = table.getSelectedRow();
+		if(selectedRow != -1) {
+			TableModel getTableModel = tableBuilder();
+			String host = (String)getTableModel.getValueAt(selectedRow, 0);
+			String name = (String)getTableModel.getValueAt(selectedRow, 1);
+			FileExchangeModel.getContactList().remove(host, name);
+			try {
+				FileExchangeModel.saveContacts(new File(fileExchangeSettings));
+			} catch (FileNotFoundException e) {
+				FileExchangeView.optionPanel("Contact file not found");
+			} catch (IOException e) {
+				FileExchangeView.optionPanel("i/o error occured");
+			}
+			FileExchangeView.getContactTable().setModel(tableBuilder());
+		}
 	}
+		
 	/**
 	 * 
 	 */
@@ -189,7 +212,7 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 	@Override
 	public void sendText() {
 		if(StringUtils.isBlank(FileExchangeView.getChattextarea().getText()))
-			FileExchangeView.optionPanel("select contact");
+			FileExchangeView.optionPanel("none text entered");
 		else {
 			textTemp = FileExchangeView.getChattextarea().getText();
 			socketClient(FileExchangeModel.getContactInfo(), null, textTemp);
@@ -226,20 +249,21 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 	//TODO da mettere in una classe neutrale
 	public static TableModel tableBuilder(){
 		DefaultTableModel model = new DefaultTableModel( new Object[] { "Host", "Name" }, 0 ){
-			/**
-			 * 
-			 */
 			private static final long serialVersionUID = 737530902377505148L;
-
 			//set the cell non editable, read only table
 			public boolean isCellEditable(int row, int column){ 
 				return false;
 			}
 		};
-		
-		FileExchangeModel.setContactList("localhost", "FiloNotebook");
-		FileExchangeModel.setContactList("Gincapa", "FiloGincapa");
-
+		try {
+			FileExchangeModel.loadContacts(new File(fileExchangeSettings));
+		} catch (FileNotFoundException e) {
+			//transparent exception
+		} catch (ClassNotFoundException e) {
+			FileExchangeView.optionPanel(e);
+		} catch (IOException e) {
+			FileExchangeView.optionPanel(e);
+		}
 		for (Map.Entry<String,String> entry : FileExchangeModel.getContactList().entrySet()) {
 		        model.addRow(new Object[] { entry.getKey(), entry.getValue() });
 		    }
@@ -313,7 +337,7 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 		FileExchangeView.getStegabutton().setEnabled(state);
 		FileExchangeView.getZipbutton().setEnabled(state);
 		FileExchangeView.getAddcontactbutton().setEnabled(!state);
-		FileExchangeView.getClosecontactbutton().setEnabled(state);
+		FileExchangeView.deleteContactButton().setEnabled(!state);
 		FileExchangeView.getChangecontactbutton().setEnabled(state);
 		FileExchangeView.getSendbutton().setEnabled(state);
 		FileExchangeView.getChattextarea().setEnabled(state);
