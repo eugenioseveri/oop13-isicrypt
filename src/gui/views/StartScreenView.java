@@ -10,7 +10,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -22,7 +21,7 @@ import javax.swing.JPanel;
 
 public class StartScreenView extends AbstractGuiMethodSetter{
 	private static final long serialVersionUID = 4934353268761561329L;
-	private final static String ICON = "./res/isiCryptICON_MetroStyle.jpg";
+	private static final String APPLICATION_ICON = "./isiCryptICON_MetroStyle.jpg";
 	private static Font font;
 	private static Color panelBackColor;
 	private static Color buttonColor;
@@ -167,7 +166,7 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 	private static void setFrame() {
 		frame.getContentPane().removeAll();
 		try {
-			frame.setIconImage(ImageIO.read(new File(ICON)));
+			frame.setIconImage(ImageIO.read(ClassLoader.getSystemResource(APPLICATION_ICON)));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

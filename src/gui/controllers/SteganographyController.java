@@ -35,7 +35,7 @@ public class SteganographyController implements ISteganographyViewObserver, IGen
 	 //String that contains the extract text for image
 	String textBorrowed;
 	//String that contains the path of default icon;
-	final static String pathDefault = "./res/SteganographyDefaultIcon.jpg";
+	private static final String STEGANOGRAPHY_BACKGROUND = "./SteganographyDefaultIcon.jpg";
 	private static final int iconHeigth = 240;
 	private static final int iconWidth = 320;
 	private static String textDefault = null;
@@ -114,7 +114,7 @@ public class SteganographyController implements ISteganographyViewObserver, IGen
 	public void clearSetting(){
 		try {
 			((JLabel) SteganographyView.getIconLabel()).
-				setIcon(AbstractGuiMethodSetter.iconOptimizer((JLabel)SteganographyView.getIconLabel(), ImageIO.read(new File(pathDefault)), iconHeigth, iconWidth));	
+				setIcon(AbstractGuiMethodSetter.iconOptimizer((JLabel)SteganographyView.getIconLabel(), ImageIO.read(ClassLoader.getSystemResource(STEGANOGRAPHY_BACKGROUND)), iconHeigth, iconWidth));	
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

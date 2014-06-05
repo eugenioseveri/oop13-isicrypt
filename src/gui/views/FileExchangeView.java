@@ -17,7 +17,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -40,6 +39,7 @@ import javax.swing.table.TableModel;
 public class FileExchangeView extends AbstractGuiMethodSetter{
 	
 	private static final long serialVersionUID = -144598402405416549L;
+	private static final String APPLICATION_ICON = "./isiCryptICON_MetroStyle.jpg";
 	private Font font;
 	private Color panelBackColor;
 	private Color buttonColor;
@@ -115,8 +115,7 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 	private void setFrame() {
 		frame = new JFrame();
 		try {
-			frame.setIconImage(ImageIO.read(new File(
-					"./res/isiCryptICON_MetroStyle.jpg")));
+			frame.setIconImage(ImageIO.read(ClassLoader.getSystemResource(APPLICATION_ICON)));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

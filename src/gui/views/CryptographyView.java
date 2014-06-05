@@ -12,7 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -40,7 +39,7 @@ import algorithms.EnumAvailableSymmetricAlgorithms;
 public class CryptographyView extends AbstractGuiMethodSetter implements ICryptographyView { // TODO: si può non estendere JFrame?
 
 	private static final long serialVersionUID = -162452746296023405L;
-	private static final String APPLICATION_ICON = "./res/isiCryptICON_MetroStyle.jpg";
+	private static final String APPLICATION_ICON = "./isiCryptICON_MetroStyle.jpg";
 	private Font font;
 	private Color panelBackColor;
 	private Color buttonColor;
@@ -142,7 +141,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 	private void setFrame() {
 		JFrame frame = new JFrame();
 		try {
-			frame.setIconImage(ImageIO.read(new File(APPLICATION_ICON)));
+			frame.setIconImage(ImageIO.read(ClassLoader.getSystemResource(APPLICATION_ICON)));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -363,6 +362,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		setGridposition(limit, xPosition+5, yPosition+8, defaultCellArea, defaultCellArea,
 				resizable, noResizable, container, progressBarDecryption);
 		//TextArea LOG TEXT AREA
+		logTextArea.setEditable(false);
 		logTextArea.setLineWrap(true);//Format text on TextArea
 		logTextArea.setWrapStyleWord(true);	//Format text on TextArea
 		scrollPane.setPreferredSize(((JTextArea) logTextArea).getSize());
@@ -466,11 +466,6 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 	public void setText_privateKeyTextField(String text) {
 		CryptographyView.privateKeyTextField.setText(text);
 	}
-
-/*	@Override
-	public void addText_logTextArea(String text) {
-		CryptographyView.logTextArea.append("\n" + text);
-	}*/
 	
 	@Override
 	public JTextArea getTextArea(){

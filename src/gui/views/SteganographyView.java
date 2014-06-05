@@ -22,7 +22,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -38,6 +37,7 @@ import javax.swing.SwingConstants;
 
 public class SteganographyView extends AbstractGuiMethodSetter {
 	private static final long serialVersionUID = -8950634673073101757L;
+	private static final String APPLICATION_ICON = "./isiCryptICON_MetroStyle.jpg";
 	//Color and Fond take from file
 	private Font font;
 	private Color panelBackColor;
@@ -59,7 +59,7 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 	private static final int ipadDefaultx = 10;
 	private static final int ipadDefaulty = 30;
 	private static ImageIcon icon = null;
-	private static final String pathDefault = "./res/SteganographyDefaultIcon.jpg";
+	private static final String STEGANOGRAPHY_BACKGROUND = "./SteganographyDefaultIcon.jpg";
 	private static final int buttonFill = GridBagConstraints.BOTH;
 	private static final int buttonAnchor = GridBagConstraints.CENTER;
 	private static final int iconHeigth = 240;
@@ -115,7 +115,7 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 	private void setFrame() {
 		JFrame frame = new JFrame();
 		try {
-			frame.setIconImage(ImageIO.read(new File("./res/isiCryptICON_MetroStyle.jpg")));
+			frame.setIconImage(ImageIO.read(ClassLoader.getSystemResource(APPLICATION_ICON)));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -173,7 +173,7 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 				resizable, resizable, container, filler2);	
 		// JLabel for icon
 		try { //TODO: non è che questo va nel controller?
-			BufferedImage defaultStartimage = ImageIO.read(new File(pathDefault));
+			BufferedImage defaultStartimage = ImageIO.read(ClassLoader.getSystemResource(STEGANOGRAPHY_BACKGROUND));
 			icon = iconOptimizer(((JLabel) iconLabel), defaultStartimage, iconHeigth, iconWidth);
 		} catch (IOException e) {
 			e.printStackTrace();

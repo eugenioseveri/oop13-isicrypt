@@ -12,7 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -36,7 +35,8 @@ import javax.swing.table.TableModel;
 public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView {
 
 	private static final long serialVersionUID = -4534574271536073257L;
-	private static final String APPLICATION_ICON = "./res/isiCryptICON_MetroStyle.jpg";
+	private static final String APPLICATION_ICON = "./isiCryptICON_MetroStyle.jpg";
+	private static final String KEYRING_ICON = "./isiCryptIIcon_Keyring.jpg";
 	private Font font;
 	private Color panelBackColor;
 	private Color buttonColor;
@@ -54,14 +54,13 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 	private static final int xPosition = 0;
 	private static final int yPosition = 0;
 	private static final int defaultCellArea = 1;
-	ImageIcon icon = new ImageIcon("./res/isiCryptIIcon_Keyring.jpg");
 	//GUI component declaration
 	private static final JButton backButton = new JButton("Show Start");
 	private static final JButton addButton = new JButton("Add account");
 	private static final JButton modifyButton = new JButton("Modify account");
 	private static final JButton cancelButton = new JButton("Cancel account");
 	private static final JButton encryptButton = new JButton("Encryption key");
-	private static final JButton saveButton = new JButton("save settings");
+	private static final JButton saveButton = new JButton("Save settings");
 	private static final JLabel iconLabel= new JLabel();
 	private static final TableModel tableModel = new DefaultTableModel();
 	private static final JTable table = new JTable(tableModel);
@@ -100,8 +99,6 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 	 * Creates the frame layout (same for all the views)
 	 */
 	private void buildLayout() {
-	//	GlobalSettings set = null;
-	//	set = new GlobalSettings();
 		this.setButtonColor(ThemeChooser.getButtonColor());
 		this.setFont(ThemeChooser.getFont());
 		this.setForegroundColor(ThemeChooser.getForegroundColor());
@@ -118,7 +115,7 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 	private void setFrame() {
 		JFrame frame = new JFrame();
 		try {
-			frame.setIconImage(ImageIO.read(new File(APPLICATION_ICON)));
+			frame.setIconImage(ImageIO.read(ClassLoader.getSystemResource(APPLICATION_ICON)));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -216,7 +213,7 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, fillerFive);
 		setGridposition(limit, xPosition, yPosition+10, defaultCellArea, defaultCellArea,
 				noResizable, resizable, container, fillerFive);		
-		iconLabel.setIcon(icon);
+		iconLabel.setIcon(new ImageIcon(ClassLoader.getSystemResource(KEYRING_ICON)));
 		setLimit(limit, zeroIpad, zeroIpad, zeroInsets, 
 				GridBagConstraints.CENTER, GridBagConstraints.CENTER, container, iconLabel);
 		setGridposition(limit, xPosition, yPosition+11, defaultCellArea, defaultCellArea,

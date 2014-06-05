@@ -20,8 +20,8 @@ import static algorithms.ErrorMessages.*;
  */
 public class GlobalSettings implements Serializable {
 
-	transient private final static String userHomePath = System.getProperty("user.home") + "\\isicrypt";
-	transient private final static String settingsFilePath = userHomePath + "\\globalsettings.dat"; // TODO: Funziona multipiattaforma?
+	transient private final static String USER_HOME_PATH = System.getProperty("user.home") + "\\isicrypt";
+	transient private final static String SETTINGS_FILE_PATH = USER_HOME_PATH + "\\globalsettings.dat"; // TODO: Funziona multipiattaforma?
 	private static final long serialVersionUID = -3375259654271655816L;
 	private String defaultTheme = "NIGHTS_WATCH";
 	
@@ -41,14 +41,14 @@ public class GlobalSettings implements Serializable {
 		BufferedInputStream buffFile;
 		ObjectInputStream objFile = null;
 		try {
-			file = new FileInputStream(settingsFilePath);
+			file = new FileInputStream(SETTINGS_FILE_PATH);
 			buffFile = new BufferedInputStream(file);
 			objFile = new ObjectInputStream(buffFile);
 			GlobalSettings readGlobalSettings = (GlobalSettings)objFile.readObject();
 			setTheme(readGlobalSettings.getTheme());
 		} catch (FileNotFoundException e) {
 			System.err.println(MISSING_SETTINGS_FILE);
-			File userHome = new File(userHomePath);
+			File userHome = new File(USER_HOME_PATH);
 			if(!userHome.exists()) {
 				userHome.mkdir();
 			}
@@ -77,7 +77,7 @@ public class GlobalSettings implements Serializable {
 		BufferedOutputStream buffFile;
 		ObjectOutputStream objFile = null;
 		try {
-			file = new FileOutputStream(settingsFilePath);
+			file = new FileOutputStream(SETTINGS_FILE_PATH);
 			buffFile = new BufferedOutputStream(file);
 			objFile = new ObjectOutputStream(buffFile);
 			objFile.writeObject(this);
