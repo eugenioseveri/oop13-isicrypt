@@ -11,6 +11,7 @@ import gui.models.KeyringModel;
 import gui.views.CryptographyView;
 import gui.views.FileExchangeView;
 import gui.views.IFileExchangeView;
+import gui.views.ISteganographyView;
 import gui.views.KeyringView;
 import gui.views.StartScreenView;
 import gui.views.SteganographyView;
@@ -34,7 +35,7 @@ public class StartScreenController implements IStartScreenViewObserver{
 	@Override
 	public void selectSteganography() {
 		SteganographyController controller = new SteganographyController(); 
-		SteganographyView view = new SteganographyView();
+		ISteganographyView view = new SteganographyView();
 		controller.setView(view);	
 		StartScreenView.getFrame().setVisible(false);
 	}

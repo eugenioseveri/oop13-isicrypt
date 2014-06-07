@@ -15,6 +15,8 @@ import java.io.*;
 import javax.crypto.spec.SecretKeySpec;
 import javax.swing.JOptionPane;
 
+import org.apache.commons.io.FilenameUtils;
+
 public class SocketServer extends Thread{
 	//Class's field initialization
 	private Socket connection;	
@@ -24,7 +26,10 @@ public class SocketServer extends Thread{
 	private AES aesEncryptor = null;
 	private RSA aesKeyEncryptor = null;
 	private String client = null;
-	static boolean onLine = true;
+	private static boolean onLine = true;
+	private byte[] clientName = null;
+	private byte[] nameFile = null;
+	private byte[] fileArray = null;
 	//Server creation
 	private static ServerSocket  server;
 
@@ -38,19 +43,26 @@ public class SocketServer extends Thread{
 		final int port = 19999;
 		try {
 			server = new ServerSocket(port);
+		}catch(IOException e){
+			controller.threadErrorThrow(e);
+		}
+		try{
 			//Start to accept connections.
 			while(onLine){
 				connection = server.accept();
 				receiveFile();
 			}
+			//Mask error when close the frame
+		}catch(IOException e){}
+		try{
 			//close connection 
 			connection.close();
 		} 
 		//Error catch when you close FileExchange Frame because it force close the connection, but it does't give problem
-		catch (IOException e){} 
-		catch (GeneralSecurityException e){}
+		catch (IOException e){
+			controller.threadErrorThrow(e);
+		} 	
 	}
-
 	/**
 	 * Series of send ad receive for receive the file from client, check if the received byte[] is
 	 * a File or text and save or append the byte[]
@@ -58,51 +70,62 @@ public class SocketServer extends Thread{
 	 * @throws IOException
 	 * @throws GeneralSecurityException
 	 */
-	private void receiveFile() throws IOException, GeneralSecurityException{
-	    try {
+	private void receiveFile(){
 	    	//Send Public key to client for crypt data.
-	    	keyExchange();
-	    	//Receive AES key for decrypt file
-	    	receiveAesKey();
-	    	controller.setProgressbar(10);
+	    try {
+			keyExchange();
+			//Receive AES key for decrypt file
+		   	receiveAesKey();
+		   	//update progressBar
+		   	controller.setProgressbar(10);
 			//Start to receive the file
-	    	byte[] clientName = receiveSequence();
-	    	controller.setProgressbar(20);
-			byte[] nameFile = receiveSequence();
-	    	controller.setProgressbar(40);
-			byte[] fileArray = receiveSequence();	
-	    	controller.setProgressbar(70);
-			//Update Client name
-			this.client = TypeConverter.byteArrayToString(clientName);
-			new TypeConverter();
-			//Get name of file for check the type.
-			String fileName = TypeConverter.byteArrayToString(nameFile);
-	    	controller.setProgressbar(100);
-			//Text or file control
-			if(fileName.equals("string")) {
-				this.stringChatDetector(fileArray);
-			}
-			else{
-				controller.fileAppendServer(fileName, client);
-				if(JOptionPane.showConfirmDialog(null, "Download the File?", "choose one", JOptionPane.YES_NO_OPTION) == 0){
-					//Select directory where save file
-					File directory = new OpenButtons().fileChooser(FileTypes.DIRECTORY);
-					if(directory!=null){
-						BufferedOutputStream byteToFile = new BufferedOutputStream
-								(new FileOutputStream(directory+"/"+fileName));
+		   	clientName = receiveSequence();
+			nameFile = receiveSequence();
+		   	controller.setProgressbar(20);
+			fileArray = receiveSequence();
+		   	controller.setProgressbar(60);
+			//Send Exception to the controller because i must hide IOExeption in the run method
+		} catch (GeneralSecurityException e) {
+			controller.threadErrorThrow(e);
+		} catch (IOException e) {
+			controller.threadErrorThrow(e);
+		}
+	    controller.setProgressbar(70);
+		//Update Client name
+		this.client = TypeConverter.byteArrayToString(clientName);
+		new TypeConverter();
+		//Get name of file for check the type.
+		String fileName = TypeConverter.byteArrayToString(nameFile);
+	    controller.setProgressbar(100);
+		//Text or file control
+		if(fileName.equals("string")) {
+			this.stringChatDetector(fileArray);
+		}
+		else{
+			controller.fileAppendServer(fileName, client);
+			if(JOptionPane.showConfirmDialog(null, "Download the File?", "choose one", JOptionPane.YES_NO_OPTION) == 0){
+				//Select directory where save file
+				File directory = new OpenButtons().fileChooser(FileTypes.DIRECTORY);
+				if(directory!=null){
+					//Control if the file is compressed
+					if(FilenameUtils.getExtension(fileName).equalsIgnoreCase("Gzip")){
+						fileName = decompressFile(fileName);
+					}
+					BufferedOutputStream byteToFile = null;
+					try {
+						byteToFile = new BufferedOutputStream(new FileOutputStream(directory+"/"+fileName));
 						byteToFile.write(fileArray, 0, fileArray.length);
 						byteToFile.close();
-						controller.textAppendServer("File Downloaded", client);
+					} catch (IOException e) {
+						controller.threadErrorThrow(e);
 					}
-					else controller.textAppendServer("File Discarded", client);
+					controller.textAppendServer("File Downloaded", client);
 				}
 				else controller.textAppendServer("File Discarded", client);
 			}
-		} catch (IOException e) {
-			throw e;
+			else controller.textAppendServer("File Discarded", client);
 		}
-	}
-	
+	}	
 	/**
 	 * TODO EUGE
 	 * @throws GeneralSecurityException
@@ -199,13 +222,27 @@ public class SocketServer extends Thread{
 		controller.textAppendServer(append, client);
 	}
 	
-	//Getter
+	//Getter for close server from control
 	public static ServerSocket getSocket() {
 		return server;
 	}
-	
-	//Setter
-	public static void setOnLine(boolean onLine) {
-		SocketServer.onLine = onLine;
+	/**
+	 * decompress the file and set right extension
+	 * 
+	 * @param fileName String that contain the name whit Gzip extension
+	 * return String 	name of file without Gzip extension
+	 */
+	private String decompressFile(String fileName){
+		ByteArrayInputStream arrayInStream = new ByteArrayInputStream(this.fileArray);
+		ByteArrayOutputStream arrayOutStream = new ByteArrayOutputStream();
+		//decompress file
+		try{
+			GZip.getInstance().decompress(arrayInStream, arrayOutStream);
+		}catch(IOException e){
+			controller.threadErrorThrow(e);
+		}
+		this.fileArray = arrayOutStream.toByteArray();
+		//update the name without the zip extension
+		return FilenameUtils.removeExtension(fileName);
 	}
 }

@@ -59,7 +59,6 @@ public final class Hashing implements IHashing {
 		return stringBuffer.toString();
 	}
 	
-	//Commentare nella java dc che l'utente deve usare lo stesso algorithm
 	@Override
 	public boolean compare(final String hashOne, final String hashTwo){
 		//equalIgnoreCase = no case sensitive

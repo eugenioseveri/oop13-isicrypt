@@ -76,7 +76,8 @@ public class SocketClient {
 	 * @throws InvalidKeySpecException		if the given key specification is inappropriate for this key factory to produce a public key.
 	 * @throws IOException					General I/O problem
 	 */
-	public SocketClient(ContactInfo contact, String text, IFileExchangeViewObserver controllerObserver) throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, IOException{
+	public SocketClient(ContactInfo contact, String text, IFileExchangeViewObserver controllerObserver) throws InvalidKeyException, 
+	NoSuchAlgorithmException, InvalidKeySpecException, IOException{
 		attacFileExchangeViewObserve(controllerObserver);
 		byte[] clientNameByte;
 		//initialize a string that will be used from server to check that the follow byte[] is a text message, not a file
@@ -93,9 +94,11 @@ public class SocketClient {
 		sendByteArray(clientNameByte, stringCheck, fileArray);
 		controller.textApendClient(text);
 		//Close existing connection
-		client.close();
-
-
+		try{
+			client.close();
+		}catch( IOException e){
+			throw new IOException("an I/O error occurs when closing this socket");
+		}
 	}
 	/**
 	 * Sequence that sent file and information at the server, first a byte[] that contain the name of client, 
@@ -119,34 +122,54 @@ public class SocketClient {
 	 * This method take a Public key from server and create a new AES key for encrypt the file.
 	 * 
 	 * @return aesKeyEncryted				 byte[] that contain the encryption key 
+	 * @throws IOException 					if there is an error when try to 
+	 * create the socket or the input stream,a specific Exception is catch and throw
 	 */
 	private byte[] keyExchange() throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, IOException{
 			//Get connection with server by creating new socket
 			getConnection();
 			//Initialize new Buffer out for write
 			ByteArrayOutputStream out  = new ByteArrayOutputStream();
-			BufferedInputStream inStream = new BufferedInputStream(client.getInputStream());		
+			BufferedInputStream inStream;
+			try {
+				inStream = new BufferedInputStream(client.getInputStream());
+			} catch (IOException e) {
+				throw new IOException("an I/O error occurs when creating the input stream, "
+						+ "the socket is closed, the socket is not connected, "
+						+ "or the socket input has been shutdown");
+			}		
 			//Start to receive public key from server
 			int i;
-	    	while ( (i = inStream.read()) != -1) {
-	            out.write(i);
-	        }		
-	    	//Save Server's public key
-	    	PublicKey publicServerKey = KeyFactory.getInstance("RSA").
-	    			generatePublic(new X509EncodedKeySpec(out.toByteArray()));
+	    	try {
+				while ( (i = inStream.read()) != -1) {
+				    out.write(i);
+				}
+			} catch (IOException e) {}		
 			//new RSA for encrypt AES key
 	    	RSA aesKeyEncryptor = new RSA();
-	    	//Set Server's public key for encrypt
-			aesKeyEncryptor.setKeyPair(publicServerKey,null);
+	    	//Save Server's public key
+	    	try{
+	    		PublicKey publicServerKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(out.toByteArray()));
+		    	//Set Server's public key for encrypt
+				aesKeyEncryptor.setKeyPair(publicServerKey,null);
+	    	}catch(InvalidKeySpecException e){
+	    		throw new InvalidKeySpecException("given key specification is inappropriate for this key factory");
+	    	}catch(NoSuchAlgorithmException e){
+	    		throw new NoSuchAlgorithmException("no Provider supports a KeyFactorySpi implementation for the specified algorithm");
+	    	}
 			//initialize new AES
 			aesEncryptor = new AES();
 			//Generate 128bit key
-			aesEncryptor.generateKey(128);
-			//Create new key from Public Server's key
-			byte[] key = aesEncryptor.getSymmetricKeySpec().getEncoded();
-			//Create new byte[] with decode key for send it on server
-			byte[] aesKeyEncryted = aesKeyEncryptor.encode(key);
-			return aesKeyEncryted;
+			try{
+				aesEncryptor.generateKey(128);
+				//Create new key from Public Server's key
+				byte[] key = aesEncryptor.getSymmetricKeySpec().getEncoded();
+				//Create new byte[] with decode key for send it on server
+				byte[] aesKeyEncryted = aesKeyEncryptor.encode(key);
+				return aesKeyEncryted;
+			}catch(InvalidKeyException e ){
+				throw new InvalidKeyException("invalid key settings");
+			}
 	}
 	/**
 	 * Send to the Server the AES key created from the public key of Server.
@@ -161,10 +184,14 @@ public class SocketClient {
 		byteArrayIn = new ByteArrayInputStream(sendByte);
 		//Start write byte from buffer in to socket
 		int transfertElement ;
-		outStream = new BufferedOutputStream(client.getOutputStream());
-		while((transfertElement = byteArrayIn.read()) != -1){
-			outStream.write(transfertElement);
-			outStream.flush();
+		try{
+			outStream = new BufferedOutputStream(client.getOutputStream());
+			while((transfertElement = byteArrayIn.read()) != -1){
+				outStream.write(transfertElement);
+				outStream.flush();
+			}
+		}catch(IOException e){
+			throw new IOException("an I/O error occurs when creating the output stream or if the socket is not connected");
 		}
 		//Close Buffer I/O
 		closeBuffer();
@@ -184,14 +211,23 @@ public class SocketClient {
 		byteArrayIn = new ByteArrayInputStream(sendByte);
 		int transfertElement;
 		//Crypting file with AES key
-		this.aesEncryptor.encode(byteArrayIn, encryptedByteArraybuffer);
+		try{
+			this.aesEncryptor.encode(byteArrayIn, encryptedByteArraybuffer);
+
+		}catch(InvalidKeyException e){
+			throw new InvalidKeyException("key has not been set or is not valid");
+		}
 		byteArrayIn = new ByteArrayInputStream(encryptedByteArraybuffer.toByteArray());
-		outStream = new BufferedOutputStream(client.getOutputStream());
-		//Write byte[] to the buffer connected with server
-		while((transfertElement = byteArrayIn.read()) != -1){
-			outStream.write(transfertElement);
-			lopo.write(transfertElement);
-			outStream.flush();
+		try{
+			outStream = new BufferedOutputStream(client.getOutputStream());
+			//Write byte[] to the buffer connected with server
+			while((transfertElement = byteArrayIn.read()) != -1){
+				outStream.write(transfertElement);
+				lopo.write(transfertElement);
+				outStream.flush();
+			}
+		}catch(IOException e){
+			throw new IOException("an I/O error occurs when creating the output stream or if the socket is not connected");
 		}
 		//Close Buffer
 		closeBuffer();
@@ -204,9 +240,14 @@ public class SocketClient {
 	private void getConnection() throws IOException{
 		int port = 19999;
 		//New InetAddress from host passed to client
-		InetAddress address = InetAddress.getByName(host);
-		//Initialize new Socket client
-		client = new Socket(address, port);
+		try {
+			InetAddress address = InetAddress.getByName(host);
+			client = new Socket(address, port);
+		} catch (UnknownHostException e){
+			throw new UnknownHostException("no IP address for the host could be found");
+		} catch (IOException e) {
+			throw new IOException("an I/O error occurs when creating the socket");
+		}
 	}
 	/**
 	 * Close buffer connection

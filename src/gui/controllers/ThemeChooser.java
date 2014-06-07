@@ -16,46 +16,46 @@ public class ThemeChooser {
 	public static enum FileTypes {
 		WINTER_IS_COMING, NIGHTS_WATCH, FIRE_AND_BLOOD, OURS_IS_THE_FURY
 	}
+	
 	// Default font of buttons
-		private static Font font;
-		// Default background JPanel color
-		private static Color panelBackColor ;
-		// Default color of buttons
-		private static Color buttonColor;
-		// Default foreground color of JButton
-		private static Color foregroundColor;
-		
-		//Switch implementation
-		/**
-		 * Select the correct enum from file 
-		 */
-		public ThemeChooser(){
-			String name = null;
-			try {
-				name = new GlobalSettings().getTheme();
-			} catch (IOException e) {
-				// Do nothing
-			}
-			if(name.equals(FileTypes.WINTER_IS_COMING.name())){
-				setGraphic(FileTypes.WINTER_IS_COMING);
-			}
-			else if(name.equals(FileTypes.FIRE_AND_BLOOD.name())){
-				setGraphic(FileTypes.FIRE_AND_BLOOD);
-			}
-			else if(name.equals(FileTypes.NIGHTS_WATCH.name())){
-				setGraphic(FileTypes.NIGHTS_WATCH);
-			}
-			else if(name.equals(FileTypes.OURS_IS_THE_FURY.name())){
-				setGraphic(FileTypes.OURS_IS_THE_FURY);
-			}
-			//Default graphic
-			else setGraphic(FileTypes.NIGHTS_WATCH);;
+	private static Font font;
+	// Default background JPanel color
+	private static Color panelBackColor ;
+	// Default color of buttons
+	private static Color buttonColor;
+	// Default foreground color of JButton
+	private static Color foregroundColor;
+	//Switch implementation
+	/**
+	 * Select the correct enum from file 
+	 */
+	public ThemeChooser(){
+		String name = null;
+		try {
+			name = new GlobalSettings().getTheme();
+		} catch (IOException e) {
+			// Do nothing
 		}
-		/**
-		 * Switch between enum for set the correct graphyc
-		 * 
-		 * @param theme enum that represent a String for choose the correspondent set of color and fort
-		 */
+		if(name.equals(FileTypes.WINTER_IS_COMING.name())){
+			setGraphic(FileTypes.WINTER_IS_COMING);
+		}
+		else if(name.equals(FileTypes.FIRE_AND_BLOOD.name())){
+			setGraphic(FileTypes.FIRE_AND_BLOOD);
+		}
+		else if(name.equals(FileTypes.NIGHTS_WATCH.name())){
+			setGraphic(FileTypes.NIGHTS_WATCH);
+		}
+		else if(name.equals(FileTypes.OURS_IS_THE_FURY.name())){
+			setGraphic(FileTypes.OURS_IS_THE_FURY);
+		}
+		//Default graphic
+		else setGraphic(FileTypes.NIGHTS_WATCH);;
+	}
+	/**
+	 * Switch between enum for set the correct graphyc
+	 * 
+	 * @param theme enum that represent a String for choose the correspondent set of color and fort
+	 */
 	private void setGraphic(FileTypes theme){
 		setFont(new Font("Verdana",Font.BOLD, 12));
 		switch (theme){
@@ -119,5 +119,4 @@ public class ThemeChooser {
 	public void setForegroundColor(Color foregroundColor) {
 		ThemeChooser.foregroundColor = foregroundColor;
 	}
-
 }

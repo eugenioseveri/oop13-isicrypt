@@ -1,5 +1,8 @@
 package gui.controllers;
 
+import gui.models.IFileExchangeModel;
+import gui.views.IFileExchangeView;
+
 import javax.swing.table.TableModel;
 
 /**
@@ -40,7 +43,7 @@ public interface IFileExchangeViewObserver {
 	 */
 	void sendText();
 	/**
-	 * Creae a TableModel with two columns that represents the host and the name of the reachable server.
+	 * Create a TableModel with two columns that represents the host and the name of the reachable server.
 	 * Set the cell of the table no editable and load from File the list of contact.
 	 * 
 	 * @return TableModel
@@ -79,4 +82,17 @@ public interface IFileExchangeViewObserver {
 	 * @return boolean
 	 */
 	boolean fileAppendServer(String text, String name);
+	/**
+	 * link view and model to the controller
+	 * 
+	 * @param view		view to be lined
+	 * @param model		model to be lined
+	 */
+	void setViewAndModel(IFileExchangeView view, IFileExchangeModel model);
+	/**
+	 * Method for launch error in run method
+	 * 
+	 * @param error
+	 */
+	void threadErrorThrow(Exception error);
 }

@@ -32,6 +32,7 @@ public interface IHashing {
 	
 	 /**
 	  * Compare two files with the same algorithm
+	  * 
 	  * @param hashingAlgorithm		enum that represent the String of hashing algorithm 
 	  * @param streamOne			InputStream for the file which will be calculated the algorithm
 	  * @param streamTwo			InputStream for the file which will be calculated the algorithm

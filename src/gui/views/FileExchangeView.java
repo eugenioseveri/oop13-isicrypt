@@ -40,8 +40,8 @@ import javax.swing.table.TableModel;
 
 public class FileExchangeView extends AbstractGuiMethodSetter implements IFileExchangeView{
 	
-	private static final long serialVersionUID = -144598402405416549L;
-	private static final String APPLICATION_ICON = "isiCryptICON_MetroStyle.jpg";
+	private static final long serialVersionUID = -1686107590453441615L;
+	private final String APPLICATION_ICON = "isiCryptICON_MetroStyle.jpg";
 	private Font font;
 	private Color panelBackColor;
 	private Color buttonColor;
@@ -65,7 +65,7 @@ public class FileExchangeView extends AbstractGuiMethodSetter implements IFileEx
 	private GridBagConstraints limit;
 	//GUI Component initialized columns x row order
 	private final JButton backButton = new JButton("Show Start");
-	private static final JPanel container = new JPanel();
+	private final JPanel container = new JPanel();
 	private final JLabel datiLabel = new JLabel("Data");
 	private final JButton fileButton = new JButton("Choose file to send");
 	private final JButton stegaButton = new JButton("Send steganoghraphed image");
@@ -88,9 +88,15 @@ public class FileExchangeView extends AbstractGuiMethodSetter implements IFileEx
 	private final JScrollPane scrollPaneTable = new JScrollPane(contactTable);
 	private final JFrame dialog = new JFrame();
 	private static JFrame frame = new JFrame();
-
 	//Initialize GUI view observer
 	private IFileExchangeViewObserver controller;
+	
+	//View Observer attacher
+	@Override
+	public void attachFileExchangeViewObserve(IFileExchangeViewObserver controller){
+		this.controller = controller;
+	}
+	
 	//Builder
 	public FileExchangeView(){
 		buildLayout();
@@ -98,14 +104,11 @@ public class FileExchangeView extends AbstractGuiMethodSetter implements IFileEx
 		setHandlers();
 		setFrame();
 	}
-	//View Observer attacher
-	@Override
-	public void attachFileExchangeViewObserve(IFileExchangeViewObserver controller){
-		this.controller = controller;
-	}
-	//Build layout, same for all "GUI"
+	/**
+	 * Set color and font from file, because there are many theme, and will be load the last used
+	 * and set the layout
+	 */
 	private void buildLayout() {
-		//model = controller.tableBuilder();
 		buttonColor = ThemeChooser.getButtonColor();
 		font = ThemeChooser.getFont();
 		foregroundColor = ThemeChooser.getForegroundColor();
@@ -411,13 +414,19 @@ public class FileExchangeView extends AbstractGuiMethodSetter implements IFileEx
 	public static boolean isOpen() {
 		return isOpen;
 	}
-	
-	private void setOpen(boolean isOpen) {
+
+	private static void setOpen(boolean isOpen) {
 		FileExchangeView.isOpen = isOpen;
 	}
 	@Override
 	public String setOptionPane(String name, String text){
 		String back = JOptionPane.showInputDialog(name, text);
 		return back;
+	}
+	@Override
+	public void attackFileExchangeViewObserve(
+			IFileExchangeViewObserver controller) {
+		// TODO Auto-generated method stub
+		
 	}
  }

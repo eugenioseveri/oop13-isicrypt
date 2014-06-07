@@ -12,7 +12,6 @@ import gui.controllers.SteganographyController;
 import gui.controllers.ThemeChooser;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -36,7 +35,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
-public class SteganographyView extends AbstractGuiMethodSetter {
+public class SteganographyView extends AbstractGuiMethodSetter implements ISteganographyView {
 	private static final long serialVersionUID = 1L;
 	private static final String APPLICATION_ICON = "isiCryptICON_MetroStyle.jpg";
 	//Color and Fond take from file
@@ -44,48 +43,49 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 	private Color panelBackColor;
 	private Color buttonColor;
 	private Color foregroundColor;
+	//is used in StartScreenView for check if frame is open
 	private static boolean isOpen = false;
 	// Arrays that contains various dimension of insets
-	private static final int insetsDefault[] = { 10, 10, 10, 10 };
-	private static final int insetsZero[] = { 0, 0, 0, 0 };
-	private static final int insetsTextButton[] = { 0, 0, 10, 10 };
-	private static final int backInsets []= { 0, 0, 10, 10 };
+	private final int insetsDefault[] = { 10, 10, 10, 10 };
+	private final int insetsZero[] = { 0, 0, 0, 0 };
+	private final int insetsTextButton[] = { 0, 0, 10, 10 };
+	private final int backInsets []= { 10, 0, 10, 10 };
 	//Position and dimension of element
-	private static final int xPosition = 0;
-	private static final int yPosition = 0;
-	private static final int resizable = 1;
-	private static final int noResizable = 0;
-	private static final int defaultCellArea = 1;
-	private static final int zeroIpad = 0;
-	private static final int ipadDefaultx = 10;
-	private static final int ipadDefaulty = 30;
-	private static ImageIcon icon = null;
-	private static final String STEGANOGRAPHY_BACKGROUND = "SteganographyDefaultIcon.jpg";
-	private static final int buttonFill = GridBagConstraints.BOTH;
-	private static final int buttonAnchor = GridBagConstraints.CENTER;
-	private static final int iconHeigth = 240;
-	private static final int iconWidth = 320;
-	private static final int textAreaYdimension = 100;
-	private static final Dimension dim = new Dimension(0,textAreaYdimension);
+	private final int xPosition = 0;
+	private final int yPosition = 0;
+	private final int resizable = 1;
+	private final int noResizable = 0;
+	private final int defaultCellArea = 1;
+	private final int zeroIpad = 0;
+	private final int ipadDefaultx = 10;
+	private final int ipadDefaulty = 30;
+	private ImageIcon icon = null;
+	private final String STEGANOGRAPHY_BACKGROUND = "SteganographyDefaultIcon.jpg";
+	private final int buttonFill = GridBagConstraints.BOTH;
+	private final int buttonAnchor = GridBagConstraints.CENTER;
+	private final int iconHeigth = 240;
+	private final int iconWidth = 320;
+	private final int textAreaYdimension = 100;
+	private final Dimension dim = new Dimension(0,textAreaYdimension);
 	GridBagConstraints limit;
 	//Graphic Element initialization
-	private static final JButton backButton = new JButton("Show Start");
-	private final static JButton selectImageButton = new JButton("Select image");
-	private final static JButton selectTextButton = new JButton("Text from File");
-	private final static JSeparator separator = new JSeparator(SwingConstants.VERTICAL);
-	private final static JLabel iconLabel = new JLabel();
+	private final JButton backButton = new JButton("Show Start");
+	private final JButton selectImageButton = new JButton("Select image");
+	private final JButton selectTextButton = new JButton("Text from File");
+	private final JSeparator separator = new JSeparator(SwingConstants.VERTICAL);
+	private final JLabel iconLabel = new JLabel();
 /*	not implemented yet
 	private final static JCheckBox encryptCheckbox = new JCheckBox("Encrypt");		*/
-	private final static JButton startButton = new JButton("START");
-	private final static JTextArea textArea = new JTextArea(10, 10);
-	private final static JScrollPane scrollPane = new JScrollPane(textArea);
-	private final static JButton findTextButton = new JButton("Find Text");
-	private final static JButton clearSettingButton = new JButton("Clear Setting");
-	private final static JButton insertTextButton = new JButton("Enter text");
-	private final static JButton filler = new JButton();
-	private final static JButton filler2 = new JButton();
-	private final static JFrame dialog = new JFrame();
-	private static final JPanel container = new JPanel();
+	private final JButton startButton = new JButton("START");
+	private final JTextArea textArea = new JTextArea(10, 10);
+	private final JScrollPane scrollPane = new JScrollPane(textArea);
+	private final JButton findTextButton = new JButton("Find Text");
+	private final JButton clearSettingButton = new JButton("Clear Setting");
+	private final JButton insertTextButton = new JButton("Enter text");
+	private final JLabel filler = new JLabel();
+	private final JLabel fillerSecond = new JLabel();
+	private final JFrame dialog = new JFrame();
+	private final JPanel container = new JPanel();
 
 	private ISteganographyViewObserver controller;
 
@@ -96,23 +96,28 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 		setFrame();
 	}
 
-	public void attacSteganographyViewObserver(ISteganographyViewObserver controller) {
+	@Override
+	public void attackSteganographyViewObserver(ISteganographyViewObserver controller) {
 		this.controller = controller;
 	}
-
+	/**
+	 * Set color and font from file, because there are many theme, and will be load the last used
+	 * and set the layout
+	 */
 	private void buildLayout() {
-		//Set color and font from file, because there are many theme, and will be load the last used
-		this.setButtonColor(ThemeChooser.getButtonColor());
-		this.setFont(ThemeChooser.getFont());
-		this.setForegroundColor(ThemeChooser.getForegroundColor());
-		this.setPanelBackColor(ThemeChooser.getPanelBackColor());
+		buttonColor = (ThemeChooser.getButtonColor());
+		font = (ThemeChooser.getFont());
+		foregroundColor = (ThemeChooser.getForegroundColor());
+		panelBackColor = (ThemeChooser.getPanelBackColor());
 		//set layout
-		GridBagLayout layout = new GridBagLayout();
+		final GridBagLayout layout = new GridBagLayout();
 		limit = new GridBagConstraints();
 		container.setLayout(layout);
 		container.setBackground(panelBackColor);
 	}
-	
+	/**
+	 * Create a new Frame that contain the Component of the GUI and set closing and opening operations
+	 */
 	private void setFrame() {	
 		//new frame created in this method because it will be re-draw every time a new frame is needed
 		JFrame frame = new JFrame();
@@ -139,7 +144,9 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 		frame.getContentPane().add(container);
 		frame.setVisible(true);
 	}
-
+	/**
+	 * Method that create a Graphic, is optimized for GridBagLayout
+	 */
 	private void componentSettings() {
 		//JButton BACK TO START 
 		setJButton(backButton, buttonColor, foregroundColor, font, false, false);
@@ -167,12 +174,11 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 		setGridposition(limit, xPosition+2, yPosition, defaultCellArea, defaultCellArea+6,
 				noResizable, resizable, container, separator);
 		//filler2
-		filler2.setMaximumSize(((JButton)filler2).getPreferredSize());
-		setJButton(filler2, panelBackColor, null, null, false, false);
+		fillerSecond.setMaximumSize(fillerSecond.getPreferredSize());
 		setLimit(limit, zeroIpad, zeroIpad, insetsZero,
-				buttonFill, GridBagConstraints.CENTER, container, filler2);
+				buttonFill, GridBagConstraints.CENTER, container, fillerSecond);
 		setGridposition(limit, xPosition+3, yPosition, defaultCellArea, defaultCellArea+6,
-				resizable, resizable, container, filler2);	
+				resizable, resizable, container, fillerSecond);	
 		// JLabel for icon
 		try { 
 			BufferedImage defaultStartimage = ImageIO.read(ClassLoader.getSystemResourceAsStream(STEGANOGRAPHY_BACKGROUND));
@@ -287,62 +293,50 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 	}
 
 	//return the dialog for show the error 
-	public static void optionPanel( Object error ){
+	@Override
+	public void optionPane( Object error ){
 		if(error instanceof Exception)JOptionPane.showMessageDialog(dialog, error);
 		if(error instanceof String)JOptionPane.showMessageDialog(dialog, error);
 	}
 	
 	//Setter and Getter
-	public static JLabel getIconLabel() {
+	@Override
+	public JLabel getIconLabel() {
 		return iconLabel;
 	}
-
-	public static Component getSelectImageButton() {
+	@Override
+	public JButton getSelectImageButton() {
 		return selectImageButton;
 	}
-
-	public static Component getSelectTextButton() {
+	@Override
+	public JButton getSelectTextButton() {
 		return selectTextButton;
 	}
-
-	public static Component getStartButton() {
+	@Override
+	public JButton getStartButton() {
 		return startButton;
 	}
-
-	public static JTextArea getTextArea() {
+	@Override
+	public JTextArea getTextArea() {
 		return textArea;
 	}
-
-	public static Component getFindTextButton() {
+	@Override
+	public JButton getFindTextButton() {
 		return findTextButton;
 	}
-
-	public static Component getClearSettingButton() {
+	@Override
+	public JButton getClearSettingButton() {
 		return clearSettingButton;
 	}
-
-	public static Component getInsertTextButton() {
+	@Override
+	public JButton getInsertTextButton() {
 		return insertTextButton;
 	}
-	public void setPanelBackColor(Color panelBackColor) {
-		this.panelBackColor = panelBackColor;
-	}
-
-	public void setButtonColor(Color buttonColor) {
-		this.buttonColor = buttonColor;
-	}
-
-	public void setForegroundColor(Color foregroundColor) {
-		this.foregroundColor = foregroundColor;
-	}
-	public void setFont(Font font) {
-		this.font = font;
-	}
-
-	public static JFrame getDialog() {
+	@Override
+	public JFrame getDialog() {
 		return dialog;
 	}
-	public static void setOpen(boolean isOpen) {
+	private static void setOpen(boolean isOpen) {
 		SteganographyView.isOpen = isOpen;
 	}
 	

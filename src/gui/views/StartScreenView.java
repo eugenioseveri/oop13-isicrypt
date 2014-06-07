@@ -1,4 +1,4 @@
-package gui.views;
+ package gui.views;
 
 import gui.controllers.IStartScreenViewObserver;
 import gui.controllers.StartScreenController;
@@ -17,7 +17,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
 
 public class StartScreenView extends AbstractGuiMethodSetter{
 	private static final long serialVersionUID = 4934353268761561329L;
@@ -65,7 +64,7 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 	}
 	
 	private static void buildLayout() {
-		//Creo un nuovo ThemeChooser all'avvio della gui cosi setto tutti i parametri
+		//set all graphic parameters
 		new ThemeChooser();
 		dialog.getContentPane().setBackground(panelBackColor);;
 		buttonColor = (ThemeChooser.getButtonColor());

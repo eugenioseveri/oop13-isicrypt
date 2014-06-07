@@ -3,7 +3,6 @@ package gui.controllers;
  * @author Filippo Vimini
  * Created 24/05/2014
  */
-import java.awt.HeadlessException;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -20,6 +19,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Map;
 import java.util.Map.Entry;
+
+
 
 //Used for set the JTable
 import javax.swing.table.DefaultTableModel;
@@ -47,6 +48,7 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 	private final static String userHomePath = System.getProperty("user.home") + "/isicrypt";
 	private final static String fileExchangeSettings = userHomePath + "/accountContacts.dat";
 
+	@Override
 	public void  setViewAndModel(IFileExchangeView view, IFileExchangeModel model){
 		SocketServer server = new SocketServer();
 		server.attacFileExchangeViewObserve(this);
@@ -67,7 +69,7 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 			} catch (FileNotFoundException e) {
 				view.optionPanel(e);	
 			}
-			socketClient(model.getContactInfo(), streamTemp, fileTemp.getName());
+			socketClientSend(model.getContactInfo(), streamTemp, fileTemp.getName());
 		}
 		else view.optionPanel("select contact");
 	}
@@ -90,7 +92,7 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 				view.optionPanel(e);	
 			}
 			if(imageToSend != null)
-				socketClient(model.getContactInfo(), bis, imageToSend.getName());
+				socketClientSend(model.getContactInfo(), bis, imageToSend.getName());
 			}
 		}
 		else view.optionPanel("select contact");
@@ -99,20 +101,22 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 	@Override
 	public void selectCompressedFile() {
 		if(searchContact(model.getContactInfo())!= null){
-			BufferedInputStream buffer = null;
-			ByteArrayOutputStream outBuffer = null;
 			File tempFile = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
+			ByteArrayOutputStream outByteBuffer = new ByteArrayOutputStream();
+			ByteArrayInputStream inByteBuffer = null;
+			BufferedInputStream bufferForZip = null;
 			try {
-				buffer = new BufferedInputStream(new FileInputStream(tempFile)) ;
-				outBuffer = new ByteArrayOutputStream(); 
-				buffer = new BufferedInputStream(new ByteArrayInputStream(outBuffer.toByteArray()));
+				bufferForZip = new BufferedInputStream(new FileInputStream(tempFile));
 				//Compress Input file
-				GZip.getInstance().compress(buffer, outBuffer);
-				
+				GZip.getInstance().compress(bufferForZip, outByteBuffer);
+				//Put in InputStream for send with client
+				inByteBuffer = new ByteArrayInputStream(outByteBuffer.toByteArray());
+			}catch(FileNotFoundException e){
+				view.optionPanel("File not found");
 			} catch (IOException e) {
-				view.optionPanel(e);	
+				view.optionPanel("Error occured during compression");	
 			}
-			socketClient(model.getContactInfo(), buffer, tempFile.getName());
+			socketClientSend(model.getContactInfo(), inByteBuffer, tempFile.getName()+".Gzip");
 		}
 		else view.optionPanel("select contact");
 	}
@@ -188,7 +192,7 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 			view.optionPanel("none text entered");
 		else {
 			textTemp = view.getChattextarea().getText();
-			socketClient(model.getContactInfo(), null, textTemp);
+			socketClientSend(model.getContactInfo(), null, textTemp);
 			view.getChattextarea().setText("");
 		}		
 	}
@@ -288,6 +292,11 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 		}
 		return null;
 	}
+	
+	@Override
+	public void threadErrorThrow(Exception error){
+		view.optionPanel(error);
+	}
 	/**
 	 * Create a socket for client and set a series of exception, for better class formatting.
 	 * 
@@ -296,7 +305,7 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 	 * @param name			For first constructor, represent the text that will be sent
 	 * 						for the second, represent the name of file.
 	 */
-	private void socketClient(ContactInfo contact, InputStream buffer, String name){
+	private void socketClientSend(ContactInfo contact, InputStream buffer, String name){
 		try {
 			//the buffer represent the file
 			if(buffer == null){
@@ -304,15 +313,11 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 			}
 			else new SocketClient(contact, buffer, name, this);
 		} catch (InvalidKeyException e) {
-			view.optionPanel(e);	
-		} catch (HeadlessException e) {
-			view.optionPanel(e);	
-		} catch (NoSuchAlgorithmException e) {
-			view.optionPanel(e);	
-		} catch (InvalidKeySpecException e) {
-			view.optionPanel(e);	
+			view.optionPanel("Problem with key exchange");		
+		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+			view.optionPanel("Problem to generate RSA public key");		
 		} catch (IOException e) {
-			view.optionPanel("Server doesn't connect or portfowarding problem");	
+			view.optionPanel("socket is closed or port fowarding problem");	
 		}
 	}
 }
