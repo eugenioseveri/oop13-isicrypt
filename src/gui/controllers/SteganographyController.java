@@ -7,7 +7,6 @@ import static gui.models.OpenButtons.FileTypes.IMAGE;
 import static gui.models.OpenButtons.FileTypes.TEXT;
 import gui.models.OpenButtons;
 import gui.views.AbstractGuiMethodSetter;
-import gui.views.FileExchangeView;
 import gui.views.StartScreenView;
 import gui.views.SteganographyView;
 
@@ -69,7 +68,7 @@ public class SteganographyController implements ISteganographyViewObserver, IGen
 		try {
 			textDefault = TypeConverter.fileToString(new OpenButtons().fileChooser(TEXT));
 		} catch (FileNotFoundException e) {
-			FileExchangeView.optionPanel(e);	
+			SteganographyView.optionPanel(e);	
 		}
 			if(textDefault != null){
 				SteganographyView.getTextArea().setText("");

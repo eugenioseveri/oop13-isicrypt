@@ -2,10 +2,13 @@ package gui.controllers;
 
 import javax.swing.JOptionPane;
 
+import gui.models.FileExchangeModel;
 import gui.models.GlobalSettings;
+import gui.models.IFileExchangeModel;
 import gui.models.KeyringModel;
 import gui.views.CryptographyView;
 import gui.views.FileExchangeView;
+import gui.views.IFileExchangeView;
 import gui.views.KeyringView;
 import gui.views.StartScreenView;
 import gui.views.SteganographyView;
@@ -45,8 +48,9 @@ public class StartScreenController implements IStartScreenViewObserver{
 	@Override
 	public void selectFileExchange() {
 		FileExchangeController controller = new FileExchangeController();
-		FileExchangeView view = new FileExchangeView();
-		controller.setView(view);		
+		IFileExchangeView view = new FileExchangeView();
+		IFileExchangeModel model = new FileExchangeModel();
+		controller.setViewAndModel(view, model);		
 		StartScreenView.getFrame().setVisible(false);
 	}
 	

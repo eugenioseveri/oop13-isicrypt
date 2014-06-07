@@ -125,10 +125,10 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 	 * Creates the frame layout (same for all the views)
 	 */
 	private void buildLayout() {
-		this.setButtonColor(ThemeChooser.getButtonColor());
-		this.setFont(ThemeChooser.getFont());
-		this.setForegroundColor(ThemeChooser.getForegroundColor());
-		this.setPanelBackColor(ThemeChooser.getPanelBackColor());
+		buttonColor = (ThemeChooser.getButtonColor());
+		font = (ThemeChooser.getFont());
+		foregroundColor = (ThemeChooser.getForegroundColor());
+		panelBackColor = (ThemeChooser.getPanelBackColor());
 		GridBagLayout layout = new GridBagLayout();
 		limit = new GridBagConstraints();
 		container.setLayout(layout);
@@ -169,7 +169,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 	 */
 	private void componentSetting(){
 		//JLabel ENCRYPTION LABEL
-		encryptionLabel.setForeground(Color.WHITE);
+		encryptionLabel.setForeground(buttonColor);
 		setLimit(limit, zeroIpad, zeroIpad, labelInsets,
 				GridBagConstraints.CENTER, GridBagConstraints.CENTER, container, encryptionLabel);
 		setGridposition(limit, xPosition+1, yPosition, defaultCellArea+1, defaultCellArea,
@@ -241,7 +241,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		setGridposition(limit, xPosition+1, yPosition+8, defaultCellArea+1, defaultCellArea,
 				resizable, resizable, container, fillerOne);
 		//JLabel ALGORITHM LABLE
-		algorithmLabel.setForeground(Color.WHITE);
+		algorithmLabel.setForeground(buttonColor);
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
 				GridBagConstraints.CENTER, GridBagConstraints.EAST, container, algorithmLabel);
 		setGridposition(limit, xPosition+1, yPosition+9, defaultCellArea, defaultCellArea,
@@ -255,7 +255,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		setGridposition(limit, xPosition+2, yPosition+9, defaultCellArea, defaultCellArea,
 				resizable, noResizable, container, algorithmComboBox);
 		//JLabel HASHING LABEL
-		hashingLabel.setForeground(Color.WHITE);
+		hashingLabel.setForeground(buttonColor);
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
 				GridBagConstraints.CENTER, GridBagConstraints.EAST, container, hashingLabel );
 		setGridposition(limit, xPosition+1, yPosition+11, defaultCellArea, defaultCellArea,
@@ -269,7 +269,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		setGridposition(limit, xPosition+2, yPosition+11, defaultCellArea, defaultCellArea,
 				resizable, noResizable, container, hashingComboBox);
 		//JLabel COMPRESSION LABEL
-		compressionLabel.setForeground(Color.WHITE);
+		compressionLabel.setForeground(buttonColor);
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
 				GridBagConstraints.CENTER, GridBagConstraints.EAST, container, compressionLabel);
 		setGridposition(limit, xPosition+1, yPosition+12, defaultCellArea, defaultCellArea,
@@ -296,7 +296,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		setGridposition(limit, xPosition+1, yPosition+14, defaultCellArea+1, defaultCellArea,
 				resizable, noResizable, container, startEncryptionButton);
 		//Status LABEL
-		statusLabelEncryption.setForeground(Color.WHITE);
+		statusLabelEncryption.setForeground(buttonColor);
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
 				GridBagConstraints.CENTER, GridBagConstraints.CENTER, container, statusLabelEncryption);
 		setGridposition(limit, xPosition+1, yPosition+15, defaultCellArea, defaultCellArea, 
@@ -315,7 +315,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		setGridposition(limit, xPosition+3, yPosition, defaultCellArea, defaultCellArea+15,
 				noResizable, resizable, container, separator);
 		//decryption LABEL
-		decryptionLabel.setForeground(Color.WHITE);
+		decryptionLabel.setForeground(buttonColor);
 		setLimit(limit, zeroIpad, zeroIpad, labelInsets,
 				GridBagConstraints.CENTER, GridBagConstraints.CENTER, container, decryptionLabel);
 		setGridposition(limit, xPosition+4, yPosition, defaultCellArea+2, defaultCellArea,
@@ -351,7 +351,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		setGridposition(limit, xPosition+4, yPosition+7, defaultCellArea+2, defaultCellArea,
 				noResizable, noResizable, container, startDecryptionButton);
 		//Status LABEL
-		statusLabelDecryption.setForeground(Color.WHITE);
+		statusLabelDecryption.setForeground(buttonColor);
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
 				GridBagConstraints.CENTER, GridBagConstraints.NORTH, container, statusLabelDecryption);
 		setGridposition(limit, xPosition+4, yPosition+8, defaultCellArea, defaultCellArea, 
@@ -430,23 +430,6 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 	}
 	
 	//Getters and setters
-	private void setPanelBackColor(Color panelBackColor) {
-		this.panelBackColor = panelBackColor;
-	}
-
-	private void setForegroundColor(Color foregroundColor) {
-		this.foregroundColor = foregroundColor;
-	}
-
-	@Override // TODO: ha senso ridefinirlo?
-	public void setFont(Font font) {
-		this.font = font;
-	}
-
-	private void setButtonColor(Color buttonColor) {
-		this.buttonColor = buttonColor;
-	}
-
 	@Override
 	public void setText_encryptTextField(String text) {
 		CryptographyView.encryptTextField.setText(text);

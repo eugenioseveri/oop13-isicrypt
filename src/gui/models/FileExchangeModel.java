@@ -9,31 +9,39 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 
-public class FileExchangeModel {
-	//Static nei campi significa che non dipendono dallo stato della classe, infatti non vengono mai toccati dal costruttore
-	//Serve come controllo che client e server parlino fra loro
-	private static ContactInfo contactTemp;
-	private static HashMap<String, String> contactList = new HashMap<String, String>();
+public class FileExchangeModel implements IFileExchangeModel {
+	private  ContactInfo contactTemp;
+	private  HashMap<String, String> contactList = new HashMap<String, String>();
 	
-	public static HashMap<String, String> getContactList(){
-		return FileExchangeModel.contactList;
+	@Override
+	public HashMap<String, String> getContactList(){
+		return contactList;
 	}
-	public static void setContactList(String host, String name){
+	
+	@Override
+	public void setContactList(String host, String name){
 		contactList.put(host, name);
 	}
-	public static ContactInfo getContactInfo(){
-		return FileExchangeModel.contactTemp;
+	
+	@Override
+	public ContactInfo getContactInfo(){
+		return contactTemp;
 	}
-	public static void setContactInfo(ContactInfo setContact){
-		FileExchangeModel.contactTemp = setContact;
+	
+	@Override
+	public void setContactInfo(ContactInfo setContact){
+		contactTemp = setContact;
 	}
-	public static void saveContacts(File path) throws FileNotFoundException, IOException{
+	
+	@Override
+	public void saveContacts(File path) throws FileNotFoundException, IOException{
 		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path));
 		oos.writeObject(contactList);
 		oos.close();
 	}
+	@Override
 	@SuppressWarnings("unchecked")
-	public static void loadContacts(File path) throws FileNotFoundException, IOException, ClassNotFoundException{
+	public void loadContacts(File path) throws FileNotFoundException, IOException, ClassNotFoundException{
 		ObjectInputStream ois = new ObjectInputStream(new FileInputStream(path));
 		contactList = (HashMap<String, String>)ois.readObject();
 		ois.close();

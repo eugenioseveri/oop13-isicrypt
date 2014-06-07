@@ -52,17 +52,9 @@ public class Steganography implements ISteganography {
 		if(decode == null || StringUtils.isBlank(new String(decode)))return null;
 		return new String(decode);
 	}
-	/**
-	 * Take in input an image and text then hide the text inside image like messageEncrypter but save the file in Temp
-	 * folder because it will be send at Server and then saved on disk
-	 * 
-	 * @param rawImage
-	 * @param extension
-	 * @param text
-	 * @return
-	 * @throws IOException 
-	 */
-	public static File stegaForClient(File rawImage, String extension, String text) throws IOException, SecurityException{
+
+	@Override
+	public File stegaForClient(File rawImage, String extension, String text) throws IOException, SecurityException{
 		// convert File to buffer and add text
 		image = fileToBufferedImage(rawImage);
 		image = messageAdder(image, text);
@@ -173,7 +165,7 @@ public class Steganography implements ISteganography {
 	 * @return BufferedImage
 	 * @throws IOException 
 	 */
-	public static BufferedImage fileToBufferedImage( File rawImage ) throws IOException{
+	private static BufferedImage fileToBufferedImage( File rawImage ) throws IOException{
 		BufferedImage imageBuffer = null;
 		imageBuffer = ImageIO.read(rawImage);
 		return imageBuffer;
@@ -184,7 +176,7 @@ public class Steganography implements ISteganography {
 	 * @param picture 	input buffer to convert
 	 * @return byte[]
 	 */
-	public static byte[] bufferImageToByteArray( BufferedImage picture ){
+	private static byte[] bufferImageToByteArray( BufferedImage picture ){
 		WritableRaster raster   = picture.getRaster();
 		DataBufferByte buffer = (DataBufferByte)raster.getDataBuffer();
 		return buffer.getData();

@@ -3,13 +3,12 @@ package gui.views;
  * @author Filippo Vimini
  * @data 30/04/2014
  */
-import gui.models.ResizableImage;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -61,7 +60,7 @@ public abstract class AbstractGuiMethodSetter extends JFrame {
 		iconDimension.height = height;
 		iconDimension.width = width;
 		label.setMinimumSize(iconDimension);
-		srcImage = new ResizableImage().getResizedImage(srcImage);
+		srcImage = getResizedImage(srcImage);
 		ImageIcon imageIcon = new ImageIcon(srcImage);
 		return imageIcon;
 	}
@@ -107,4 +106,59 @@ public abstract class AbstractGuiMethodSetter extends JFrame {
 		limit.weighty = weighty;
 		container.add(C, limit);
 	}
+	
+	private static BufferedImage getResizedImage(BufferedImage originalImage){
+		
+		int MAX_WIDTH = 640;
+		int MAX_HEIGHT = 480;
+		
+		int width = originalImage.getWidth();
+		int height = originalImage.getHeight();
+		 
+		Dimension originalDimension = new Dimension(originalImage.getWidth(), originalImage.getHeight());
+	    Dimension boundaryDimension = new Dimension(MAX_WIDTH, MAX_HEIGHT);
+       	Dimension scalingDimension = getResizedDimension(originalDimension, boundaryDimension);
+		 
+		width = (int) scalingDimension.getWidth();
+		height = (int) scalingDimension.getHeight();
+		
+		BufferedImage resizedImage = new BufferedImage(width, height,originalImage.getType());
+		Graphics2D graphic= resizedImage.createGraphics();
+		graphic.drawImage(originalImage, 0, 0, width, height, null);
+		 
+		return resizedImage; 
+
+	}
+	/**
+	 * Replace the Dimension type with default dimension
+	 * 
+	 * @param imageDimension 	the dimension of original image
+	 * @param limit 	the new specific dimension of the image
+	 */
+	private static Dimension getResizedDimension(Dimension imageDimension, Dimension limit){
+		int original_width = imageDimension.width;
+	    int original_height = imageDimension.height;
+	    int bound_width = limit.width;
+	    int bound_height = limit.height;
+	    int new_width = original_width;
+	    int new_height = original_height;
+	 
+	    // Check if is necessary doing the scaling
+	    if (original_width > bound_width) {
+	        //scaling to the max width
+	        new_width = bound_width;
+	        //Height scaling for have same dimension
+	        new_height = (new_width * original_height) / original_width;
+	    }
+	    // Check if is out of boundries
+	    if (new_height > bound_height) {
+	         
+	        new_height = bound_height;
+	        //new scaling for right dimension
+	        new_width = (new_height * original_width) / original_height;
+	    }
+	 
+	    return new Dimension(new_width, new_height);
+	}
+
 }

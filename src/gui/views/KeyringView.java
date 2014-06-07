@@ -103,10 +103,10 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 	 * Creates the frame layout (same for all the views)
 	 */
 	private void buildLayout() {
-		this.setButtonColor(ThemeChooser.getButtonColor());
-		this.setFont(ThemeChooser.getFont());
-		this.setForegroundColor(ThemeChooser.getForegroundColor());
-		this.setPanelBackColor(ThemeChooser.getPanelBackColor());
+		buttonColor = (ThemeChooser.getButtonColor());
+		font = (ThemeChooser.getFont());
+		foregroundColor = (ThemeChooser.getForegroundColor());
+		panelBackColor = (ThemeChooser.getPanelBackColor());
 		GridBagLayout layout = new GridBagLayout();
 		limit = new GridBagConstraints();
 		container.setLayout(layout);
@@ -289,22 +289,6 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 	}
 	
 	//Getters and setters
-	public void setFont(Font font) {
-		this.font = font;
-	}
-
-	public void setPanelBackColor(Color panelBackColor) {
-		this.panelBackColor = panelBackColor;
-	}
-
-	public void setButtonColor(Color buttonColor) {
-		this.buttonColor = buttonColor;
-	}
-
-	public void setForegroundColor(Color foregroundColor) {
-		this.foregroundColor = foregroundColor;
-	}
-	
 	@Override
 	public JTable getTable() {
 		return (JTable) table;

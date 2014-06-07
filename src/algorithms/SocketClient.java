@@ -3,7 +3,7 @@ package algorithms;
  * @author Filippo Vimini
  * Created 05/05/2014
  */
-import gui.controllers.FileExchangeController;
+import gui.controllers.IFileExchangeViewObserver;
 import gui.models.ContactInfo;
 
 import java.net.*;
@@ -23,6 +23,12 @@ public class SocketClient {
 	private Socket client = null;
 	private String host = null;
 	private String clientName = "UserClientDefault";
+	
+	private IFileExchangeViewObserver controller;
+
+	private void attacFileExchangeViewObserve(IFileExchangeViewObserver controller){
+		this.controller = controller;
+	}
 	/**
 	 * This constructor is used for send a file to a server.
 	 * 
@@ -35,12 +41,12 @@ public class SocketClient {
 	 * @throws IOException					General I/O problem
 	 */
 	
-	public SocketClient(ContactInfo contact, InputStream fileStream, String name) throws InvalidKeyException, NoSuchAlgorithmException,
+	public SocketClient(ContactInfo contact, InputStream fileStream, String name, IFileExchangeViewObserver controllerObserver) throws InvalidKeyException, NoSuchAlgorithmException,
 	InvalidKeySpecException, IOException {
+		attacFileExchangeViewObserve(controllerObserver);
 		byte[] clientNameByte;
 		//set Host
 		this.host = contact.getHost();
-    	FileExchangeController.setProgressbar(10);
 		//Put name of Client on byte[] for send through socket
 		clientNameByte = this.clientName.getBytes();
 		//Put name of file on byte[] for send through socket
@@ -51,13 +57,11 @@ public class SocketClient {
 		while((i = fileStream.read())!=-1){
 			bufferArray.write(i);
 		}
-    	FileExchangeController.setProgressbar(5);
 		//Put file on byte[] for send through socket
 		byte[] fileArray = bufferArray.toByteArray();
 		//Method that send file to Server
 		sendByteArray(clientNameByte, fileName, fileArray);
-    	FileExchangeController.setProgressbar(100);
-		FileExchangeController.textApendClient(name);
+		controller.textApendClient(name);
 		//Close existing connection
 		client.close();
 	
@@ -72,7 +76,8 @@ public class SocketClient {
 	 * @throws InvalidKeySpecException		if the given key specification is inappropriate for this key factory to produce a public key.
 	 * @throws IOException					General I/O problem
 	 */
-	public SocketClient(ContactInfo contact, String text) throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, IOException{
+	public SocketClient(ContactInfo contact, String text, IFileExchangeViewObserver controllerObserver) throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, IOException{
+		attacFileExchangeViewObserve(controllerObserver);
 		byte[] clientNameByte;
 		//initialize a string that will be used from server to check that the follow byte[] is a text message, not a file
 		String isString = "string";
@@ -86,7 +91,7 @@ public class SocketClient {
 		byte[] fileArray = text.getBytes();
 		//Method that send text to Server
 		sendByteArray(clientNameByte, stringCheck, fileArray);
-		FileExchangeController.textApendClient(text);
+		controller.textApendClient(text);
 		//Close existing connection
 		client.close();
 
@@ -105,14 +110,10 @@ public class SocketClient {
 																	NoSuchAlgorithmException, InvalidKeySpecException{
 		//Receive the Public key from server and use it to encrypt byte[] to send
 		sendAesKey(keyExchange());
-    	FileExchangeController.setProgressbar(10);
 		//Sequence that sent file and information at the server
     	sendSequence(clientName);	
-    	FileExchangeController.setProgressbar(30);
 		sendSequence(fileName);
-    	FileExchangeController.setProgressbar(40);
 		sendSequence(fileArray);
-    	FileExchangeController.setProgressbar(80);
 	}
 	/**
 	 * This method take a Public key from server and create a new AES key for encrypt the file.

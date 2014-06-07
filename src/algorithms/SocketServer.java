@@ -3,7 +3,7 @@ package algorithms;
  * @author Filippo Vimini
  * Created 05/05/2014
  */
-import gui.controllers.FileExchangeController;
+import gui.controllers.IFileExchangeViewObserver;
 import gui.models.OpenButtons;
 import gui.models.OpenButtons.FileTypes;
 
@@ -28,6 +28,12 @@ public class SocketServer extends Thread{
 	//Server creation
 	private static ServerSocket  server;
 
+	private IFileExchangeViewObserver controller;
+
+	public void attacFileExchangeViewObserve(IFileExchangeViewObserver controller){
+		this.controller = controller;
+	}
+	
 	public void run(){
 		final int port = 19999;
 		try {
@@ -58,26 +64,26 @@ public class SocketServer extends Thread{
 	    	keyExchange();
 	    	//Receive AES key for decrypt file
 	    	receiveAesKey();
-	    	FileExchangeController.setProgressbar(10);
+	    	controller.setProgressbar(10);
 			//Start to receive the file
 	    	byte[] clientName = receiveSequence();
-	    	FileExchangeController.setProgressbar(20);
+	    	controller.setProgressbar(20);
 			byte[] nameFile = receiveSequence();
-	    	FileExchangeController.setProgressbar(40);
+	    	controller.setProgressbar(40);
 			byte[] fileArray = receiveSequence();	
-	    	FileExchangeController.setProgressbar(70);
+	    	controller.setProgressbar(70);
 			//Update Client name
 			this.client = TypeConverter.byteArrayToString(clientName);
 			new TypeConverter();
 			//Get name of file for check the type.
 			String fileName = TypeConverter.byteArrayToString(nameFile);
-	    	FileExchangeController.setProgressbar(100);
+	    	controller.setProgressbar(100);
 			//Text or file control
 			if(fileName.equals("string")) {
 				this.stringChatDetector(fileArray);
 			}
 			else{
-				FileExchangeController.fileAppendServer(fileName, client);
+				controller.fileAppendServer(fileName, client);
 				if(JOptionPane.showConfirmDialog(null, "Download the File?", "choose one", JOptionPane.YES_NO_OPTION) == 0){
 					//Select directory where save file
 					File directory = new OpenButtons().fileChooser(FileTypes.DIRECTORY);
@@ -86,11 +92,11 @@ public class SocketServer extends Thread{
 								(new FileOutputStream(directory+"/"+fileName));
 						byteToFile.write(fileArray, 0, fileArray.length);
 						byteToFile.close();
-						FileExchangeController.textAppendServer("File Downloaded", client);
+						controller.textAppendServer("File Downloaded", client);
 					}
-					else FileExchangeController.textAppendServer("File Discarded", client);
+					else controller.textAppendServer("File Discarded", client);
 				}
-				else FileExchangeController.textAppendServer("File Discarded", client);
+				else controller.textAppendServer("File Discarded", client);
 			}
 		} catch (IOException e) {
 			throw e;
@@ -190,7 +196,7 @@ public class SocketServer extends Thread{
 	 */
 	private void stringChatDetector(byte[] stringByte){
 		String append = TypeConverter.byteArrayToString(stringByte);
-		FileExchangeController.textAppendServer(append, client);
+		controller.textAppendServer(append, client);
 	}
 	
 	//Getter

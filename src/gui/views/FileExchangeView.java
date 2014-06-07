@@ -35,9 +35,10 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-public class FileExchangeView extends AbstractGuiMethodSetter{
+public class FileExchangeView extends AbstractGuiMethodSetter implements IFileExchangeView{
 	
 	private static final long serialVersionUID = -144598402405416549L;
 	private static final String APPLICATION_ICON = "isiCryptICON_MetroStyle.jpg";
@@ -47,45 +48,45 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 	private Color foregroundColor;
 	private static boolean isOpen;
 	// Arrays that contains various dimension of insets
-	private static final int insetsDefault[] = { 10, 10, 10, 10 };
-	private static final int insetsChatArea[] = { 0, 0, 10, 10 };
-	private static final int insetsSendButton[] = {0, 10, 10, 10};
-	private static final int zeroInsets []= { 0, 0, 0, 0 };
-	private static final int labelInsets [] = {10, 0, 10, 10};
-	private static final int backInsets []= { 0, 0, 10, 10 };
-	private static final int zeroIpad  = 0;
-	private static final int noResizable  = 0;
-	private static final int resizable  = 1;
-	private static final int ipadDefaulty = 30;
-	private static final int ipadDefaultx = 65;
-	private static final int xPosition = 0;
-	private static final int yPosition = 0;
-	private static final int defaultCellArea = 1;
+	private final int insetsDefault[] = { 10, 10, 10, 10 };
+	private final int insetsChatArea[] = { 0, 0, 10, 10 };
+	private final int insetsSendButton[] = {0, 10, 10, 10};
+	private final int zeroInsets []= { 0, 0, 0, 0 };
+	private final int labelInsets [] = {10, 0, 10, 10};
+	private final int backInsets []= { 0, 0, 10, 10 };
+	private final int zeroIpad  = 0;
+	private final int noResizable  = 0;
+	private final int resizable  = 1;
+	private final int ipadDefaulty = 30;
+	private final int ipadDefaultx = 65;
+	private final int xPosition = 0;
+	private final int yPosition = 0;
+	private final int defaultCellArea = 1;
 	private GridBagConstraints limit;
 	//GUI Component initialized columns x row order
-	private static final JButton backButton = new JButton("Show Start");
+	private final JButton backButton = new JButton("Show Start");
 	private static final JPanel container = new JPanel();
-	private final static JLabel datiLabel = new JLabel("Data");
-	private final static JButton fileButton = new JButton("Choose file to send");
-	private final static JButton stegaButton = new JButton("Send steganoghraphed image");
-	private final static JButton zipButton = new JButton("Send compressed file");
-	private final static JLabel contactLabel = new JLabel("Contact");
-	private final static JButton addContactButton = new JButton("Add new Contact");
-	private final static JButton deleteContactButton = new JButton("Delete contact");
-	private final static JButton changeContactButton = new JButton("Change contact");
-	private final static JLabel sendStateLabel = new JLabel("Send state");
-	private final static JProgressBar sendProgress = new JProgressBar();
-	private final static JSeparator separator = new JSeparator(SwingConstants.VERTICAL);
-	private final static JTextArea visualTextArea = new JTextArea();
-	private final static JScrollPane scrollPaneVisual = new JScrollPane(visualTextArea);
-	private final static JTextArea chatTextArea = new JTextArea(10,10);
-	private final static JScrollPane scrollPaneChat = new JScrollPane(chatTextArea);
-	private final static JButton filler = new JButton("");
-	private final static JButton sendButton = new JButton("Send");
-	private final static TableModel model = FileExchangeController.tableBuilder();
-	private final static JTable contactTable = new JTable(model);
-	private final static JScrollPane scrollPaneTable = new JScrollPane(contactTable);
-	private final static JFrame dialog = new JFrame();
+	private final JLabel datiLabel = new JLabel("Data");
+	private final JButton fileButton = new JButton("Choose file to send");
+	private final JButton stegaButton = new JButton("Send steganoghraphed image");
+	private final JButton zipButton = new JButton("Send compressed file");
+	private final JLabel contactLabel = new JLabel("Contact");
+	private final JButton addContactButton = new JButton("Add new Contact");
+	private final JButton deleteContactButton = new JButton("Delete contact");
+	private final JButton changeContactButton = new JButton("Change contact");
+	private final JLabel sendStateLabel = new JLabel("Send state");
+	private final JProgressBar sendProgress = new JProgressBar();
+	private final JSeparator separator = new JSeparator(SwingConstants.VERTICAL);
+	private final JTextArea visualTextArea = new JTextArea();
+	private final JScrollPane scrollPaneVisual = new JScrollPane(visualTextArea);
+	private final JTextArea chatTextArea = new JTextArea(10,10);
+	private final JScrollPane scrollPaneChat = new JScrollPane(chatTextArea);
+	private final JButton filler = new JButton("");
+	private final JButton sendButton = new JButton("Send");
+	private TableModel model = new DefaultTableModel();
+	private final JTable contactTable = new JTable(model);
+	private final JScrollPane scrollPaneTable = new JScrollPane(contactTable);
+	private final JFrame dialog = new JFrame();
 	private static JFrame frame = new JFrame();
 
 	//Initialize GUI view observer
@@ -98,11 +99,13 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 		setFrame();
 	}
 	//View Observer attacher
+	@Override
 	public void attacFileExchangeViewObserve(IFileExchangeViewObserver controller){
 		this.controller = controller;
 	}
 	//Build layout, same for all "GUI"
 	private void buildLayout() {
+		//model = controller.tableBuilder();
 		buttonColor = ThemeChooser.getButtonColor();
 		font = ThemeChooser.getFont();
 		foregroundColor = ThemeChooser.getForegroundColor();
@@ -112,7 +115,9 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 		container.setLayout(layout);
 		container.setBackground(panelBackColor);
 	}
-
+	/**
+	 * Create a new Frame that contain the Component of the GUI and set closing and opening operations
+	 */
 	private void setFrame() {
 		frame = new JFrame();
 		try {
@@ -123,14 +128,14 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 
 	        @Override
 	        public void windowOpened(WindowEvent e) {
-	        	FileExchangeView.setOpen(true);	        }
+	        	setOpen(true);	        }
 
 	        @Override
 	        public void windowClosing(WindowEvent e) {
-	        	FileExchangeView.setOpen(false);
-	    		FileExchangeController.setEnableButton(false);
+	        	setOpen(false);
+	    		controller.setEnableButton(false);
 	        	//Try to close Server ad Server's thread
-	        	FileExchangeController.closeThread();
+	        	controller.closeThread();
 	        	//repaint the start screen
 	        	StartScreenView.redraw();
 	        }
@@ -141,7 +146,9 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 		frame.setVisible(true);
 	    frame.addWindowListener(listener);
 	}
-	
+	/**
+	 * Method that create a Graphic, is optimized for GridBagLayout
+	 */
 	private void componentSetting(){
 		//JBUTTON BACK TO START 
 		setJButton(backButton, buttonColor, foregroundColor, font, false, false);
@@ -332,75 +339,85 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 		});
 	}
 	
-	//return the dialog for show the error 
-	public static void optionPanel( Object error ){
-		if(error instanceof Exception)JOptionPane.showMessageDialog(FileExchangeView.dialog, error);
-		if(error instanceof String)JOptionPane.showMessageDialog(FileExchangeView.dialog, error);
+	//the dialog for show the error 
+	@Override
+	public void optionPanel( Object error ){
+		if(error instanceof Exception)JOptionPane.showMessageDialog(this.dialog, error);
+		if(error instanceof String)JOptionPane.showMessageDialog(this.dialog, error);
 	}
 	
 	//Component setter and getter
-	public static JTextArea getVisualtextarea() {
+	@Override
+	public JTextArea getVisualtextarea() {
 		return visualTextArea;
 	}
-	
-	public static JTextArea getChattextarea() {
+	@Override
+	public JTextArea getChattextarea() {
 		return chatTextArea;
 	}
-	
-	public static JTable getContactTable() {
+	@Override
+	public JTable getContactTable() {
 		return contactTable;
 	}
-	
-	public static Component getScrollpanetable() {
+	@Override
+	public Component getScrollpanetable() {
 		return scrollPaneTable;
 	}
-
-	public static JScrollPane getScrollpanevisual() {
+	@Override
+	public JScrollPane getScrollpanevisual() {
 		return (JScrollPane) scrollPaneVisual;
 	}
-
-	public static JButton getFilebutton() {
+	@Override
+	public JButton getFilebutton() {
 		return fileButton;
 	}
-	
-	public static JButton getStegabutton() {
+	@Override
+	public JButton getStegabutton() {
 		return stegaButton;
 	}
-	
-	public static JButton getZipbutton() {
+	@Override
+	public JButton getZipbutton() {
 		return zipButton;
 	}
-	
-	public static JFrame getFrame() {
+	@Override
+	public JFrame getFrame() {
 		return frame;
 	}
-
-	public static JButton getDeleteContactButton() {
+	@Override
+	public JButton getDeleteContactButton() {
 		return deleteContactButton;
 	}
-	
-	public static JButton getChangecontactbutton() {
+	@Override
+	public JButton getChangecontactbutton() {
 		return changeContactButton;
 	}
-	
-	public static JButton getAddcontactbutton() {
+	@Override
+	public JButton getAddcontactbutton() {
 		return addContactButton;
 	}
-	
-	public static JButton getSendbutton() {
+	@Override
+	public JButton getSendbutton() {
 		return sendButton;
 	}
-
-	public static void setSendprogress(int value) {
+	@Override
+	public TableModel getModel() {
+		return model;
+	}
+	@Override
+	public void setSendprogress(int value) {
 		sendProgress.getModel().setValue(value);
 	}
-	
 	//boolean for control if "JFrame" is close or open
 	public static boolean isOpen() {
 		return isOpen;
 	}
-	
-	public static void setOpen(boolean isOpen) {
+	@Override
+	public void setOpen(boolean isOpen) {
 		FileExchangeView.isOpen = isOpen;
+	}
+	@Override
+	public String setOptionPane(String name, String text){
+		String back = JOptionPane.showInputDialog(name, text);
+		return back;
 	}
  }
