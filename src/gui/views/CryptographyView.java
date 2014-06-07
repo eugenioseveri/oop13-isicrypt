@@ -39,7 +39,7 @@ import algorithms.EnumAvailableSymmetricAlgorithms;
 public class CryptographyView extends AbstractGuiMethodSetter implements ICryptographyView { // TODO: si può non estendere JFrame?
 
 	private static final long serialVersionUID = -162452746296023405L;
-	private static final String APPLICATION_ICON = "./isiCryptICON_MetroStyle.jpg";
+	private static final String APPLICATION_ICON = "isiCryptICON_MetroStyle.jpg";
 	private Font font;
 	private Color panelBackColor;
 	private Color buttonColor;

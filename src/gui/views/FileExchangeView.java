@@ -9,6 +9,7 @@ import gui.models.ThemeChooser;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -39,7 +40,7 @@ import javax.swing.table.TableModel;
 public class FileExchangeView extends AbstractGuiMethodSetter{
 	
 	private static final long serialVersionUID = -144598402405416549L;
-	private static final String APPLICATION_ICON = "./isiCryptICON_MetroStyle.jpg";
+	private static final String APPLICATION_ICON = "isiCryptICON_MetroStyle.jpg";
 	private Font font;
 	private Color panelBackColor;
 	private Color buttonColor;
@@ -81,8 +82,8 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 	private final static JScrollPane scrollPaneChat = new JScrollPane(chatTextArea);
 	private final static JButton filler = new JButton("");
 	private final static JButton sendButton = new JButton("Send");
-	private static TableModel model = FileExchangeController.tableBuilder();
-	private static JTable contactTable = new JTable(model);
+	private final static TableModel model = FileExchangeController.tableBuilder();
+	private final static JTable contactTable = new JTable(model);
 	private final static JScrollPane scrollPaneTable = new JScrollPane(contactTable);
 	private final static JFrame dialog = new JFrame();
 	private static JFrame frame = new JFrame();
@@ -96,16 +97,16 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 		setHandlers();
 		setFrame();
 	}
-	//View Observer attaccher
+	//View Observer attacher
 	public void attacFileExchangeViewObserve(IFileExchangeViewObserver controller){
 		this.controller = controller;
 	}
-	//Build layout, same for all gui
+	//Build layout, same for all "GUI"
 	private void buildLayout() {
-		this.setButtonColor(ThemeChooser.getButtonColor());
-		this.setFont(ThemeChooser.getFont());
-		this.setForegroundColor(ThemeChooser.getForegroundColor());
-		this.setPanelBackColor(ThemeChooser.getPanelBackColor());
+		buttonColor = ThemeChooser.getButtonColor();
+		font = ThemeChooser.getFont();
+		foregroundColor = ThemeChooser.getForegroundColor();
+		panelBackColor = ThemeChooser.getPanelBackColor();
 		GridBagLayout layout = new GridBagLayout();
 		limit = new GridBagConstraints();
 		container.setLayout(layout);
@@ -115,10 +116,9 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 	private void setFrame() {
 		frame = new JFrame();
 		try {
-			frame.setIconImage(ImageIO.read(ClassLoader.getSystemResource(APPLICATION_ICON)));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			frame.setIconImage(ImageIO.read(ClassLoader.getSystemResourceAsStream(APPLICATION_ICON)));
+		} catch (IOException e) {}
+		//Set action when frame is open and close
 		WindowAdapter listener = new WindowAdapter() {
 
 	        @Override
@@ -128,10 +128,9 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 	        @Override
 	        public void windowClosing(WindowEvent e) {
 	        	FileExchangeView.setOpen(false);
+	    		FileExchangeController.setEnableButton(false);
 	        	//Try to close Server ad Server's thread
 	        	FileExchangeController.closeThread();
-	    		FileExchangeController.setEnableButton(false);
-	        	FileExchangeView.setOpen(false);
 	        	//repaint the start screen
 	        	StartScreenView.redraw();
 	        }
@@ -142,107 +141,109 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 		frame.setVisible(true);
 	    frame.addWindowListener(listener);
 	}
+	
 	private void componentSetting(){
-		//JButton BACK TO START 
+		//JBUTTON BACK TO START 
 		setJButton(backButton, buttonColor, foregroundColor, font, false, false);
 		setLimit(limit, ipadDefaultx-50, ipadDefaulty-10, backInsets,
 				GridBagConstraints.CENTER, GridBagConstraints.WEST, container, backButton);
 		setGridposition(limit, xPosition, yPosition , defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, backButton);		
-		//Jlabel data
+		//JLABEL DATA
 		datiLabel.setForeground(Color.white);
 		setLimit(limit, zeroIpad, zeroIpad, labelInsets, 
 				GridBagConstraints.WEST, GridBagConstraints.WEST, container, datiLabel);
 		setGridposition(limit, xPosition, yPosition, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, datiLabel);
-		//JButton fileButton
+		//JBUTTON SELECT FILE BUTTON
 		setJButton(fileButton, buttonColor, foregroundColor, font, false, false);
 		setLimit(limit, ipadDefaultx, ipadDefaulty, insetsDefault,
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, fileButton);
 		setGridposition(limit, xPosition, yPosition+1, defaultCellArea, defaultCellArea, 
 				noResizable, noResizable, container, fileButton);
 		fileButton.setEnabled(false);
-		//JButton stegaButton
+		//JBUTTON SELECT STEGANOGRAPHED IMAGE BUTTON
 		setJButton(stegaButton, buttonColor, foregroundColor, font, false, false);
 		setLimit(limit, zeroIpad, ipadDefaulty, insetsDefault,
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, stegaButton);
 		setGridposition(limit, xPosition, yPosition+2, defaultCellArea, defaultCellArea, 
 				noResizable, noResizable, container, stegaButton);
 		stegaButton.setEnabled(false);
-		//JButton zip Button
+		//JBUTTON SEND ZIPPED FILE BUTTON
 		setJButton(zipButton, buttonColor, foregroundColor, font, false, false);
 		setLimit(limit, ipadDefaultx, ipadDefaulty, insetsDefault, 
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, zipButton);
 		setGridposition(limit, xPosition, yPosition+3, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, zipButton);
 		zipButton.setEnabled(false);
-		//JLabel contact
-		contactLabel.setForeground(Color.white);
+		//JLABEL CONTACT 
+		contactLabel.setForeground(buttonColor);
 		setLimit(limit, zeroIpad, zeroIpad, labelInsets,
 				GridBagConstraints.NONE, GridBagConstraints.WEST, container, contactLabel);
 		setGridposition(limit, xPosition, yPosition+4, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, contactLabel);
-		//JButton add new contact
+		//JBUTTON ADD NEW CONTACT
 		setJButton(addContactButton, buttonColor, foregroundColor, font, false, false);
 		setLimit(limit, ipadDefaultx, ipadDefaulty, insetsDefault, 
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, addContactButton);	
 		setGridposition(limit, xPosition, yPosition+5, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, addContactButton);
-		//JButton change contact
+		//JBUTTON CHANGE CONTACT
 		setJButton(changeContactButton, buttonColor, foregroundColor, font, false, false);
 		setLimit(limit, ipadDefaultx, ipadDefaulty, insetsDefault,
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, changeContactButton);
 		setGridposition(limit, xPosition, yPosition+6, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, changeContactButton);
 		changeContactButton.setEnabled(false);
-		//JButton delete contact
+		//JBUTTON DELETE CONTACT
 		setJButton(deleteContactButton, buttonColor, foregroundColor, font, false, false);
 		setLimit(limit, ipadDefaultx, ipadDefaulty, insetsDefault,
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, deleteContactButton);
 		setGridposition(limit, xPosition, yPosition+7, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, deleteContactButton);
 		deleteContactButton.setEnabled(true);
-		//filler
+		//FILLER
 		setLimit(limit, zeroIpad, zeroIpad, zeroInsets, 
 				GridBagConstraints.NONE, GridBagConstraints.SOUTH, container, filler);
 		setGridposition(limit, xPosition, yPosition+8, defaultCellArea, defaultCellArea, 
 				resizable, resizable, container, filler);
 		filler.setVisible(false);
-		//JLabel send state label
+		//JLABEL SEND STATE LABEL
 		sendStateLabel.setForeground(Color.white);
 		setLimit(limit, zeroIpad, zeroIpad, labelInsets,
 				GridBagConstraints.SOUTH, GridBagConstraints.WEST, container, sendStateLabel);
 		setGridposition(limit, xPosition, yPosition+9, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, sendStateLabel);
-		//JProgressbar Progress bar
+		//JPROGRESSBAR SEND STATUS PROGRESSBAR
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
 				GridBagConstraints.HORIZONTAL, GridBagConstraints.SOUTH, container, sendProgress);
 		setGridposition(limit, xPosition, yPosition+10, defaultCellArea, defaultCellArea, 
 				noResizable, noResizable, container, sendProgress);
-		//JSeparator
+		//JSEPARATOR for divide button from table/text area
 		setLimit(limit, zeroIpad, zeroIpad, zeroInsets, 
 				GridBagConstraints.BOTH, GridBagConstraints.SOUTH, container, separator);
 		setGridposition(limit, xPosition+1, yPosition, defaultCellArea, defaultCellArea+8,
 				noResizable, resizable, container, separator);
-		//JTextPanel visual text area
+		//JTEXTAREA/SCROLLPANE TEXT AREA AND SCROLLPANE stamp text send/received during the conversation
 		visualTextArea.setEditable(false);
 		visualTextArea.setLineWrap(true);
 		visualTextArea.setWrapStyleWord(true);
 		visualTextArea.setFont(font);
+		visualTextArea.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 		scrollPaneVisual.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPaneVisual.setVisible(false);
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault, 
 				GridBagConstraints.BOTH, GridBagConstraints.SOUTH, container, scrollPaneVisual);
 		setGridposition(limit, xPosition+2, yPosition, defaultCellArea, defaultCellArea+8,
 				resizable, resizable, container, scrollPaneVisual);
-		//JTable
+		//JTABLE TABLE that contain and show the HashMap with user 
 		contactTable.setFont(font);
 		contactTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault, 
 				GridBagConstraints.BOTH, GridBagConstraints.SOUTH, container, scrollPaneTable);
 		setGridposition(limit, xPosition+2, yPosition, defaultCellArea, defaultCellArea+8,
 				resizable, resizable, container, scrollPaneTable);
-		//JTextArea chat
+		//JTEXTAREA TEXTAREA for write text
 		chatTextArea.setLineWrap(true);
 		chatTextArea.setWrapStyleWord(true);
 		chatTextArea.setFont(font);
@@ -256,14 +257,13 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 				GridBagConstraints.HORIZONTAL, GridBagConstraints.SOUTH, container, scrollPaneChat );
 		setGridposition(limit, xPosition+2, yPosition+9, defaultCellArea+1, defaultCellArea,
 				resizable, noResizable, container, scrollPaneChat);
-		//JButton send text
+		//JBUTTON SEND TEXT write on chat area
 		setJButton(sendButton, buttonColor, foregroundColor, font, false, false);
 		setLimit(limit, ipadDefaultx, ipadDefaulty-20, insetsSendButton, 
 				GridBagConstraints.WEST, GridBagConstraints.SOUTHEAST, container, sendButton);
 		setGridposition(limit, xPosition+2, yPosition+10, defaultCellArea, defaultCellArea, 
 				noResizable, noResizable, container, sendButton);
 		sendButton.setEnabled(false);
-			
 	}
 	
 	private void setHandlers(){
@@ -309,6 +309,7 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 				controller.deleteContact();
 			}
 		});
+		//Change current connection and show Jtable for choose new contact
 		changeContactButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -317,7 +318,7 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 		});
 		//Send chat text
 		sendButton.addActionListener(new ActionListener() {
-			
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.sendText();
 			}
@@ -331,33 +332,13 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 		});
 	}
 	
-	public static void optionPanel( Exception error ){
-		JOptionPane.showMessageDialog(FileExchangeView.dialog, error);
-	}
-	
-	public static void optionPanel( String error ){
-		JOptionPane.showMessageDialog(FileExchangeView.dialog, error);
-	}
-	
-	//Setter and Getter
-	public void setFont(Font font) {
-		this.font = font;
-	}
-
-	public void setPanelBackColor(Color panelBackColor) {
-		this.panelBackColor = panelBackColor;
-	}
-
-	public void setButtonColor(Color buttonColor) {
-		this.buttonColor = buttonColor;
-	}
-
-	public void setForegroundColor(Color foregroundColor) {
-		this.foregroundColor = foregroundColor;
+	//return the dialog for show the error 
+	public static void optionPanel( Object error ){
+		if(error instanceof Exception)JOptionPane.showMessageDialog(FileExchangeView.dialog, error);
+		if(error instanceof String)JOptionPane.showMessageDialog(FileExchangeView.dialog, error);
 	}
 	
 	//Component setter and getter
-	//TODO: verificare cosa serve e cosa no
 	public static JTextArea getVisualtextarea() {
 		return visualTextArea;
 	}
@@ -378,15 +359,15 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 		return (JScrollPane) scrollPaneVisual;
 	}
 
-	public static Component getFilebutton() {
+	public static JButton getFilebutton() {
 		return fileButton;
 	}
 	
-	public static Component getStegabutton() {
+	public static JButton getStegabutton() {
 		return stegaButton;
 	}
 	
-	public static Component getZipbutton() {
+	public static JButton getZipbutton() {
 		return zipButton;
 	}
 	
@@ -394,26 +375,27 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 		return frame;
 	}
 
-	public static void setContactTable(JTable contactTable) {
-		FileExchangeView.contactTable = contactTable;
-	}
-
-	public static Component deleteContactButton() {
+	public static JButton getDeleteContactButton() {
 		return deleteContactButton;
 	}
 	
-	public static Component getChangecontactbutton() {
+	public static JButton getChangecontactbutton() {
 		return changeContactButton;
 	}
 	
-	public static Component getAddcontactbutton() {
+	public static JButton getAddcontactbutton() {
 		return addContactButton;
 	}
 	
-	public static Component getSendbutton() {
+	public static JButton getSendbutton() {
 		return sendButton;
 	}
+
+	public static void setSendprogress(int value) {
+		sendProgress.getModel().setValue(value);
+	}
 	
+	//boolean for control if "JFrame" is close or open
 	public static boolean isOpen() {
 		return isOpen;
 	}
@@ -421,5 +403,4 @@ public class FileExchangeView extends AbstractGuiMethodSetter{
 	public static void setOpen(boolean isOpen) {
 		FileExchangeView.isOpen = isOpen;
 	}
-
  }

@@ -21,7 +21,7 @@ import javax.swing.JPanel;
 
 public class StartScreenView extends AbstractGuiMethodSetter{
 	private static final long serialVersionUID = 4934353268761561329L;
-	private static final String APPLICATION_ICON = "./isiCryptICON_MetroStyle.jpg";
+	private static final String APPLICATION_ICON = "isiCryptICON_MetroStyle.jpg";
 	private static Font font;
 	private static Color panelBackColor;
 	private static Color buttonColor;
@@ -68,10 +68,10 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 		//Creo un nuovo ThemeChooser all'avvio della gui cosi setto tutti i parametri
 		new ThemeChooser();
 		dialog.getContentPane().setBackground(panelBackColor);;
-		setButtonColor(ThemeChooser.getButtonColor());
+		buttonColor = (ThemeChooser.getButtonColor());
 		font = (ThemeChooser.getFont());
-		setForegroundColor(ThemeChooser.getForegroundColor());
-		setPanelBackColor(ThemeChooser.getPanelBackColor());
+		foregroundColor = (ThemeChooser.getForegroundColor());
+		panelBackColor = (ThemeChooser.getPanelBackColor());
 		GridBagLayout layout = new GridBagLayout();
 		limit = new GridBagConstraints();
 		container.setLayout(layout);
@@ -166,7 +166,7 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 	private static void setFrame() {
 		frame.getContentPane().removeAll();
 		try {
-			frame.setIconImage(ImageIO.read(ClassLoader.getSystemResource(APPLICATION_ICON)));
+			frame.setIconImage(ImageIO.read(ClassLoader.getSystemResourceAsStream(APPLICATION_ICON)));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -178,45 +178,30 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 		frame.setVisible(true);
 	}
 	
+	//initialize again many method for draw the start screen
 	public static void redraw() {
 		buildLayout();
 		componentSetting();
 		setFrame();
 	}
 	
-	//GETTERS and SETTERS
+	//GETTERS 
 	public Font getFont() {
 		return font;
-	}
-
-	public  void setFont(Font font) {
-		StartScreenView.font = font;
 	}
 
 	public Color getPanelBakColor() {
 		return panelBackColor;
 	}
 
-	public static void setPanelBackColor(Color panelBackColor) {
-		StartScreenView.panelBackColor = panelBackColor;
-	}
-
 	public Color getButtonColor() {
 		return buttonColor;
 	}
-
-	public static void setButtonColor(Color buttonColor) {
-		StartScreenView.buttonColor = buttonColor;
-	}
-
+	
 	public Color getForegroundColor() {
 		return foregroundColor;
 	}
-
-	public static void setForegroundColor(Color foregroundColor) {
-		StartScreenView.foregroundColor = foregroundColor;
-	}
-
+	
 	public static JFrame getFrame() {
 		return frame;
 	}
@@ -224,8 +209,4 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 	public static JFrame getDialog() {
 		return dialog;
 	}
-
-
-
-	
 }

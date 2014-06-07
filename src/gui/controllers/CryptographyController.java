@@ -38,9 +38,9 @@ import static algorithms.EnumAsymmetricKeyTypes.*;
 public class CryptographyController implements ICryptographyViewObserver, IGeneralViewObserver {
 
 	private final static String TEMP_DIRECTORY = System.getProperty("java.io.tmpdir");
-	private final static String TEMP_CIPHER_FILE_NAME = TEMP_DIRECTORY + "\\tempCipherFile.tmp";
-	private final static String TEMP_COMPRESSION_FILE_NAME = TEMP_DIRECTORY + "\\tempCompressionFile.tmp";
-	private final static String TEMP_PAYLOAD_FILE_NAME = TEMP_DIRECTORY + "\\tempPayloadExtracted.tmp";
+	private final static String TEMP_CIPHER_FILE_NAME = TEMP_DIRECTORY + "/tempCipherFile.tmp";
+	private final static String TEMP_COMPRESSION_FILE_NAME = TEMP_DIRECTORY + "/tempCompressionFile.tmp";
+	private final static String TEMP_PAYLOAD_FILE_NAME = TEMP_DIRECTORY + "/tempPayloadExtracted.tmp";
 	private File tempFileToEncrypt = null;
 	private File tempPublicKeyFile = null;
 	private File tempFileToDecrypt = null;
@@ -214,7 +214,7 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 				this.model = new FileInterpret(tempFileToDecrypt);
 				this.view.setValue_progressBarDecryption(25);
 				this.view.getTextArea().append("\nThe selected file has been loaded.");
-				outputFile = new BufferedOutputStream(new FileOutputStream(tempOutputFileDecrypt.getAbsolutePath() + "\\" + this.model.getFileName())); // Platform-independent?
+				outputFile = new BufferedOutputStream(new FileOutputStream(tempOutputFileDecrypt.getAbsolutePath() + "/" + this.model.getFileName())); // Platform-independent?
 				streamPrivateKeyFile = new ObjectInputStream(new FileInputStream(tempPrivateKeyFile));
 				newRSA.setKeyPair(null, (PrivateKey)streamPrivateKeyFile.readObject()); // controllare che la chiave sia giusta
 				this.view.setValue_progressBarDecryption(35);

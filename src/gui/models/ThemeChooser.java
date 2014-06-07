@@ -1,5 +1,10 @@
 package gui.models;
-
+/**
+ * @author Filippo Vimini
+ * Created 30/05/2014
+ * 
+ * Class that read from file a text that contain a enum ( in String form ) and set the corresponding theme
+ */
 import java.awt.Color;
 import java.awt.Font;
 
@@ -17,10 +22,12 @@ public class ThemeChooser {
 		// Default foreground color of JButton
 		private static Color foregroundColor;
 		
-
+		//Switch implementation
+		/**
+		 * Select the correct enum from file 
+		 */
 		public ThemeChooser(){
 			String name = new GlobalSettings().getTheme();
-			if(name == null)System.out.println("nome thema == null");
 			if(name.equals(FileTypes.WINTER_IS_COMING.name())){
 				setGraphic(FileTypes.WINTER_IS_COMING);
 			}
@@ -33,8 +40,14 @@ public class ThemeChooser {
 			else if(name.equals(FileTypes.OURS_IS_THE_FURY.name())){
 				setGraphic(FileTypes.OURS_IS_THE_FURY);
 			}
-			else System.out.println("tema non trovato");
+			//Default graphic
+			else setGraphic(FileTypes.NIGHTS_WATCH);;
 		}
+		/**
+		 * Switch between enum for set the correct graphyc
+		 * 
+		 * @param theme enum that represent a String for choose the correspondent set of color and fort
+		 */
 	private void setGraphic(FileTypes theme){
 		switch (theme){
 		case NIGHTS_WATCH:
@@ -66,8 +79,7 @@ public class ThemeChooser {
 			setButtonColor(royalGreen);
 			setForegroundColor(gold);
 			break;
-		}
-			
+		}	
 	}
 	
 	//GETTERS and SETTERS

@@ -2,6 +2,9 @@ package algorithms;
 /**
  * @author Filippo Vimini
  *Created 08/03/2014
+ *
+ *Class that generate hashing algorithm for check the correctness of file
+ *implements singleton pattern
  */
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -10,11 +13,9 @@ import java.io.InputStream;
 
 import algorithms.interfacesandabstractclasses.IHashing;
 
-
-
 public class Hashing implements IHashing {
-
-	private static final int DIM_BUFFER = 1024;
+	
+	private final int DIM_BUFFER = 1024;
 	private static final Hashing SINGLETON = new Hashing();
 	
 	private Hashing(){
@@ -23,18 +24,16 @@ public class Hashing implements IHashing {
 	public static Hashing getInstance(){
 		return SINGLETON;
 	}
-	//Non bufferizzo l'input perchè se viene passato un buffer ribufferizza
+
 	@Override
 	public String generateHash(EnumAvailableHashingAlgorithms hashingAlgorithm, InputStream stream) {
-		//create the interface for the selection of the file
-		StringBuffer sb = new StringBuffer("");
-		//BufferedInputStream bufferStrem = new BufferedInputStream(stream);
+		StringBuffer stringBuffer = new StringBuffer("");
 		int nread;
 		byte[] mdBytes = null;
 		try {
-			//Create MessageDigest and select the sha-1 algorithm
+			//Create MessageDigest object that implement the selected algorithm
 			MessageDigest md = MessageDigest.getInstance(hashingAlgorithm.name());
-			//Select the key dimension i think (MUST SEARCH!!!)
+			//Select the key dimension 
 			byte[] dataBytes = new byte[DIM_BUFFER];
 			nread = stream.read(dataBytes);
 			//Calculating sha1 with is class
@@ -43,27 +42,26 @@ public class Hashing implements IHashing {
 				nread = stream.read(dataBytes);
 			}	
 			mdBytes = md.digest();
+			
 		} catch (IOException e) {
-			System.out.println("Stream.read error, can't read byte array: "+e);
 			return null;
 		} catch (NoSuchAlgorithmException e) {
-			System.out.println("Can't select sha1 algorithm: "+e);
 			return null;
 		} finally {
 			if (stream != null){
 		        try {
 		            stream.close();
 		        } catch (IOException e) {
-		        	System.out.println("Stream close error occured: "+e);
 		        	return null;
 		        }
 			}
 		}
-		//TODO Studia come funziona e al max modificala
-	    for (int i = 0; i < mdBytes.length; i++) {
-	    	sb.append(Integer.toString((mdBytes[i] & 0xff) + 0x100, 16).substring(1));
-	    }
-		return sb.toString();
+		for(byte temp : mdBytes){
+			//String format for messageDigest to convert byte to Hexadecimal, temp & 0xff: get the last byte
+			stringBuffer.append(String.format("%02x", temp & 0xff));
+		}		
+		
+		return stringBuffer.toString();
 	}
 	//Commentare nella java dc che l'utente deve usare lo stesso algorithm
 	@Override

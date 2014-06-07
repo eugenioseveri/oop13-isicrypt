@@ -1,6 +1,5 @@
 package gui.controllers;
 
-
 import javax.swing.JOptionPane;
 
 import gui.models.GlobalSettings;
@@ -60,9 +59,6 @@ public class StartScreenController implements IStartScreenViewObserver{
 			settings.setTheme(theme);
 			settings.storeSettings();
 			StartScreenView.redraw();
-			/*StartScreenController reloadController = new StartScreenController();
-			StartScreenView reloadView = new StartScreenView();
-			reloadController.setView(reloadView);*/
 		}
 	}
 }

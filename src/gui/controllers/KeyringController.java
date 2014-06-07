@@ -40,8 +40,8 @@ public class KeyringController implements IKeyringViewObserver, IGeneralViewObse
 	private final static String ERROR_WHILE_SAVING = "An error has occurred while saving data!";
 	private final static String ERROR_WHILE_LOADING = "An error has occurred while loading data!";
 	private final static String[] TABLE_COLUMNS_NAMES = {"Host name", "Username", "Password"};
-	private final static String USER_HOME_PATH = System.getProperty("user.home") + "\\isicrypt"; //TODO: duplicato in più classi
-	private final static String KEYRING_FILE_PATH = USER_HOME_PATH + "\\keyring.dat";
+	private final static String USER_HOME_PATH = System.getProperty("user.home") + "/isicrypt"; //TODO: duplicato in più classi
+	private final static String KEYRING_FILE_PATH = USER_HOME_PATH + "/keyring.dat";
 	private byte[] aesKey = null;
 	private IKeyringView view;
 	private IKeyringModel model;

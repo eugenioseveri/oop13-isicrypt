@@ -16,45 +16,38 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.swing.JOptionPane;
 
 public class SocketServer extends Thread{
-	
-	/*public static void main(String[] args){
-		new SocketServer();
-	}*/
-	
-	static Socket connection;	
-	InputStream inStream = null;
-	OutputStream outStream = null;
-	ByteArrayOutputStream out = null;
-	AES aesEncryptor = null;
-	RSA aesKeyEncryptor = null;
-	String client;
+	//Class's field initialization
+	private Socket connection;	
+	private InputStream inStream = null;
+	private OutputStream outStream = null;
+	private ByteArrayOutputStream out = null;
+	private AES aesEncryptor = null;
+	private RSA aesKeyEncryptor = null;
+	private String client = null;
 	static boolean onLine = true;
-
+	//Server creation
 	private static ServerSocket  server;
 
-
-	//Come lanciare le eccezioni a questo punto?
 	public void run(){
 		final int port = 19999;
 		try {
 			server = new ServerSocket(port);
-			System.out.println("Server initialized...\nStart to accepting connections...");
 			//Start to accept connections.
 			while(onLine){
 				connection = server.accept();
 				receiveFile();
 			}
+			//close connection 
 			connection.close();
-			System.out.println("The server if fucking closed!!!");
-		} catch (IOException e) {
-			//Error catched when you close FileExchange Frame because it force close the connection, but it does't give problem
-			System.out.println("Force close");
-		} catch (GeneralSecurityException e) {
-			System.out.println("Key exchange or I/O errors occured " + e);
-		}
+		} 
+		//Error catch when you close FileExchange Frame because it force close the connection, but it does't give problem
+		catch (IOException e){} 
+		catch (GeneralSecurityException e){}
 	}
 
 	/**
+	 * Series of send ad receive for receive the file from client, check if the received byte[] is
+	 * a File or text and save or append the byte[]
 	 * 
 	 * @throws IOException
 	 * @throws GeneralSecurityException
@@ -65,22 +58,25 @@ public class SocketServer extends Thread{
 	    	keyExchange();
 	    	//Receive AES key for decrypt file
 	    	receiveAesKey();
+	    	FileExchangeController.setProgressbar(10);
 			//Start to receive the file
 	    	byte[] clientName = receiveSequence();
+	    	FileExchangeController.setProgressbar(20);
 			byte[] nameFile = receiveSequence();
-			byte[] fileArray = receiveSequence();			
+	    	FileExchangeController.setProgressbar(40);
+			byte[] fileArray = receiveSequence();	
+	    	FileExchangeController.setProgressbar(70);
 			//Update Client name
 			this.client = TypeConverter.byteArrayToString(clientName);
-			System.out.println("\nConnection with: " + this.client+":");
 			new TypeConverter();
 			//Get name of file for check the type.
 			String fileName = TypeConverter.byteArrayToString(nameFile);
+	    	FileExchangeController.setProgressbar(100);
 			//Text or file control
 			if(fileName.equals("string")) {
 				this.stringChatDetector(fileArray);
 			}
 			else{
-				System.out.println("Client file recived... \nfile name: "+fileName+"\nDownload?(yes|no)");
 				FileExchangeController.fileAppendServer(fileName, client);
 				if(JOptionPane.showConfirmDialog(null, "Download the File?", "choose one", JOptionPane.YES_NO_OPTION) == 0){
 					//Select directory where save file
@@ -90,7 +86,6 @@ public class SocketServer extends Thread{
 								(new FileOutputStream(directory+"/"+fileName));
 						byteToFile.write(fileArray, 0, fileArray.length);
 						byteToFile.close();
-						System.out.println("file "+fileName+" saved...");
 						FileExchangeController.textAppendServer("File Downloaded", client);
 					}
 					else FileExchangeController.textAppendServer("File Discarded", client);
@@ -98,19 +93,17 @@ public class SocketServer extends Thread{
 				else FileExchangeController.textAppendServer("File Discarded", client);
 			}
 		} catch (IOException e) {
-			System.out.println("an I/O error occured: " + e);
 			throw e;
 		}
 	}
 	
 	/**
-	 * 
+	 * TODO EUGE
 	 * @throws GeneralSecurityException
 	 * @throws IOException
 	 */
 	private void keyExchange() throws GeneralSecurityException, IOException{
 		try {
-			//connection =socket1.accept();
 			aesKeyEncryptor = new RSA();
 			// Generate new 2048 k?bit key
 			aesKeyEncryptor.generateKeyPair(2048);
@@ -128,15 +121,14 @@ public class SocketServer extends Thread{
 			byteArrayIn.close();
 			connection.close();
 		} catch (InvalidKeyException e) {
-			System.out.println("RSA encryption error occured: " + e);
 			throw e;
 		} catch (IOException e) {
-			System.out.println("an I/O error occured: " + e);
 			throw e;
 		}
 	}
 	
 	/**
+	 * Receive AES key whereby the server will decrypt the byte[] sended by client
 	 * 
 	 * @throws IOException
 	 * @throws GeneralSecurityException
@@ -158,14 +150,13 @@ public class SocketServer extends Thread{
 	    	//Close Buffer in/out connection
 	    	connection.close();
 		} catch (IOException e) {
-			System.out.println("an I/O error occured: " + e);
 			throw e;
 		}
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * TODO EUGE
+	 * @return byte[]		
 	 * @throws IOException
 	 * @throws InvalidKeyException
 	 */
@@ -180,41 +171,34 @@ public class SocketServer extends Thread{
 	        }
 	    	//closeConnection();
 	    	ByteArrayOutputStream byteArrayOutBuffer = new ByteArrayOutputStream();
+	    	//decode AES key 
+	    	//EUGE
 	    	aesEncryptor.decode(new ByteArrayInputStream(out.toByteArray()), byteArrayOutBuffer);
 	    	connection.close();
 	    	return byteArrayOutBuffer.toByteArray();	
 		} catch (SocketTimeoutException e){
-			System.out.println("Socket Timeout error occured: " + e);
 			throw e;	
 		} catch (IOException e) {
-			System.out.println("an I/O error occured: " + e);
 			throw e;
 		}
 	}
 	
 	/**
+	 * Convert input byte[] in String, and append text on JTextArea
 	 * 
-	 * @param stringByte
+	 * @param stringByte		byte[] to be converted
 	 */
 	private void stringChatDetector(byte[] stringByte){
-		int count;
-		System.out.print("	");
-		for(count = 0; count < stringByte.length; count++){
-			System.out.print((char)stringByte[count]);
-		}
 		String append = TypeConverter.byteArrayToString(stringByte);
 		FileExchangeController.textAppendServer(append, client);
 	}
 	
-	public static void closeSocket() {
-		 try {
-			server.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	//Getter
+	public static ServerSocket getSocket() {
+		return server;
 	}
 	
-	//SETTERS
+	//Setter
 	public static void setOnLine(boolean onLine) {
 		SocketServer.onLine = onLine;
 	}

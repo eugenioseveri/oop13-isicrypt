@@ -14,9 +14,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class OpenButtons extends JPanel{
 	
-	/**
-	 * 
-	 */
 	public static enum FileTypes {
 		GENERIC_FILE, IMAGE, TEXT, DIRECTORY;
 	}
@@ -26,7 +23,12 @@ public class OpenButtons extends JPanel{
 	File hashObj;
 	BufferedInputStream stream;
 	BufferedImage image;
-	
+	/**
+	 * Switch from enum for choose the correct file to open from file system and return the selected file on file system 
+	 * 
+	 * @param fileType 		enum to be checked
+	 * @return File			selected file
+	 */
 	public File fileChooser(FileTypes fileType) {
 			fileChooser.setAcceptAllFileFilterUsed(false);			
 		switch( fileType ){

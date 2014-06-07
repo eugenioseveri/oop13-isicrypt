@@ -3,7 +3,6 @@ package gui.controllers;
  * @author Filippo Vimini
  * Created 24/05/2014
  */
-import java.awt.ComponentOrientation;
 import java.awt.HeadlessException;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
@@ -22,9 +21,6 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -49,22 +45,16 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 	//Initialize FileEchange Gui
 	private static FileExchangeView view;
 	private static String textTemp;
-	private final static String userHomePath = System.getProperty("user.home") + "\\isicrypt";
-	private final static String fileExchangeSettings = userHomePath + "\\accountContacts.dat";
-	/**
-	 * 
-	 * @param view
-	 */
+	private final static String userHomePath = System.getProperty("user.home") + "/isicrypt";
+	private final static String fileExchangeSettings = userHomePath + "/accountContacts.dat";
+
 	public void  setView(FileExchangeView view){
 		SocketServer server = new SocketServer();
 		FileExchangeController.view = view;
 		FileExchangeController.view.attacFileExchangeViewObserve(this);
-		System.out.println("Server thread is alive: " + server.isAlive());
 		server.start();
 	}
-	/**
-	 * 
-	 */
+
 	@Override
 	public void selectFile() {
 		
@@ -80,9 +70,7 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 		}
 		else FileExchangeView.optionPanel("select contact");
 	}
-	/**
-	 * 
-	 */
+
 	@Override
 	public void stegaImage() {
 		if(searchContact(FileExchangeModel.getContactInfo())!= null){
@@ -106,9 +94,7 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 		}
 		else FileExchangeView.optionPanel("select contact");
 	}
-	/**
-	 * 
-	 */
+
 	@Override
 	public void selectCompressedFile() {
 		if(searchContact(FileExchangeModel.getContactInfo())!= null){
@@ -129,16 +115,13 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 		}
 		else FileExchangeView.optionPanel("select contact");
 	}
-	/**
-	 * 
-	 */
+
 	@Override
 	public void selectContact() {
 		final JTable table = FileExchangeView.getContactTable();
 		table.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 			      if (e.getClickCount() == 2){
-			//	    	JTable lopo = (JTable) e.getSource();
 				    	Point p = e.getPoint();
 				    	int row = table.rowAtPoint(p);
 				    	String host = table.getValueAt(row, 1).toString();
@@ -154,9 +137,7 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 			}
 		});
 	}
-	/**
-	 * 
-	 */
+
 	@Override
 	public void addContact() {
 		//Input dialog with a text field
@@ -174,16 +155,14 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 		FileExchangeView.getContactTable().setModel(tableBuilder());
 		
 	}
-	/**
-	 * 
-	 */
+
 	@Override
 	public void deleteContact() {
 		JTable table = FileExchangeView.getContactTable();
 		int selectedRow = table.getSelectedRow();
 		if(selectedRow != -1) {
 			TableModel getTableModel = tableBuilder();
-			String host = (String)getTableModel.getValueAt(selectedRow, 0);
+			String host = (String) getTableModel.getValueAt(selectedRow, 0);
 			String name = (String)getTableModel.getValueAt(selectedRow, 1);
 			FileExchangeModel.getContactList().remove(host, name);
 			try {
@@ -197,18 +176,13 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 		}
 	}
 		
-	/**
-	 * 
-	 */
 	@Override
 	public void changeContact() {
 		FileExchangeModel.setContactInfo(null);
 		FileExchangeController.setEnableButton(false);
 		FileExchangeView.getFrame().setVisible(true);
 	}
-	/**
-	 * 
-	 */
+
 	@Override
 	public void sendText() {
 		if(StringUtils.isBlank(FileExchangeView.getChattextarea().getText()))
@@ -224,15 +198,20 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 		StartScreenView.getFrame().setVisible(true);
 		StartScreenView.redraw();	
 	}
-	public static void closeThread(){
-		SocketServer.closeSocket();
-		
-	}
-	
 	/**
+	 * close the server connection, used like bridge for view from model
+	 */
+	public static void closeThread(){
+		try {
+			SocketServer.getSocket().close();
+		} catch (IOException e) {
+			FileExchangeView.optionPanel(e);		}
+	}
+	/**
+	 * Search a ContactInfo from HashMap "ContactList"
 	 * 
-	 * @param search
-	 * @return
+	 * @param search		ContactInfo to search
+	 * @return ContactInfo
 	 */
 	private ContactInfo searchContact(ContactInfo search){
 		for(Entry<String, String> entry : FileExchangeModel.getContactList().entrySet()){
@@ -243,10 +222,11 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 		return null;
 	}
 	/**
+	 * Creae a TableModel with two columns that represents the host and the name of the reachable server.
+	 * Set the cell of the table no editable and load from File the list of contact.
 	 * 
-	 * @return
+	 * @return TableModel
 	 */
-	//TODO da mettere in una classe neutrale
 	public static TableModel tableBuilder(){
 		DefaultTableModel model = new DefaultTableModel( new Object[] { "Host", "Name" }, 0 ){
 			private static final long serialVersionUID = 737530902377505148L;
@@ -257,9 +237,10 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 		};
 		try {
 			FileExchangeModel.loadContacts(new File(fileExchangeSettings));
-		} catch (FileNotFoundException e) {
-			//transparent exception
-		} catch (ClassNotFoundException e) {
+		}
+		//Not visible to the user
+		catch (FileNotFoundException e) {} 
+		  catch (ClassNotFoundException e) {
 			FileExchangeView.optionPanel(e);
 		} catch (IOException e) {
 			FileExchangeView.optionPanel(e);
@@ -267,66 +248,47 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 		for (Map.Entry<String,String> entry : FileExchangeModel.getContactList().entrySet()) {
 		        model.addRow(new Object[] { entry.getKey(), entry.getValue() });
 		    }
-		
 		    return model;
 	}
+
 	/**
+	 * Append  text on JTextArea, with the formatting of text for the Client.
 	 * 
-	 * @return
-	 */
-	public static String getChatAreaText(){
-		while(StringUtils.isBlank(FileExchangeView.getChattextarea().getText())){
-		}
-		return FileExchangeView.getChattextarea().getText();
-	}
-	/**
-	 * 
-	 * @param text
+	 * @param text		text that will be append.
 	 */
 	public static void textApendClient(String text){
 		JTextArea area = FileExchangeView.getVisualtextarea();
-		area.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 		String append = "\nYOU\n			"+text;
 		area.append(append);
-		
 	}
 	/**
+	 *Append  text on JTextArea, with the formatting of text for the server.
 	 * 
-	 * @param text
-	 */
-	public static void fileAppendClient(String text){
-		JTextArea area = FileExchangeView.getVisualtextarea();
-		area.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-		String append = "\nYOU\n			SENDING: "+text;
-		area.append(append);
-	}
-	/**
-	 * 
-	 * @param text
-	 * @param name
+	 * @param text		text that will be append.
+	 * @param name		name of the client.
 	 */
 	public static void textAppendServer(String text, String name){
 		JTextArea area = FileExchangeView.getVisualtextarea();
-		area.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 		String append = "\n"+name+"\n			"+text;
 		area.append(append);
 	}
 	/**
-	 * 
-	 * @param text
-	 * @param name
-	 * @return
+	 *Append  text on JTextArea, with the formatting for the server.
+	 *
+	 * @param text		name of file.
+	 * @param name		name of client.
+	 * @return boolean
 	 */
 	public static boolean fileAppendServer(String text, String name){
 		JTextArea area = FileExchangeView.getVisualtextarea();
-		area.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 		String append = "\n"+name+"\n			DOWNLOADING FILE? (yes/no): "+text;
 		area.append(append);
 		return false;
 	}
 	/**
+	 * Set JButton enable or disabled, created for better class formatting.
 	 * 
-	 * @param state
+	 * @param state		boolean that set the button enable or disable.
 	 */
 	//Public because is used even when the FileExchange is closed (bugFix for closure after contact selection)
 	public static void setEnableButton(boolean state){
@@ -337,32 +299,29 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 		FileExchangeView.getStegabutton().setEnabled(state);
 		FileExchangeView.getZipbutton().setEnabled(state);
 		FileExchangeView.getAddcontactbutton().setEnabled(!state);
-		FileExchangeView.deleteContactButton().setEnabled(!state);
+		FileExchangeView.getDeleteContactButton().setEnabled(!state);
 		FileExchangeView.getChangecontactbutton().setEnabled(state);
 		FileExchangeView.getSendbutton().setEnabled(state);
 		FileExchangeView.getChattextarea().setEnabled(state);
 	}
 	/**
+	 * Create a socket for client and set a series of exception, for better class formatting.
 	 * 
-	 * @param contact
-	 * @param buffer
-	 * @param name
+	 * @param contact		info for the server.
+	 * @param buffer		represent the File.
+	 * @param name			For first constructor, represent the text that will be sent
+	 * 						for the second, represent the name of file.
 	 */
 	private static void socketClient(ContactInfo contact, InputStream buffer, String name){
 		try {
+			//the buffer represent the file
 			if(buffer == null)new SocketClient(contact, name);
-			else new SocketClient(contact, buffer,name);
+			else new SocketClient(contact, buffer, name);
 		} catch (InvalidKeyException e) {
 			FileExchangeView.optionPanel(e);	
 		} catch (HeadlessException e) {
 			FileExchangeView.optionPanel(e);	
 		} catch (NoSuchAlgorithmException e) {
-			FileExchangeView.optionPanel(e);	
-		} catch (BadPaddingException e) {
-			FileExchangeView.optionPanel(e);	
-		} catch (NoSuchPaddingException e) {
-			FileExchangeView.optionPanel(e);	
-		} catch (IllegalBlockSizeException e) {
 			FileExchangeView.optionPanel(e);	
 		} catch (InvalidKeySpecException e) {
 			FileExchangeView.optionPanel(e);	
@@ -370,5 +329,8 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 			FileExchangeView.optionPanel("Server doesn't connect or portfowarding problem");	
 		}
 	}
-
+	
+	public static void setProgressbar(int value){
+		FileExchangeView.setSendprogress(value);
+	}
 }

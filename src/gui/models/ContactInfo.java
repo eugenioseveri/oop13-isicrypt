@@ -1,5 +1,11 @@
 package gui.models;
-
+/**
+ * 
+ * @author Filippo
+ *Created 10/05/2014
+ *
+ *Class that store info about contact for client/server
+ */
 public class ContactInfo {
 	String name = null;
 	String host = null; 

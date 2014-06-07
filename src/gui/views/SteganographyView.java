@@ -29,6 +29,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -36,8 +37,8 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
 public class SteganographyView extends AbstractGuiMethodSetter {
-	private static final long serialVersionUID = -8950634673073101757L;
-	private static final String APPLICATION_ICON = "./isiCryptICON_MetroStyle.jpg";
+	private static final long serialVersionUID = 1L;
+	private static final String APPLICATION_ICON = "isiCryptICON_MetroStyle.jpg";
 	//Color and Fond take from file
 	private Font font;
 	private Color panelBackColor;
@@ -59,7 +60,7 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 	private static final int ipadDefaultx = 10;
 	private static final int ipadDefaulty = 30;
 	private static ImageIcon icon = null;
-	private static final String STEGANOGRAPHY_BACKGROUND = "./SteganographyDefaultIcon.jpg";
+	private static final String STEGANOGRAPHY_BACKGROUND = "SteganographyDefaultIcon.jpg";
 	private static final int buttonFill = GridBagConstraints.BOTH;
 	private static final int buttonAnchor = GridBagConstraints.CENTER;
 	private static final int iconHeigth = 240;
@@ -100,22 +101,23 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 	}
 
 	private void buildLayout() {
-	//	GlobalSettings set = null;
-		//set = new GlobalSettings();
+		//Set color and font from file, because there are many theme, and will be load the last used
 		this.setButtonColor(ThemeChooser.getButtonColor());
 		this.setFont(ThemeChooser.getFont());
 		this.setForegroundColor(ThemeChooser.getForegroundColor());
 		this.setPanelBackColor(ThemeChooser.getPanelBackColor());
+		//set layout
 		GridBagLayout layout = new GridBagLayout();
 		limit = new GridBagConstraints();
 		container.setLayout(layout);
 		container.setBackground(panelBackColor);
 	}
 	
-	private void setFrame() {
+	private void setFrame() {	
+		//new frame created in this method because it will be re-draw every time a new frame is needed
 		JFrame frame = new JFrame();
 		try {
-			frame.setIconImage(ImageIO.read(ClassLoader.getSystemResource(APPLICATION_ICON)));
+			frame.setIconImage(ImageIO.read(ClassLoader.getSystemResourceAsStream(APPLICATION_ICON)));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -172,11 +174,10 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 		setGridposition(limit, xPosition+3, yPosition, defaultCellArea, defaultCellArea+6,
 				resizable, resizable, container, filler2);	
 		// JLabel for icon
-		try { //TODO: non è che questo va nel controller?
-			BufferedImage defaultStartimage = ImageIO.read(ClassLoader.getSystemResource(STEGANOGRAPHY_BACKGROUND));
-			icon = iconOptimizer(((JLabel) iconLabel), defaultStartimage, iconHeigth, iconWidth);
+		try { 
+			BufferedImage defaultStartimage = ImageIO.read(ClassLoader.getSystemResourceAsStream(STEGANOGRAPHY_BACKGROUND));
+			icon = iconOptimizer(iconLabel, defaultStartimage, iconHeigth, iconWidth);
 		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		iconLabel.setIcon(icon);
 		int insetsIcon[] = { 20, 10, 10, 10 };
@@ -227,9 +228,11 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 		// JScrollPane(JtextArea)
 		scrollPane.setPreferredSize(dim);
 		scrollPane.setMinimumSize(dim);
-		textArea.setLineWrap(true);		//Format text on TextArea
-		textArea.setWrapStyleWord(true);	//Format text on TextArea
-		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); 	//Only vertical scroll bar
+		//Format text on TextArea
+		textArea.setLineWrap(true);		
+		textArea.setWrapStyleWord(true);	
+		//Only vertical scroll bar
+		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); 	
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, scrollPane);
 		setGridposition(limit, xPosition, yPosition+8, defaultCellArea+4, defaultCellArea,
@@ -283,8 +286,14 @@ public class SteganographyView extends AbstractGuiMethodSetter {
 		});
 	}
 
+	//return the dialog for show the error 
+	public static void optionPanel( Object error ){
+		if(error instanceof Exception)JOptionPane.showMessageDialog(dialog, error);
+		if(error instanceof String)JOptionPane.showMessageDialog(dialog, error);
+	}
+	
 	//Setter and Getter
-	public static Component getIconLabel() {
+	public static JLabel getIconLabel() {
 		return iconLabel;
 	}
 

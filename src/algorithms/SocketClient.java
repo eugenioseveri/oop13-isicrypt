@@ -13,157 +13,115 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
-import java.awt.HeadlessException;
 import java.io.*;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-
-public class SocketClient extends Thread{
-
-	ByteArrayInputStream byteArrayIn = null;
-	BufferedOutputStream outStream = null;
-	AES aesEncryptor = null;
-	//Client used only for send name at Server
-	Socket client = null;
-	//Define a port
-	byte[] clientNameByte;
-	ContactInfo contact;
-	//Define a host server
-	String host;
-	String clientName = "UserClientDefault";
+public class SocketClient {
+	//initialization of class field
+	private ByteArrayInputStream byteArrayIn = null;
+	private BufferedOutputStream outStream = null;
+	private AES aesEncryptor = null;
+	private Socket client = null;
+	private String host = null;
+	private String clientName = "UserClientDefault";
 	/**
+	 * This constructor is used for send a file to a server.
 	 * 
-	 * @param contact
-	 * @param fileStream
-	 * @param name
-	 * @throws InvalidKeyException
-	 * @throws HeadlessException
-	 * @throws NoSuchAlgorithmException
-	 * @throws BadPaddingException
-	 * @throws NoSuchPaddingException
-	 * @throws IllegalBlockSizeException
-	 * @throws InvalidKeySpecException
-	 * @throws IOException
+	 * @param contact						A ContactInfo object that contain the name and the address of the server
+	 * @param fileStream					InputStream that contain the file that will be sent at the server
+	 * @param name							The name of the file that will be sent at the server	
+	 * @throws InvalidKeyException			Problem with the generation of AES key
+	 * @throws NoSuchAlgorithmException		if no Provider supports a KeyFactorySpi implementation for the specified algorithm.
+	 * @throws InvalidKeySpecException		if the given key specification is inappropriate for this key factory to produce a public key.
+	 * @throws IOException					General I/O problem
 	 */
-	public SocketClient(ContactInfo contact, InputStream fileStream, String name) throws InvalidKeyException, HeadlessException, NoSuchAlgorithmException, BadPaddingException, NoSuchPaddingException, IllegalBlockSizeException, InvalidKeySpecException, IOException {
-		//Update contact info for text area
-		this.contact = contact;
+	
+	public SocketClient(ContactInfo contact, InputStream fileStream, String name) throws InvalidKeyException, NoSuchAlgorithmException,
+	InvalidKeySpecException, IOException {
+		byte[] clientNameByte;
 		//set Host
 		this.host = contact.getHost();
+    	FileExchangeController.setProgressbar(10);
 		//Put name of Client on byte[] for send through socket
-		this.clientNameByte = this.clientName.getBytes();
+		clientNameByte = this.clientName.getBytes();
 		//Put name of file on byte[] for send through socket
 		byte[] fileName = name.getBytes();       
 		//InputStream to byte[]
 		ByteArrayOutputStream bufferArray = new ByteArrayOutputStream();
 		int i;
-		try {
-			while((i = fileStream.read())!=-1){
-				bufferArray.write(i);
-			}
-		} catch (IOException e) {
-			System.out.println("an I/O error occured: " + e);
-			throw e;
+		while((i = fileStream.read())!=-1){
+			bufferArray.write(i);
 		}
+    	FileExchangeController.setProgressbar(5);
 		//Put file on byte[] for send through socket
 		byte[] fileArray = bufferArray.toByteArray();
 		//Method that send file to Server
 		sendByteArray(clientNameByte, fileName, fileArray);
+    	FileExchangeController.setProgressbar(100);
 		FileExchangeController.textApendClient(name);
 		//Close existing connection
-		try {
-			client.close();
-		} catch (IOException e) {
-			System.out.println("an I/O error occured: " + e);
-			throw e;
-		}
+		client.close();
+	
 	}
 	/**
+	 * This constructor is used for send a text to a server.
 	 * 
-	 * @param contact
-	 * @param text
-	 * @throws InvalidKeyException
-	 * @throws HeadlessException
-	 * @throws NoSuchAlgorithmException
-	 * @throws BadPaddingException
-	 * @throws NoSuchPaddingException
-	 * @throws IllegalBlockSizeException
-	 * @throws InvalidKeySpecException
-	 * @throws IOException
+	 * @param contact						A ContactInfo object that contain the name and the address of the server
+	 * @param text							String that will be encrypted and sent to the Server
+	 * @throws InvalidKeyException			Problem with the generation of AES key
+	 * @throws NoSuchAlgorithmException		if no Provider supports a KeyFactorySpi implementation for the specified algorithm.
+	 * @throws InvalidKeySpecException		if the given key specification is inappropriate for this key factory to produce a public key.
+	 * @throws IOException					General I/O problem
 	 */
-	public SocketClient(ContactInfo contact, String text) throws InvalidKeyException, HeadlessException, NoSuchAlgorithmException, BadPaddingException, NoSuchPaddingException, IllegalBlockSizeException, InvalidKeySpecException, IOException{
+	public SocketClient(ContactInfo contact, String text) throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, IOException{
+		byte[] clientNameByte;
 		//initialize a string that will be used from server to check that the follow byte[] is a text message, not a file
-		String lopo = "string";
+		String isString = "string";
 		//Put String on byte[] for send through socket
-		byte[] stringCheck = lopo.getBytes();
-		//Update contact info for text area
-		this.contact = contact;
+		byte[] stringCheck = isString.getBytes();
 		//Get host
 		this.host = contact.getHost();
 		//Put name of Client on byte[] for send through socket
-		this.clientNameByte = this.clientName.getBytes();
+		clientNameByte = this.clientName.getBytes();
 		//Put text message on byte[] for send through socket
 		byte[] fileArray = text.getBytes();
 		//Method that send text to Server
 		sendByteArray(clientNameByte, stringCheck, fileArray);
 		FileExchangeController.textApendClient(text);
 		//Close existing connection
-		try {
-			client.close();
-		} catch (IOException e) {
-			System.out.println("an I/O error occured: " + e);
-			throw e;
-		}
+		client.close();
+
+
 	}
 	/**
+	 * Sequence that sent file and information at the server, first a byte[] that contain the name of client, 
+	 * then a byte[] that contain the name of the file or String if ir's a 
+	 * text and last the a byte[] that contain the file or text 	
 	 * 
 	 * @param clientName
 	 * @param fileName
 	 * @param fileArray
-	 * @return
-	 * @throws IOException
-	 * @throws InvalidKeyException
-	 * @throws NoSuchAlgorithmException
-	 * @throws BadPaddingException
-	 * @throws NoSuchPaddingException
-	 * @throws IllegalBlockSizeException
-	 * @throws InvalidKeySpecException
 	 */
-	private void sendByteArray( byte[] clientName, byte[] fileName, byte[] fileArray) throws IOException, InvalidKeyException, NoSuchAlgorithmException, BadPaddingException, NoSuchPaddingException, IllegalBlockSizeException, InvalidKeySpecException{
-		//Start counting of time to leave package
-		long startTime = System.currentTimeMillis();
-		//Client start to send package
-		System.out.println("Client initialized...:");
+	private void sendByteArray( byte[] clientName, byte[] fileName, byte[] fileArray) throws IOException, InvalidKeyException,
+																	NoSuchAlgorithmException, InvalidKeySpecException{
 		//Receive the Public key from server and use it to encrypt byte[] to send
 		sendAesKey(keyExchange());
-    	sendSequence(clientName);
+    	FileExchangeController.setProgressbar(10);
+		//Sequence that sent file and information at the server
+    	sendSequence(clientName);	
+    	FileExchangeController.setProgressbar(30);
 		sendSequence(fileName);
+    	FileExchangeController.setProgressbar(40);
 		sendSequence(fileArray);
-		//sendSequence(encryptor.encode(new ByteArraI, output););
-		long seconds = (System.currentTimeMillis() - startTime) / 1000;
-		System.out.println("File Send to: " + contact.getName() + "\nTransfert time: " + seconds + "s");
-		System.out.println("Connection close...:");
+    	FileExchangeController.setProgressbar(80);
 	}
 	/**
+	 * This method take a Public key from server and create a new AES key for encrypt the file.
 	 * 
-	 * @return
-	 * @throws InvalidKeyException
-	 * @throws NoSuchAlgorithmException
-	 * @throws BadPaddingException
-	 * @throws NoSuchPaddingException
-	 * @throws IllegalBlockSizeException
-	 * @throws InvalidKeySpecException
-	 * @throws IOException
+	 * @return aesKeyEncryted				 byte[] that contain the encryption key 
 	 */
-	private byte[] keyExchange() 
-			throws InvalidKeyException, NoSuchAlgorithmException, BadPaddingException, 
-			NoSuchPaddingException, IllegalBlockSizeException, InvalidKeySpecException, IOException{
-		try {
+	private byte[] keyExchange() throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, IOException{
 			//Get connection with server by creating new socket
 			getConnection();
-			System.out.println("Get connection with server...");
 			//Initialize new Buffer out for write
 			ByteArrayOutputStream out  = new ByteArrayOutputStream();
 			BufferedInputStream inStream = new BufferedInputStream(client.getInputStream());		
@@ -188,54 +146,32 @@ public class SocketClient extends Thread{
 			//Create new byte[] with decode key for send it on server
 			byte[] aesKeyEncryted = aesKeyEncryptor.encode(key);
 			return aesKeyEncryted;
-			
-		} catch (InvalidKeyException e) {
-			System.out.println("Byte[] encryption error occured: " + e);
-			throw e;
-		} catch (IOException e) {
-			System.out.println("an I/O error occured: " + e);
-			throw e;
-		} catch (InvalidKeySpecException e) {
-			System.out.println("Generate public key error occured: " + e);
-			throw e;
-		} catch (NoSuchAlgorithmException e) {
-			System.out.println("RSA initializzation error occured: " + e);
-			throw e;
-		}
 	}
 	/**
+	 * Send to the Server the AES key created from the public key of Server.
 	 * 
-	 * @param sendByte
-	 * @return
-	 * @throws IOException
+	 * @param sendByte   byte[] that contain the AES key 
 	 */
-	//Send AES key, this method don't crypt byte[], the key is just hidden by Diffie-Helman algorithm
-	private boolean sendAesKey(byte[] sendByte) throws IOException{
+	//Send AES key, this method don't encrypt byte[], the key is just hidden by Diffie-Helman algorithm
+	private void sendAesKey(byte[] sendByte) throws IOException{
 		//Get connection with server by creating new socket
-		if(sendByte == null)return false;
 		getConnection();
 		//Initialize buffer with byte[] to read and buffer with Socket
 		byteArrayIn = new ByteArrayInputStream(sendByte);
 		//Start write byte from buffer in to socket
 		int transfertElement ;
-		try {
-			outStream = new BufferedOutputStream(client.getOutputStream());
-			while((transfertElement = byteArrayIn.read()) != -1){
-				outStream.write(transfertElement);
-				outStream.flush();
-			}
-			//Close Buffer I/O
-			closeBuffer();
-		} catch (IOException e) {
-			System.out.println("an I/O error occured: " + e);
-			throw e;
+		outStream = new BufferedOutputStream(client.getOutputStream());
+		while((transfertElement = byteArrayIn.read()) != -1){
+			outStream.write(transfertElement);
+			outStream.flush();
 		}
-		return true;
+		//Close Buffer I/O
+		closeBuffer();
 	}
 	/**
+	 * Sent the byte[] to the server.
 	 * 
-	 * @param sendByte
-	 * @throws IOException
+	 * @param sendByte		byte[] that will be sent to the server
 	 */
 	private void sendSequence(byte[] sendByte) throws IOException{
 		//Get connection with server by creating new socket
@@ -244,61 +180,38 @@ public class SocketClient extends Thread{
 		ByteArrayOutputStream lopo = new ByteArrayOutputStream();
 		byteArrayIn = new ByteArrayInputStream(sendByte);
 		int transfertElement;
-		try {
-			//Crypting file with AES key
-			this.aesEncryptor.encode(byteArrayIn, encryptedByteArraybuffer);
-			byteArrayIn = new ByteArrayInputStream(encryptedByteArraybuffer.toByteArray());
-			outStream = new BufferedOutputStream(client.getOutputStream());
-			while((transfertElement = byteArrayIn.read()) != -1){
-				outStream.write(transfertElement);
-				lopo.write(transfertElement);
-				outStream.flush();
-			}
-			//Close Buffer
-			closeBuffer();
-		} catch (IOException e) {
-			System.out.println("an I/O error occured: " + e);
-			throw e;
+		//Crypting file with AES key
+		this.aesEncryptor.encode(byteArrayIn, encryptedByteArraybuffer);
+		byteArrayIn = new ByteArrayInputStream(encryptedByteArraybuffer.toByteArray());
+		outStream = new BufferedOutputStream(client.getOutputStream());
+		//Write byte[] to the buffer connected with server
+		while((transfertElement = byteArrayIn.read()) != -1){
+			outStream.write(transfertElement);
+			lopo.write(transfertElement);
+			outStream.flush();
 		}
+		//Close Buffer
+		closeBuffer();
 	}
 	/**
+	 * Initialize InetAddress and Socket.
 	 * 
-	 * @throws IOException
+	 * @throws IOException    I/O problem when try to create a Socket or InetAddress
 	 */
 	private void getConnection() throws IOException{
-		try {
-			int port = 19999;
-			//New InetAddress from host passed to client
-			InetAddress address = InetAddress.getByName(host);
-			//Initialize new Socket client
-			client = new Socket(address, port);
-		} catch (UnknownHostException e) {
-			System.out.println(" no IP address for the host could be found: " + e);
-			throw e;
-		} catch (IOException e) {
-			System.out.println("an I/O error occured: " + e);
-			throw e;
-		}
+		int port = 19999;
+		//New InetAddress from host passed to client
+		InetAddress address = InetAddress.getByName(host);
+		//Initialize new Socket client
+		client = new Socket(address, port);
 	}
 	/**
+	 * Close buffer connection
 	 * 
-	 * @throws IOException
+	 * @throws IOException		I/O problem when try to close buffer 
 	 */
 	private void closeBuffer() throws IOException{
-		try {
-			outStream.close();
-			byteArrayIn.close();
-		//	connection.close();
-		} catch (IOException e) {
-			System.out.println("an I/O error occured: " + e);
-			throw e;		
-		}
-	}
-	/**
-	 * 
-	 * @param name
-	 */
-	public void setClientName(String name){
-		if(name.length() < 17)this.clientName = name;
+		outStream.close();
+		byteArrayIn.close();
 	}
 }

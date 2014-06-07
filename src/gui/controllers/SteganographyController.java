@@ -29,13 +29,13 @@ public class SteganographyController implements ISteganographyViewObserver, IGen
 
 	private static SteganographyView view;
 	//Contains the selected image. Used like ICON.
-	private static File imageIcon = null; //Type File because steganography is ready for take another file over images
+	private static File imageIcon = null;
 	//Contains the selected image.
 	private static File imageChoosen = null;
 	 //String that contains the extract text for image
 	String textBorrowed;
 	//String that contains the path of default icon;
-	private static final String STEGANOGRAPHY_BACKGROUND = "./SteganographyDefaultIcon.jpg";
+	private static final String STEGANOGRAPHY_BACKGROUND = "SteganographyDefaultIcon.jpg";
 	private static final int iconHeigth = 240;
 	private static final int iconWidth = 320;
 	private static String textDefault = null;
@@ -54,9 +54,9 @@ public class SteganographyController implements ISteganographyViewObserver, IGen
 				((JLabel) SteganographyView.getIconLabel()).
 					setIcon(AbstractGuiMethodSetter.iconOptimizer((JLabel)SteganographyView.getIconLabel(), ImageIO.read(imageIcon), iconHeigth, iconWidth));
 				if(!StringUtils.isEmpty(SteganographyView.getTextArea().getText())){
-					((JButton)SteganographyView.getStartButton()).setEnabled(true);
+					SteganographyView.getStartButton().setEnabled(true);
 				}
-				((JButton)SteganographyView.getClearSettingButton()).setEnabled(true);
+				SteganographyView.getClearSettingButton().setEnabled(true);
 			}
 		} catch (IOException e) {
 			// TODO JOptionPane
@@ -77,8 +77,8 @@ public class SteganographyController implements ISteganographyViewObserver, IGen
 				if(imageIcon != null){
 					((JButton)SteganographyView.getStartButton()).setEnabled(true);
 				}
-				((JButton)SteganographyView.getClearSettingButton()).setEnabled(true);
-				((JButton)SteganographyView.getInsertTextButton()).setEnabled(false);
+				SteganographyView.getClearSettingButton().setEnabled(true);
+				SteganographyView.getInsertTextButton().setEnabled(false);
 			}
 	}
 	@Override
@@ -86,7 +86,7 @@ public class SteganographyController implements ISteganographyViewObserver, IGen
 		try {
 			new Steganography().messageEncrypter(imageChoosen, "png", textDefault);
 		} catch (IOException e) {
-			FileExchangeView.optionPanel(e);	
+			JOptionPane.showMessageDialog(SteganographyView.getDialog(), "Error occured during the Steganography process");
 		}
 		JOptionPane.showMessageDialog(SteganographyView.getDialog(), "Image Steganografed");		
 	}
@@ -95,30 +95,33 @@ public class SteganographyController implements ISteganographyViewObserver, IGen
 		try {
 			File iconFinder = new OpenButtons().fileChooser(IMAGE);
 			if(iconFinder != null){
-				((JLabel) SteganographyView.getIconLabel()).
-					setIcon(AbstractGuiMethodSetter.iconOptimizer((JLabel)SteganographyView.getIconLabel(), ImageIO.read(imageIcon), iconHeigth, iconWidth));
-				textBorrowed = new Steganography().messageBorrower(iconFinder);
+				SteganographyView.getIconLabel().
+					setIcon(AbstractGuiMethodSetter.iconOptimizer(SteganographyView.getIconLabel(), ImageIO.read(iconFinder), iconHeigth, iconWidth));
+				textBorrowed = new Steganography().messageFinder(iconFinder);
 				if(SteganographyView.getTextArea() != null)SteganographyView.getTextArea().setText("");
 				if(textBorrowed != null)SteganographyView.getTextArea().append(textBorrowed);
 				else JOptionPane.showMessageDialog(SteganographyView.getDialog(), "Message not found");
+				//Change button status
 				(SteganographyView.getStartButton()).setEnabled(false);
 				(SteganographyView.getSelectImageButton()).setEnabled(false);
 				(SteganographyView.getSelectTextButton()).setEnabled(false);
 				(SteganographyView.getClearSettingButton()).setEnabled(true);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(SteganographyView.getDialog(), e);		
 		}
 	}
 	@Override
 	public void clearSetting(){
 		try {
 			((JLabel) SteganographyView.getIconLabel()).
-				setIcon(AbstractGuiMethodSetter.iconOptimizer((JLabel)SteganographyView.getIconLabel(), ImageIO.read(ClassLoader.getSystemResource(STEGANOGRAPHY_BACKGROUND)), iconHeigth, iconWidth));	
+				setIcon(AbstractGuiMethodSetter.iconOptimizer((JLabel)SteganographyView.getIconLabel(),
+						ImageIO.read(ClassLoader.getSystemResourceAsStream(STEGANOGRAPHY_BACKGROUND)), iconHeigth, iconWidth));	
 		} catch (IOException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(SteganographyView.getDialog(), e);		
 		}
 		SteganographyView.getTextArea().setText("");
+		//Change button status
 		(SteganographyView.getStartButton()).setEnabled(false);
 		(SteganographyView.getClearSettingButton()).setEnabled(false);
 		(SteganographyView.getSelectImageButton()).setEnabled(true);
@@ -127,7 +130,6 @@ public class SteganographyController implements ISteganographyViewObserver, IGen
 		imageChoosen = null;
 		textDefault = null;
 		textBorrowed = null;
-		
 	}
 	
 	@Override
@@ -135,20 +137,18 @@ public class SteganographyController implements ISteganographyViewObserver, IGen
 		StartScreenView.getFrame().setVisible(true);
 		StartScreenView.redraw();
 	}
-	
+	@Override
 	public void insertText(){
 		if(StringUtils.isBlank(SteganographyView.getTextArea().
 					getText()))JOptionPane.showMessageDialog(SteganographyView.getDialog(), "None text entered");
 		else{ 
 			textDefault = SteganographyView.getTextArea().getText();
 			if(imageIcon != null){
-				((JButton)SteganographyView.getStartButton()).setEnabled(true);
+				SteganographyView.getStartButton().setEnabled(true);
 			}
-				((JButton)SteganographyView.getClearSettingButton()).setEnabled(true);
-				/*
-				 * you can select test form File OR from textArea
-				 */
-				((JButton)SteganographyView.getSelectTextButton()).setEnabled(false);
+				SteganographyView.getClearSettingButton().setEnabled(true);
+				//can select test form File OR from textArea
+				SteganographyView.getSelectTextButton().setEnabled(false);
 			}
 	}
 }

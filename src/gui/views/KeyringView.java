@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -35,13 +36,15 @@ import javax.swing.table.TableModel;
 public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView {
 
 	private static final long serialVersionUID = -4534574271536073257L;
-	private static final String APPLICATION_ICON = "./isiCryptICON_MetroStyle.jpg";
-	private static final String KEYRING_ICON = "./isiCryptIIcon_Keyring.jpg";
+	private static final String APPLICATION_ICON = "isiCryptICON_MetroStyle.jpg";
+	private static final String KEYRING_ICON = "isiCryptIIcon_Keyring.jpg";
 	private Font font;
 	private Color panelBackColor;
 	private Color buttonColor;
 	private Color foregroundColor;
 	private static boolean isOpen = false;
+	private final int iconHeigth = 100;
+	private final int iconWidth = 100;
 	// Arrays that contains various dimension of insets
 	private static final int insetsDefault[] = { 10, 10, 10, 10 };
 	private static final int zeroInsets []= { 0, 0, 0, 0 };
@@ -62,6 +65,7 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 	private static final JButton encryptButton = new JButton("Encryption key");
 	private static final JButton saveButton = new JButton("Save settings");
 	private static final JLabel iconLabel= new JLabel();
+	private static ImageIcon icon = null;
 	private static final TableModel tableModel = new DefaultTableModel();
 	private static final JTable table = new JTable(tableModel);
 	private static final JScrollPane scrollPane = new JScrollPane(table);
@@ -115,7 +119,7 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 	private void setFrame() {
 		JFrame frame = new JFrame();
 		try {
-			frame.setIconImage(ImageIO.read(ClassLoader.getSystemResource(APPLICATION_ICON)));
+			frame.setIconImage(ImageIO.read(ClassLoader.getSystemResourceAsStream(APPLICATION_ICON)));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -213,7 +217,12 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, fillerFive);
 		setGridposition(limit, xPosition, yPosition+10, defaultCellArea, defaultCellArea,
 				noResizable, resizable, container, fillerFive);		
-		iconLabel.setIcon(new ImageIcon(ClassLoader.getSystemResource(KEYRING_ICON)));
+		try {
+			BufferedImage imageIcon = ImageIO.read(ClassLoader.getSystemResourceAsStream(KEYRING_ICON));
+			icon = iconOptimizer(iconLabel, imageIcon, iconHeigth, iconWidth);
+		} catch (IOException e) {
+		}
+		iconLabel.setIcon(icon);
 		setLimit(limit, zeroIpad, zeroIpad, zeroInsets, 
 				GridBagConstraints.CENTER, GridBagConstraints.CENTER, container, iconLabel);
 		setGridposition(limit, xPosition, yPosition+11, defaultCellArea, defaultCellArea,
