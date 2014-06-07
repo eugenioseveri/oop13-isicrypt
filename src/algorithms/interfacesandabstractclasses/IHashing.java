@@ -1,5 +1,6 @@
 package algorithms.interfacesandabstractclasses;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import algorithms.EnumAvailableHashingAlgorithms;
@@ -11,13 +12,15 @@ import algorithms.EnumAvailableHashingAlgorithms;
 public interface IHashing {
 
 	/**
-	 * Generate Hashing algorithm
+	 * Generate a checksum for the specified stream
 	 * 
 	 * @param hashingAlgorithm 	enum that represent the String of hashing algorithm 
 	 * @param stream			InputStream for the file which will be calculated the algorithm
-	 * @return String					
+	 * @return String			The generated checksum
+	 * @throws IOException		If an error occurs while reading the stream
 	 */
-	 String generateHash(EnumAvailableHashingAlgorithms hashingAlgorithm, InputStream stream);
+	 String generateHash(EnumAvailableHashingAlgorithms hashingAlgorithm, InputStream stream) throws IOException;
+	 
 	 /**
 	  * Compare two String
 	  * 
@@ -26,14 +29,17 @@ public interface IHashing {
 	  * @return boolean
 	  */
 	 boolean compare(String hashOne, String hashTwo);
+	
 	 /**
-	  * Compare two file with the same algorithm
+	  * Compare two files with the same algorithm
 	  * @param hashingAlgorithm		enum that represent the String of hashing algorithm 
 	  * @param streamOne			InputStream for the file which will be calculated the algorithm
 	  * @param streamTwo			InputStream for the file which will be calculated the algorithm
 	  * @return boolean
+	 * @throws IOException 			If an error occurs while reading a stream
 	  */
-	 boolean compare(EnumAvailableHashingAlgorithms hashingAlgorithm, InputStream streamOne, InputStream streamTwo);
+	 boolean compare(EnumAvailableHashingAlgorithms hashingAlgorithm, InputStream streamOne, InputStream streamTwo) throws IOException;
+	
 	 /**
 	  * Compare file hashing and string
 	  * 
@@ -41,7 +47,8 @@ public interface IHashing {
 	  * @param streamOne			InputStream for the file which will be calculated the algorithm
 	  * @param hashTwo				String that contain a hash
 	  * @return
+	 * @throws IOException 			If an error occurs while reading a stream
 	  */
-	 boolean compare(EnumAvailableHashingAlgorithms hashingAlgorithm, InputStream streamOne, String hashTwo);
+	 boolean compare(EnumAvailableHashingAlgorithms hashingAlgorithm, InputStream streamOne, String hashTwo) throws IOException;
 	 
 }

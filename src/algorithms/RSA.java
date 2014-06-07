@@ -29,51 +29,51 @@ public class RSA extends AbstractAsymmetricCryptography implements IAsymmetricCr
 		super();
 		try {
 			super.cryptoCipher = Cipher.getInstance(ALGORITHM);
-		} catch (NoSuchAlgorithmException | NoSuchPaddingException e) { // Queste eccezioni non possono verificarsi (algorithm è costante)
-			e.printStackTrace();
+		} catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+			// This exceptions can not occur since ALGORITHM is built-in
 		}
 	}
 	
 	@Override
-	public byte[] encode(byte[] input) {
+	public byte[] encode(final byte[] input) throws InvalidKeyException{
 		try {
 			super.cryptoCipher.init(Cipher.ENCRYPT_MODE, super.keyPair.getPublic());
 		} catch (InvalidKeyException e) {
 			if(super.isKeyPairInitialized()) {
-				e.printStackTrace();
+				throw e;
 			} else {
-				System.err.println(NOKEY_ERROR);
+				throw new InvalidKeyException(NOKEY_ERROR);
 			}
 		}
 		try {
 			return super.cryptoCipher.doFinal(input);
 		} catch (IllegalBlockSizeException | BadPaddingException e) {
-			e.printStackTrace();
+			// This exceptions can not occur since ALGORITHM is built-in
 		}
 		return null;
 	}
 
 	@Override
-	public byte[] decode(byte[] input) {
+	public byte[] decode(final byte[] input) throws InvalidKeyException{
 		try {
 			super.cryptoCipher.init(Cipher.DECRYPT_MODE, super.keyPair.getPrivate());
 		} catch (InvalidKeyException e) {
 			if(super.isKeyPairInitialized()) {
-				e.printStackTrace();
+				throw e;
 			} else {
-				System.err.println(NOKEY_ERROR);
+				throw new InvalidKeyException(NOKEY_ERROR);
 			}
 		}
 		try {
 			return super.cryptoCipher.doFinal(input);
 		} catch (IllegalBlockSizeException | BadPaddingException e) {
-			e.printStackTrace();
+			// This exceptions can not occur since ALGORITHM is built-in
 		}
 		return null;
 	}
 
 	@Override
-	public void generateKeyPair(int keySize) throws InvalidKeyException {
+	public void generateKeyPair(final int keySize) throws InvalidKeyException {
 		if(!checkKeySize(keySize)) {
 			throw new InvalidKeyException("Il valore di keySize deve essere una potenza di 2!");
 		}
@@ -81,7 +81,7 @@ public class RSA extends AbstractAsymmetricCryptography implements IAsymmetricCr
 		try {
 			keyPairGenerator = KeyPairGenerator.getInstance(ALGORITHM);
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			// This exception can not occur since ALGORITHM is built-in
 		}
 		keyPairGenerator.initialize(keySize);
 		super.keyPair = keyPairGenerator.generateKeyPair();
@@ -92,9 +92,9 @@ public class RSA extends AbstractAsymmetricCryptography implements IAsymmetricCr
 	 * @param keySize The length (in bits) of the generated key
 	 * @return If the key length matches with one of the supported values
 	 */
-	private boolean checkKeySize(int keySize) {
+	private boolean checkKeySize(final int keySize) {
 		// Controlla se la chiave è valida per RSA (deve essere una potenza di 2)
-		double log2 = Math.log(keySize)/Math.log(2); // Proprietà del cambiamento di base dei logaritmi
+		final double log2 = Math.log(keySize)/Math.log(2); // Proprietà del cambiamento di base dei logaritmi
 		if(log2 == (int)log2) {
 			return true;
 		}

@@ -4,8 +4,8 @@ package algorithms;
  * Created 05/05/2014
  */
 import gui.controllers.IFileExchangeViewObserver;
-import gui.models.OpenButtons;
-import gui.models.OpenButtons.FileTypes;
+import gui.views.OpenButtons;
+import gui.views.OpenButtons.FileTypes;
 
 import java.net.*;
 import java.security.GeneralSecurityException;

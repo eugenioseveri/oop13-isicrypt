@@ -29,14 +29,15 @@ public class GlobalSettings implements Serializable {
 		return defaultTheme;
 	}
 
-	public void setTheme(String theme) {
+	public void setTheme(final String theme) {
 		this.defaultTheme = theme;
 	}
 
 	/**
-	 * Automatically loads the global application settings from the settings file
+	 * Automatically loads the global application settings from the settings file. If it does not exists, it will be created.
+	 * @throws IOException If an error occurs wrilte reading or writing the settings file
 	 */
-	public GlobalSettings() {
+	public GlobalSettings() throws IOException {
 		FileInputStream file;
 		BufferedInputStream buffFile;
 		ObjectInputStream objFile = null;
@@ -44,35 +45,31 @@ public class GlobalSettings implements Serializable {
 			file = new FileInputStream(SETTINGS_FILE_PATH);
 			buffFile = new BufferedInputStream(file);
 			objFile = new ObjectInputStream(buffFile);
-			GlobalSettings readGlobalSettings = (GlobalSettings)objFile.readObject();
+			final GlobalSettings readGlobalSettings = (GlobalSettings)objFile.readObject();
 			setTheme(readGlobalSettings.getTheme());
+			storeSettings();
 		} catch (FileNotFoundException e) {
-			System.err.println(MISSING_SETTINGS_FILE);
-			File userHome = new File(USER_HOME_PATH);
+			//System.err.println(MISSING_SETTINGS_FILE);
+			final File userHome = new File(USER_HOME_PATH);
 			if(!userHome.exists()) {
 				userHome.mkdir();
 			}
-			storeSettings();
 		} catch (IOException e) {
-			System.err.println(IO_READING_ERROR);
-			e.printStackTrace();
+			throw new IOException(IO_READING_ERROR);
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			// This exception should not occur
 		} finally {
 			if(objFile != null) {
-				try {
-					objFile.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				objFile.close();
 			}
 		}
 	}
 	
 	/**
 	 * Stores the current global application settings to the settings file
+	 * @throws IOException If an error occurs while writing the settings
 	 */
-	public void storeSettings() {
+	final public void storeSettings() throws IOException {
 		FileOutputStream file;
 		BufferedOutputStream buffFile;
 		ObjectOutputStream objFile = null;
@@ -82,13 +79,10 @@ public class GlobalSettings implements Serializable {
 			objFile = new ObjectOutputStream(buffFile);
 			objFile.writeObject(this);
 		} catch (IOException e) {
-			System.err.println(IO_WRITING_ERROR);
-			e.printStackTrace();
+			throw new IOException(IO_WRITING_ERROR);
 		} finally {
-			try {
+			if(objFile != null) {
 				objFile.close();
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
 		}
 	}

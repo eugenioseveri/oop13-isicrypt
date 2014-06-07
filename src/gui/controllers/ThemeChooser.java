@@ -1,12 +1,15 @@
-package gui.models;
+package gui.controllers;
 /**
  * @author Filippo Vimini
  * Created 30/05/2014
  * 
  * Class that read from file a text that contain a enum ( in String form ) and set the corresponding theme
  */
+import gui.models.GlobalSettings;
+
 import java.awt.Color;
 import java.awt.Font;
+import java.io.IOException;
 
 public class ThemeChooser {
 	
@@ -27,7 +30,12 @@ public class ThemeChooser {
 		 * Select the correct enum from file 
 		 */
 		public ThemeChooser(){
-			String name = new GlobalSettings().getTheme();
+			String name = null;
+			try {
+				name = new GlobalSettings().getTheme();
+			} catch (IOException e) {
+				// Do nothing
+			}
 			if(name.equals(FileTypes.WINTER_IS_COMING.name())){
 				setGraphic(FileTypes.WINTER_IS_COMING);
 			}
@@ -49,16 +57,15 @@ public class ThemeChooser {
 		 * @param theme enum that represent a String for choose the correspondent set of color and fort
 		 */
 	private void setGraphic(FileTypes theme){
+		setFont(new Font("Verdana",Font.BOLD, 12));
 		switch (theme){
 		case NIGHTS_WATCH:
-			setFont(new Font("Verdana",Font.BOLD, 12));
 			setPanelBackColor(Color.DARK_GRAY);
 			setButtonColor(Color.black);
 			setForegroundColor(Color.white);
 			break;
 		case WINTER_IS_COMING:
 			Color ice = new Color(55,124,217);
-			setFont(new Font("Verdana",Font.BOLD, 12));
 			setPanelBackColor(Color.WHITE);
 			setButtonColor(ice);
 			setForegroundColor(Color.black);
@@ -66,7 +73,6 @@ public class ThemeChooser {
 		case FIRE_AND_BLOOD:
 			Color bloodback = new Color(138, 7, 7);
 			Color blood = new Color(128, 10, 25);
-			setFont(new Font("Verdana",Font.BOLD, 12));
 			setPanelBackColor(bloodback);
 			setButtonColor(Color.black);
 			setForegroundColor(blood);
@@ -74,7 +80,6 @@ public class ThemeChooser {
 		case OURS_IS_THE_FURY:
 			Color gold = new Color(207,181,59);
 			Color royalGreen = new Color(29,91,6);
-			setFont(new Font("Verdana",Font.BOLD, 12));
 			setPanelBackColor(gold);
 			setButtonColor(royalGreen);
 			setForegroundColor(gold);

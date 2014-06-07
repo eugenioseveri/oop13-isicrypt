@@ -48,17 +48,19 @@ public class FileInterpret implements Serializable, IFileInterpret {
 	 * @param hashingAlgorithm The hashing algorithm you want to use to ensure the payload's integrity. Must be one of @link {@link EnumAvailableHashingAlgorithms}
 	 * @param compressionAlgorithm The compression algorithm you want to use. Must be one of @link {@link EnumAvailableCompressionAlgorithms}
 	 * @param payloadFile The file you want to put inside this FileInterpret wrapper
+	 * @throws IOException If the payload file is not found or an error occurs while generating its hash
 	 */
-	public FileInterpret(EnumAvailableSymmetricAlgorithms symmetricAlgorithm, byte[] encryptedSymmetricKey, EnumAvailableHashingAlgorithms hashingAlgorithm, EnumAvailableCompressionAlgorithms compressionAlgorithm, String originalFileName, File payloadFile) {
+	public FileInterpret(final EnumAvailableSymmetricAlgorithms symmetricAlgorithm, final byte[] encryptedSymmetricKey, final EnumAvailableHashingAlgorithms hashingAlgorithm, final EnumAvailableCompressionAlgorithms compressionAlgorithm, final String originalFileName, final File payloadFile) throws IOException {
 		this.symmetricAlgorithm = symmetricAlgorithm;
 		this.encryptedSymmetricKey = encryptedSymmetricKey;
 		this.hashingAlgorithm = hashingAlgorithm;
 		try {
 			this.generatedHash = Hashing.getInstance().generateHash(hashingAlgorithm, new BufferedInputStream(new FileInputStream(payloadFile)));
 		} catch (FileNotFoundException e) {
-			System.err.println(FILE_NOT_FOUND_ERROR + payloadFile.getAbsolutePath());
-			e.printStackTrace();
-		};
+			throw new FileNotFoundException(FILE_NOT_FOUND_ERROR + payloadFile.getAbsolutePath());
+		} catch (IOException e) {
+			throw e;
+		}
 		this.compressionAlgorithm = compressionAlgorithm;
 		this.fileName = originalFileName;
 		loadPayloadToRAM(payloadFile);
@@ -67,8 +69,9 @@ public class FileInterpret implements Serializable, IFileInterpret {
 	/**
 	 * This constructor is meant to be used to read a previously created FileInterpret file
 	 * @param inputFile The FileInterpret file you want to read
+	 * @throws IOException If an error occurs while reading the file
 	 */
-	public FileInterpret(File inputFile) {
+	public FileInterpret(final File inputFile) throws IOException {
 		FileInputStream file;
 		BufferedInputStream buffStream;
 		ObjectInputStream objStream = null;
@@ -77,18 +80,14 @@ public class FileInterpret implements Serializable, IFileInterpret {
 			file = new FileInputStream(inputFile);
 			buffStream = new BufferedInputStream(file);
 			objStream = new ObjectInputStream(buffStream);
-			// È proprio necessario duplicare l'oggetto? Non c'è modo di assegnare direttamente a "this" l'output di readObject()?
 			readFile = (FileInterpret)objStream.readObject();
 		} catch (IOException e) {
-			System.err.println(IO_READING_ERROR);
-			e.printStackTrace();
+			throw new IOException(IO_READING_ERROR);
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			// This exception should not occur
 		} finally {
-			try {
+			if(objStream != null) {
 				objStream.close();
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
 		}
 		this.symmetricAlgorithm = readFile.getSymmetricAlgorithm();
@@ -106,16 +105,16 @@ public class FileInterpret implements Serializable, IFileInterpret {
 	}
 
 	@Override
-	public void setSymmetricAlgorithm(EnumAvailableSymmetricAlgorithms symmetricAlgorithm) {
+	public void setSymmetricAlgorithm(final EnumAvailableSymmetricAlgorithms symmetricAlgorithm) {
 		this.symmetricAlgorithm = symmetricAlgorithm;
 	}
 
 	public byte[] getEncryptedSymmetricKey() {
-		return this.encryptedSymmetricKey;
+		return encryptedSymmetricKey;
 	}
 
 	@Override
-	public void setEncryptedSymmetricKey(byte[] encryptedSymmetricKey) {
+	public void setEncryptedSymmetricKey(final byte[] encryptedSymmetricKey) {
 		this.encryptedSymmetricKey = encryptedSymmetricKey;
 	}
 
@@ -125,7 +124,7 @@ public class FileInterpret implements Serializable, IFileInterpret {
 	}
 
 	@Override
-	public void setHashingAlgorithm(EnumAvailableHashingAlgorithms hashingAlgorithm) {
+	public void setHashingAlgorithm(final EnumAvailableHashingAlgorithms hashingAlgorithm) {
 		this.hashingAlgorithm = hashingAlgorithm;
 	}
 
@@ -135,7 +134,7 @@ public class FileInterpret implements Serializable, IFileInterpret {
 	}
 
 	@Override
-	public void setGeneratedHash(String generatedHash) {
+	public void setGeneratedHash(final String generatedHash) {
 		this.generatedHash = generatedHash;
 	}
 
@@ -145,7 +144,7 @@ public class FileInterpret implements Serializable, IFileInterpret {
 	}
 
 	@Override
-	public void setCompressionAlgorithm(EnumAvailableCompressionAlgorithms compressionAlgorithm) {
+	public void setCompressionAlgorithm(final EnumAvailableCompressionAlgorithms compressionAlgorithm) {
 		this.compressionAlgorithm = compressionAlgorithm;
 	}
 
@@ -155,17 +154,17 @@ public class FileInterpret implements Serializable, IFileInterpret {
 	}
 	
 	@Override
-	public void setFileName(String fileName) {
+	public void setFileName(final String fileName) {
 		this.fileName = fileName;
 	}
 	
 	@Override
 	public byte[] getPayload() {
-		return this.payload;
+		return payload;
 	}
 
 	@Override
-	public void setPayload(byte[] payload) {
+	public void setPayload(final byte[] payload) {
 		this.payload = payload;
 	}
 	
@@ -180,7 +179,7 @@ public class FileInterpret implements Serializable, IFileInterpret {
 	}
 	
 	@Override
-	public void writeInterpretToFile(File outputFile) {
+	public void writeInterpretToFile(final File outputFile) throws IOException {
 		FileOutputStream file;
 		BufferedOutputStream buffStream;
 		ObjectOutputStream objStream = null;
@@ -191,20 +190,17 @@ public class FileInterpret implements Serializable, IFileInterpret {
 			objStream.writeObject(this);
 			
 		} catch (IOException e) {
-			System.err.println(IO_WRITING_ERROR);
-			e.printStackTrace();
+			throw new IOException(IO_WRITING_ERROR);
 		} finally {
-			try {
+			if(objStream != null) {
 				objStream.close();
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
 		}
 	}
 	
 	// Estrae il payload da una classe e lo scrive su disco. Il file è temporaneo.
 	@Override
-	public void writePayloadToFile(File outputFile) throws CorruptedDataException {
+	public void writePayloadToFile(final File outputFile) throws CorruptedDataException, IOException {
 		FileOutputStream fos;
 		BufferedOutputStream buffPayload = null;
 		try {
@@ -214,13 +210,10 @@ public class FileInterpret implements Serializable, IFileInterpret {
 				buffPayload.write(currentByte);
 			}
 		} catch (IOException e) {
-			System.err.println(IO_WRITING_ERROR);
-			e.printStackTrace();
+			throw new IOException(IO_WRITING_ERROR);
 		} finally {
-			try {
+			if(buffPayload != null) {
 				buffPayload.close();
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
 		}
 		if(!checkPayloadChecksum(outputFile)) {
@@ -231,8 +224,9 @@ public class FileInterpret implements Serializable, IFileInterpret {
 	/**
 	 * Internal method to read a file and put its content in this payload. It is called by one constructor
 	 * @param payload The file you want to load
+	 * @throws IOException If an error occurs while reading the payload file or the file does not exists
 	 */
-	private void loadPayloadToRAM(File payload) {
+	private void loadPayloadToRAM(final File payload) throws IOException {
 		FileInputStream fis;
 		BufferedInputStream buffPayload = null;
 		int currentByte;
@@ -243,17 +237,13 @@ public class FileInterpret implements Serializable, IFileInterpret {
 			for(int index = 0; (currentByte = buffPayload.read()) != -1; index++) {
 				this.payload[index] = (byte)currentByte;
 			}	
-		} catch (FileNotFoundException e1) {
-			System.err.println(FILE_NOT_FOUND_ERROR + payload.getAbsolutePath());
-			e1.printStackTrace();
+		//} catch (FileNotFoundException e) {
+			//System.err.println(FILE_NOT_FOUND_ERROR + payload.getAbsolutePath());
 		} catch (IOException e) {
-			System.err.println(IO_READING_ERROR);
-			e.printStackTrace();
+			throw e;
 		} finally {
-			try {
+			if(buffPayload != null) {
 				buffPayload.close();
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
 		}
 	}
@@ -262,14 +252,14 @@ public class FileInterpret implements Serializable, IFileInterpret {
 	 * Check if an extracted file is corrupted
 	 * @param diskPayload
 	 * @return If the stored checksum matches with the generated one
+	 * @throws IOException If an error occurs while reading the payload on disk
 	 */
-	private boolean checkPayloadChecksum(File diskPayload) {
+	private boolean checkPayloadChecksum(final File diskPayload) throws IOException {
 		BufferedInputStream buffDiskPayload = null;
 		try {
 			buffDiskPayload = new BufferedInputStream(new FileInputStream(diskPayload));
 		} catch (FileNotFoundException e) {
-			System.err.println(FILE_NOT_FOUND_ERROR + diskPayload.getAbsolutePath());
-			e.printStackTrace();
+			throw new FileNotFoundException(FILE_NOT_FOUND_ERROR + diskPayload.getAbsolutePath());
 		}
 		return Hashing.getInstance().compare(this.hashingAlgorithm, buffDiskPayload, this.generatedHash);
 	}

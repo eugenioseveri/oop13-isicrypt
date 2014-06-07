@@ -9,7 +9,7 @@ package gui.views;
 
 import gui.controllers.ISteganographyViewObserver;
 import gui.controllers.SteganographyController;
-import gui.models.ThemeChooser;
+import gui.controllers.ThemeChooser;
 
 import java.awt.Color;
 import java.awt.Component;

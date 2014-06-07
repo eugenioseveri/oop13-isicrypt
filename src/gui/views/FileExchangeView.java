@@ -5,7 +5,7 @@ package gui.views;
  */
 import gui.controllers.FileExchangeController;
 import gui.controllers.IFileExchangeViewObserver;
-import gui.models.ThemeChooser;
+import gui.controllers.ThemeChooser;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -100,7 +100,7 @@ public class FileExchangeView extends AbstractGuiMethodSetter implements IFileEx
 	}
 	//View Observer attacher
 	@Override
-	public void attacFileExchangeViewObserve(IFileExchangeViewObserver controller){
+	public void attachFileExchangeViewObserve(IFileExchangeViewObserver controller){
 		this.controller = controller;
 	}
 	//Build layout, same for all "GUI"
@@ -411,8 +411,8 @@ public class FileExchangeView extends AbstractGuiMethodSetter implements IFileEx
 	public static boolean isOpen() {
 		return isOpen;
 	}
-	@Override
-	public void setOpen(boolean isOpen) {
+	
+	private void setOpen(boolean isOpen) {
 		FileExchangeView.isOpen = isOpen;
 	}
 	@Override

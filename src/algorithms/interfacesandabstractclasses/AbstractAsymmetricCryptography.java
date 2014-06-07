@@ -35,13 +35,13 @@ public abstract class AbstractAsymmetricCryptography implements IAsymmetricCrypt
 	}
 
 	@Override
-	public void setKeyPair(KeyPair pair) {
+	public void setKeyPair(final KeyPair pair) {
 		this.keyPair = pair;
 	}
 
 
 	@Override
-	public void setKeyPair(PublicKey publicKey, PrivateKey privateKey) {
+	public void setKeyPair(final PublicKey publicKey, final PrivateKey privateKey) {
 		this.keyPair = new KeyPair(publicKey, privateKey);
 	}
 
@@ -50,7 +50,7 @@ public abstract class AbstractAsymmetricCryptography implements IAsymmetricCrypt
 	}
 	
 	@Override
-	public void saveKeyToFile(EnumAsymmetricKeyTypes keyType, FileOutputStream output) throws IOException {
+	public void saveKeyToFile(final EnumAsymmetricKeyTypes keyType, final FileOutputStream output) throws IOException {
 		ObjectOutputStream objOutStream = null;
 		try {
 			objOutStream = new ObjectOutputStream(new BufferedOutputStream(output));
@@ -60,19 +60,16 @@ public abstract class AbstractAsymmetricCryptography implements IAsymmetricCrypt
 				objOutStream.writeObject(getPublicKey());
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw e;
 		} finally {
 			if(objOutStream != null) {
 				objOutStream.close();
-				if(output != null) {
-					output.close();
-				}
 			}
 		}
 	}
 	
 	@Override
-	public void loadKeyFromFile(EnumAsymmetricKeyTypes keyType, FileInputStream input) throws IOException {
+	public void loadKeyFromFile(final EnumAsymmetricKeyTypes keyType, final FileInputStream input) throws IOException {
 		ObjectInputStream objInStream = null;
 		try {
 			objInStream = new ObjectInputStream(new BufferedInputStream(input));
@@ -82,15 +79,12 @@ public abstract class AbstractAsymmetricCryptography implements IAsymmetricCrypt
 				this.keyPair = new KeyPair((PublicKey)objInStream.readObject(), getPrivateKey());
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw e;
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			// This exception can not occur
 		} finally {
 			if(objInStream != null) {
 				objInStream.close();
-				if(input != null) {
-					input.close();
-				}
 			}
 		}
 	}

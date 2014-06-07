@@ -3,10 +3,10 @@ package gui.controllers;
  * @author Filippo Vimini
  *
  */
-import static gui.models.OpenButtons.FileTypes.IMAGE;
-import static gui.models.OpenButtons.FileTypes.TEXT;
-import gui.models.OpenButtons;
+import static gui.views.OpenButtons.FileTypes.IMAGE;
+import static gui.views.OpenButtons.FileTypes.TEXT;
 import gui.views.AbstractGuiMethodSetter;
+import gui.views.OpenButtons;
 import gui.views.StartScreenView;
 import gui.views.SteganographyView;
 

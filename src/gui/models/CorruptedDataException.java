@@ -2,6 +2,7 @@ package gui.models;
 
 /**
  * This exception occurs when some data and its checksum don't match
+ * @author Eugenio Severi
  */
 public class CorruptedDataException extends Exception {
 
@@ -11,7 +12,7 @@ public class CorruptedDataException extends Exception {
 		super();
 	}
 
-	public CorruptedDataException(String message) {
+	public CorruptedDataException(final String message) {
 		super(message);
 	}
 }

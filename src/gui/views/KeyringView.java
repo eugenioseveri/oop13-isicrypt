@@ -2,7 +2,7 @@ package gui.views;
 
 import gui.controllers.IKeyringViewObserver;
 import gui.controllers.KeyringController;
-import gui.models.ThemeChooser;
+import gui.controllers.ThemeChooser;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -42,9 +42,9 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 	private Color panelBackColor;
 	private Color buttonColor;
 	private Color foregroundColor;
-	private static boolean isOpen = false;
-	private final int iconHeigth = 100;
-	private final int iconWidth = 100;
+	private static boolean isOpen; // Default=false
+	private static final int ICON_HEIGTH = 100;
+	private static final int ICON_WIDTH = 100;
 	// Arrays that contains various dimension of insets
 	private static final int insetsDefault[] = { 10, 10, 10, 10 };
 	private static final int zeroInsets []= { 0, 0, 0, 0 };
@@ -65,7 +65,7 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 	private static final JButton encryptButton = new JButton("Encryption key");
 	private static final JButton saveButton = new JButton("Save settings");
 	private static final JLabel iconLabel= new JLabel();
-	private static ImageIcon icon = null;
+	private static ImageIcon icon;
 	private static final TableModel tableModel = new DefaultTableModel();
 	private static final JTable table = new JTable(tableModel);
 	private static final JScrollPane scrollPane = new JScrollPane(table);
@@ -80,7 +80,7 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 	private IKeyringViewObserver controller;
 	
 	@Override
-	public void attachViewObserver(IKeyringViewObserver listener){
+	public void attachViewObserver(final IKeyringViewObserver listener){
 		this.controller = listener;
 	}
 
@@ -93,6 +93,7 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 	 * Creates a new cryptography function view.
 	 */
 	public KeyringView(){
+		super();
 		buildLayout();
 		componentSettings();
 		setHandlers();
@@ -103,11 +104,11 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 	 * Creates the frame layout (same for all the views)
 	 */
 	private void buildLayout() {
-		buttonColor = (ThemeChooser.getButtonColor());
-		font = (ThemeChooser.getFont());
-		foregroundColor = (ThemeChooser.getForegroundColor());
-		panelBackColor = (ThemeChooser.getPanelBackColor());
-		GridBagLayout layout = new GridBagLayout();
+		buttonColor = ThemeChooser.getButtonColor();
+		font = ThemeChooser.getFont();
+		foregroundColor = ThemeChooser.getForegroundColor();
+		panelBackColor = ThemeChooser.getPanelBackColor();
+		final GridBagLayout layout = new GridBagLayout();
 		limit = new GridBagConstraints();
 		container.setLayout(layout);
 		container.setBackground(panelBackColor);
@@ -117,20 +118,20 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 	 * Sets the properties for the frame.
 	 */
 	private void setFrame() {
-		JFrame frame = new JFrame();
+		final JFrame frame = new JFrame();
 		try {
 			frame.setIconImage(ImageIO.read(ClassLoader.getSystemResourceAsStream(APPLICATION_ICON)));
 		} catch (IOException e) {
-			e.printStackTrace();
+			// This exception can not occur since the resource is built-in
 		}
-		WindowAdapter listener = new WindowAdapter() {
+		final WindowAdapter listener = new WindowAdapter() {
 
 	        @Override
-	        public void windowOpened(WindowEvent e) {
+	        public void windowOpened(final WindowEvent e) {
 	        	KeyringView.setOpen(true);	        }
 
 	        @Override
-	        public void windowClosing(WindowEvent e) {
+	        public void windowClosing(final WindowEvent e) {
 	        	KeyringView.setOpen(false);
 	            StartScreenView.redraw();
 	        }
@@ -218,9 +219,10 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 		setGridposition(limit, xPosition, yPosition+10, defaultCellArea, defaultCellArea,
 				noResizable, resizable, container, fillerFive);		
 		try {
-			BufferedImage imageIcon = ImageIO.read(ClassLoader.getSystemResourceAsStream(KEYRING_ICON));
-			icon = iconOptimizer(iconLabel, imageIcon, iconHeigth, iconWidth);
+			final BufferedImage imageIcon = ImageIO.read(ClassLoader.getSystemResourceAsStream(KEYRING_ICON));
+			icon = iconOptimizer(iconLabel, imageIcon, ICON_HEIGTH, ICON_WIDTH);
 		} catch (IOException e) {
+			//This exception can not occur since the resource is built-in
 		}
 		iconLabel.setIcon(icon);
 		setLimit(limit, zeroIpad, zeroIpad, zeroInsets, 
@@ -252,37 +254,37 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 	private void setHandlers(){
 		KeyringView.backButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				((KeyringController)controller).showStart();
 			}
 		});
 		KeyringView.addButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				controller.command_addButton();
 			}
 		});
 		KeyringView.modifyButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				controller.command_modifyButton();
 			}
 		});
 		KeyringView.cancelButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				controller.command_cancelButton();
 			}
 		});
 		KeyringView.encryptButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				controller.command_encryptButton();
 			}
 		});
 		KeyringView.saveButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				controller.command_saveButton();
 			}
 		});
@@ -295,13 +297,13 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 	}
 
 	@Override
-	public void showMessageDialog(String message) {
+	public void showMessageDialog(final String message) {
 		JOptionPane.showMessageDialog(this, message);
 	}
 
 	@Override
-	public boolean showYesNoOptionPane(String message) {
-		int choice = JOptionPane.showConfirmDialog(this, message, "", JOptionPane.YES_NO_OPTION);
+	public boolean showYesNoOptionPane(final String message) {
+		final int choice = JOptionPane.showConfirmDialog(this, message, "", JOptionPane.YES_NO_OPTION);
 		if(choice == JOptionPane.YES_OPTION) {
 			return true;
 		}
@@ -309,11 +311,11 @@ public class KeyringView extends AbstractGuiMethodSetter implements IKeyringView
 	}
 
 	@Override
-	public String showInputDialog(String title, String editableText) {
+	public String showInputDialog(final String title, final String editableText) {
 		return JOptionPane.showInputDialog(title, editableText);
 	}
 	
-	public static void setOpen(boolean isOpen) {
+	public static void setOpen(final boolean isOpen) {
 		KeyringView.isOpen = isOpen;
 	}
 	

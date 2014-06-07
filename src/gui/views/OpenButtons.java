@@ -1,4 +1,4 @@
-package gui.models;
+package gui.views;
 /**
  * @author Filippo Vimini 
  */

@@ -13,9 +13,9 @@ import java.io.InputStream;
 
 import algorithms.interfacesandabstractclasses.IHashing;
 
-public class Hashing implements IHashing {
+public final class Hashing implements IHashing {
 	
-	private final int DIM_BUFFER = 1024;
+	private static final int DIM_BUFFER = 1024;
 	private static final Hashing SINGLETON = new Hashing();
 	
 	private Hashing(){
@@ -26,17 +26,17 @@ public class Hashing implements IHashing {
 	}
 
 	@Override
-	public String generateHash(EnumAvailableHashingAlgorithms hashingAlgorithm, InputStream stream) {
-		StringBuffer stringBuffer = new StringBuffer("");
+	public String generateHash(final EnumAvailableHashingAlgorithms hashingAlgorithm, final InputStream stream) throws IOException {
+		final StringBuffer stringBuffer = new StringBuffer("");
 		int nread;
 		byte[] mdBytes = null;
 		try {
-			//Create MessageDigest object that implement the selected algorithm
-			MessageDigest md = MessageDigest.getInstance(hashingAlgorithm.name());
-			//Select the key dimension 
-			byte[] dataBytes = new byte[DIM_BUFFER];
+			// Create MessageDigest object that implements the selected algorithm
+			final MessageDigest md = MessageDigest.getInstance(hashingAlgorithm.name());
+			// Select the key dimension 
+			final byte[] dataBytes = new byte[DIM_BUFFER];
 			nread = stream.read(dataBytes);
-			//Calculating sha1 with is class
+			// Calculating checksum with its class
 			while(nread > 0){
 				md.update(dataBytes, 0, nread);
 				nread = stream.read(dataBytes);
@@ -44,42 +44,38 @@ public class Hashing implements IHashing {
 			mdBytes = md.digest();
 			
 		} catch (IOException e) {
-			return null;
+			throw e;
 		} catch (NoSuchAlgorithmException e) {
-			return null;
+			// This exceptions can not occur since hashingAlgorithm is choosen from an Enum of valid algorithms
 		} finally {
 			if (stream != null){
-		        try {
-		            stream.close();
-		        } catch (IOException e) {
-		        	return null;
-		        }
+				stream.close();
 			}
 		}
 		for(byte temp : mdBytes){
 			//String format for messageDigest to convert byte to Hexadecimal, temp & 0xff: get the last byte
 			stringBuffer.append(String.format("%02x", temp & 0xff));
 		}		
-		
 		return stringBuffer.toString();
 	}
+	
 	//Commentare nella java dc che l'utente deve usare lo stesso algorithm
 	@Override
-	public boolean compare(String hashOne, String hashTwo){
+	public boolean compare(final String hashOne, final String hashTwo){
 		//equalIgnoreCase = no case sensitive
 		return hashOne.equalsIgnoreCase(hashTwo);
 	}
 
 	@Override
-	public boolean compare(EnumAvailableHashingAlgorithms hashingAlgorithm, InputStream streamOne, InputStream streamTwo){
-		String fileOne = generateHash(hashingAlgorithm, streamOne);
-		String fileTwo = generateHash(hashingAlgorithm, streamTwo);
+	public boolean compare(final EnumAvailableHashingAlgorithms hashingAlgorithm, final InputStream streamOne, final InputStream streamTwo) throws IOException{
+		final String fileOne = generateHash(hashingAlgorithm, streamOne);
+		final String fileTwo = generateHash(hashingAlgorithm, streamTwo);
 		return fileOne.equals(fileTwo);
 	}
 	
 	@Override
-	public boolean compare(EnumAvailableHashingAlgorithms hashingAlgorithm, InputStream streamOne, String hashTwo){
-		String compare = generateHash(hashingAlgorithm, streamOne);
+	public boolean compare(final EnumAvailableHashingAlgorithms hashingAlgorithm, final InputStream streamOne, final String hashTwo) throws IOException{
+		final String compare = generateHash(hashingAlgorithm, streamOne);
 		return compare.equals(hashTwo);
 	}
 	

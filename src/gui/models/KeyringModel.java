@@ -22,44 +22,44 @@ public class KeyringModel extends HashSet<Triple<String, String, String>> implem
 
 	private static final long serialVersionUID = -4180040339126413292L;
 	
-	public KeyringModel() {
+	/*public KeyringModel() {
 		super();
-	}
+	}*/
 
 	@Override
-	public void saveData(OutputStream outputFile, byte[] aesKey) throws IOException, InvalidKeyException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ObjectOutputStream oos = new ObjectOutputStream(baos);
+	public void saveData(final OutputStream outputFile, final byte[] aesKey) throws IOException, InvalidKeyException {
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		final ObjectOutputStream oos = new ObjectOutputStream(baos);
 		oos.writeObject(this); // TODO: crash se l'hashset non è vuoto
 		oos.flush();
 		oos.close();
-		ByteArrayInputStream is = new ByteArrayInputStream(baos.toByteArray());
-		AES encryptor = new AES();
+		final ByteArrayInputStream is = new ByteArrayInputStream(baos.toByteArray());
+		final AES encryptor = new AES();
 		encryptor.setSymmetricKeySpec(aesKey);
 		encryptor.encode(is, outputFile);
 	}
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public void loadData(InputStream inputFile, byte[] aesKey) throws IOException, InvalidKeyException, ClassNotFoundException {
-		ByteArrayOutputStream bois = new ByteArrayOutputStream();
-		AES decryptor = new AES();
+	public void loadData(final InputStream inputFile, final byte[] aesKey) throws IOException, InvalidKeyException, ClassNotFoundException {
+		final ByteArrayOutputStream bois = new ByteArrayOutputStream();
+		final AES decryptor = new AES();
 		decryptor.setSymmetricKeySpec(aesKey);
 		decryptor.decode(inputFile, bois);
-		ByteArrayInputStream bais = new ByteArrayInputStream(bois.toByteArray());
-		ObjectInputStream ois = new ObjectInputStream(bais);
-		HashSet<Triple<String, String, String>> readData = (HashSet<Triple<String, String, String>>) ois.readObject();
+		final ByteArrayInputStream bais = new ByteArrayInputStream(bois.toByteArray());
+		final ObjectInputStream ois = new ObjectInputStream(bais);
+		final HashSet<Triple<String, String, String>> readData = (HashSet<Triple<String, String, String>>) ois.readObject();
 		this.clear();
 		this.addAll(readData);
 	}
 	
 	@Override
-	public void addItem(String host, String username, String password) {
+	public void addItem(final String host, final String username, final String password) {
 		this.add(new Triple<String, String, String>(host, username, password));
 	}
 	
 	@Override
-	public void removeItem(String host, String username, String password) {
+	public void removeItem(final String host, final String username, final String password) {
 		this.remove(new Triple<String, String, String>(host, username, password));
 	}
 	

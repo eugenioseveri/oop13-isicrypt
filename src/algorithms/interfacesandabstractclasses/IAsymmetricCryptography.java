@@ -21,15 +21,17 @@ import algorithms.EnumAsymmetricKeyTypes;
 		 * Encodes a byte array, using a previously set public key (via @link {@link #setKeyPair(java.security.KeyPair)} or @link {@link #setKeyPair(java.security.PublicKey, java.security.PrivateKey)})
 		 * @param input The byte array you want to encode
 		 * @return The encrypted byte array
+		 * @throws InvalidKeyException If a key has not been set or is not valid
 		 */
-		byte[] encode(byte[] input);
+		byte[] encode(byte[] input) throws InvalidKeyException;
 		
 		/**
 		 * Decodes a byte array, using a previously set private key (via @link {@link #setKeyPair(java.security.KeyPair)} or @link {@link #setKeyPair(java.security.PublicKey, java.security.PrivateKey)})
 		 * @param input The byte array you want to decode
 		 * @return The decrypted byte array
+		 * @throws InvalidKeyException If a key has not been set or is not valid
 		 */
-		byte[] decode(byte[] input);
+		byte[] decode(byte[] input) throws InvalidKeyException;
 		
 		/**
 		 * Generates a new asymmetric key pair of the specified length

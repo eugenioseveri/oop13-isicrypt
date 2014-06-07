@@ -13,7 +13,7 @@ import gui.controllers.IFileExchangeViewObserver;
 
 public interface IFileExchangeView {
 	//View Observer attacher
-	abstract void attacFileExchangeViewObserve(IFileExchangeViewObserver controller);
+	void attachFileExchangeViewObserve(IFileExchangeViewObserver controller);
 	JTextArea getVisualtextarea();
 	JTextArea getChattextarea();
 	JTable getContactTable();
@@ -28,7 +28,6 @@ public interface IFileExchangeView {
 	JButton getAddcontactbutton();
 	JButton getSendbutton();
 	void setSendprogress(int value);
-	void setOpen(boolean isOpen);
 	void optionPanel(Object error);
 	String setOptionPane(String name, String text);
 	TableModel getModel();

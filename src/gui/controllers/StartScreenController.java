@@ -1,5 +1,7 @@
 package gui.controllers;
 
+import java.io.IOException;
+
 import javax.swing.JOptionPane;
 
 import gui.models.FileExchangeModel;
@@ -59,9 +61,14 @@ public class StartScreenController implements IStartScreenViewObserver{
 		Object[] possibilities = {"WINTER_IS_COMING", "NIGHTS_WATCH", "FIRE_AND_BLOOD", "OURS_IS_THE_FURY"};
 		String theme = (String)JOptionPane.showInputDialog(StartScreenView.getDialog(),"Choose a theme:\n","Customized Dialog",JOptionPane.PLAIN_MESSAGE,null ,possibilities,null);
 		if(theme != null){
-			GlobalSettings settings = new GlobalSettings();
-			settings.setTheme(theme);
-			settings.storeSettings();
+			GlobalSettings settings;
+			try {
+				settings = new GlobalSettings();
+				settings.setTheme(theme);
+				settings.storeSettings();
+			} catch (IOException e) {
+				// Do nothing
+			}
 			StartScreenView.redraw();
 		}
 	}

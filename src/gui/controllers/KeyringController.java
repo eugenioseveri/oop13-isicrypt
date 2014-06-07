@@ -19,11 +19,11 @@ import javax.swing.table.TableModel;
 import algorithms.AES;
 import gui.models.IKeyringModel;
 import gui.models.KeyringModel;
-import gui.models.OpenButtons;
 import gui.models.Triple;
-import gui.models.OpenButtons.FileTypes;
 import gui.views.IKeyringView;
+import gui.views.OpenButtons;
 import gui.views.StartScreenView;
+import gui.views.OpenButtons.FileTypes;
 
 /**
  * Class used to implement the keyring function controller.
@@ -42,9 +42,9 @@ public class KeyringController implements IKeyringViewObserver, IGeneralViewObse
 	private final static String[] TABLE_COLUMNS_NAMES = {"Host name", "Username", "Password"};
 	private final static String USER_HOME_PATH = System.getProperty("user.home") + "/isicrypt"; //TODO: duplicato in più classi
 	private final static String KEYRING_FILE_PATH = USER_HOME_PATH + "/keyring.dat";
-	private byte[] aesKey = null;
-	private IKeyringView view;
-	private IKeyringModel model;
+	private byte[] aesKey;
+	final private IKeyringView view;
+	final private IKeyringModel model;
 	
 	/**
 	 * Creates a new controller and asks the user to select a key to encrypt/decrypt the database (if available).
@@ -57,7 +57,7 @@ public class KeyringController implements IKeyringViewObserver, IGeneralViewObse
 		this.model = model;
 		this.view.attachViewObserver(this);
 		this.view.getTable().setModel(this.tableBuilder());
-		File selectedFile = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
+		final File selectedFile = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
 		if(selectedFile == null || !(selectedFile.exists())) {
 			this.view.showMessageDialog(KEY_NOT_SET_WARNING);
 		} else {
@@ -65,7 +65,7 @@ public class KeyringController implements IKeyringViewObserver, IGeneralViewObse
 			try {
 				ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(selectedFile)));
 				this.aesKey = (byte[]) ois.readObject();
-				File keyRingFile = new File(KEYRING_FILE_PATH);
+				final File keyRingFile = new File(KEYRING_FILE_PATH);
 				if(keyRingFile.exists() && keyRingFile.length() > 0) {
 					this.model.loadData(new BufferedInputStream(new FileInputStream(KEYRING_FILE_PATH)), this.aesKey);
 					this.view.getTable().setModel(this.tableBuilder());
@@ -73,7 +73,7 @@ public class KeyringController implements IKeyringViewObserver, IGeneralViewObse
 			} catch (IOException e) {
 				this.view.showMessageDialog(ERROR_WHILE_LOADING);
 			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
+				this.view.showMessageDialog(e.getMessage());
 			} catch (InvalidKeyException e) {
 				this.view.showMessageDialog(WRONG_KEYSIZE_ERROR);
 			}
@@ -91,9 +91,9 @@ public class KeyringController implements IKeyringViewObserver, IGeneralViewObse
 	
 	@Override
 	public void command_addButton() {
-		String host = this.view.showInputDialog("Host name", "Enter host name:");
-		String user = this.view.showInputDialog("Username", "Enter username:");
-		String pass = this.view.showInputDialog("Password", "Enter password:");
+		final String host = this.view.showInputDialog("Host name", "Enter host name:");
+		final String user = this.view.showInputDialog("Username", "Enter username:");
+		final String pass = this.view.showInputDialog("Password", "Enter password:");
 		if(host != null && user != null && pass != null) {
 			this.model.addItem(host, user, pass);
 			this.view.getTable().setModel(this.tableBuilder()); // TODO: controllare che non sia un duplicato
@@ -104,44 +104,44 @@ public class KeyringController implements IKeyringViewObserver, IGeneralViewObse
 
 	@Override
 	public void command_modifyButton() {
-		int selectedRow = this.view.getTable().getSelectedRow();
-		if(selectedRow != -1) {
-			TableModel getTableModel = tableBuilder();
-			String host = (String)getTableModel.getValueAt(selectedRow, 0);
-			String user = (String)getTableModel.getValueAt(selectedRow, 1);
-			String pass = (String)getTableModel.getValueAt(selectedRow, 2);
-			String host2 = this.view.showInputDialog("Host name", host);
-			String user2 = this.view.showInputDialog("Username", user);
-			String pass2 = this.view.showInputDialog("Password", pass);
+		final int selectedRow = this.view.getTable().getSelectedRow();
+		if(selectedRow == -1) {
+			this.view.showMessageDialog(ROW_NOT_SELECTED);
+		} else {
+			final TableModel getTableModel = tableBuilder();
+			final String host = (String)getTableModel.getValueAt(selectedRow, 0);
+			final String user = (String)getTableModel.getValueAt(selectedRow, 1);
+			final String pass = (String)getTableModel.getValueAt(selectedRow, 2);
+			final String host2 = this.view.showInputDialog("Host name", host);
+			final String user2 = this.view.showInputDialog("Username", user);
+			final String pass2 = this.view.showInputDialog("Password", pass);
 			this.model.removeItem(host, user, pass);
 			this.model.addItem(host2, user2, pass2);
 			this.view.getTable().setModel(this.tableBuilder());	
-		} else {
-			this.view.showMessageDialog(ROW_NOT_SELECTED);
 		}
 	}
 
 	@Override
 	public void command_cancelButton() {
-		int selectedRow = this.view.getTable().getSelectedRow();
-		if(selectedRow != -1) {
+		final int selectedRow = this.view.getTable().getSelectedRow();
+		if(selectedRow == -1) {
+			this.view.showMessageDialog(ROW_NOT_SELECTED);
+		} else {
 			if(this.view.showYesNoOptionPane(DELETE_RECORD_CHECK)) {
-				TableModel getTableModel = tableBuilder();
-				String host = (String)getTableModel.getValueAt(selectedRow, 0);
-				String user = (String)getTableModel.getValueAt(selectedRow, 1);
-				String pass = (String)getTableModel.getValueAt(selectedRow, 2);
+				final TableModel getTableModel = tableBuilder();
+				final String host = (String)getTableModel.getValueAt(selectedRow, 0);
+				final String user = (String)getTableModel.getValueAt(selectedRow, 1);
+				final String pass = (String)getTableModel.getValueAt(selectedRow, 2);
 				this.model.removeItem(host, user, pass);
 				this.view.getTable().setModel(this.tableBuilder());
 			}
-		} else {
-			this.view.showMessageDialog(ROW_NOT_SELECTED);
 		}
 		
 	}
 
 	@Override
 	public void command_encryptButton() {
-		AES newEncryptor = new AES();
+		final AES newEncryptor = new AES();
 		if(this.aesKey == null) { // Generates a new key and stores it into a file
 			ObjectOutputStream oos;
 			File selectedFile = null;
@@ -163,7 +163,7 @@ public class KeyringController implements IKeyringViewObserver, IGeneralViewObse
 			}
 		} else { // Reads the key from file
 			ObjectInputStream ois;
-			File selectedFile = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
+			final File selectedFile = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
 			try {
 				if(selectedFile != null) {
 					ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(selectedFile)));
@@ -174,7 +174,7 @@ public class KeyringController implements IKeyringViewObserver, IGeneralViewObse
 			} catch (IOException e) {
 				this.view.showMessageDialog(IO_READING_ERROR);
 			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
+				this.view.showMessageDialog(e.getMessage());
 			} catch (InvalidKeyException e) {
 				this.view.showMessageDialog(WRONG_KEYSIZE_ERROR);
 			}
@@ -192,7 +192,7 @@ public class KeyringController implements IKeyringViewObserver, IGeneralViewObse
 			this.view.showMessageDialog(KEY_NOT_SET_WARNING);
 		} else {
 			if(this.view.showYesNoOptionPane(SAVE_RECORDS_CHECK)) {
-				File saveFile = new File(KEYRING_FILE_PATH);
+				final File saveFile = new File(KEYRING_FILE_PATH);
 				try {
 					this.model.saveData(new BufferedOutputStream(new FileOutputStream(saveFile)), this.aesKey);
 				} catch (InvalidKeyException e) {
@@ -208,9 +208,9 @@ public class KeyringController implements IKeyringViewObserver, IGeneralViewObse
 	 * @return A new table model, used to store data for the JTable in the view
 	 */
 	private TableModel tableBuilder(){
-		DefaultTableModel tableModel = new DefaultTableModel(TABLE_COLUMNS_NAMES, 0 ){ //TODO: forse il problema è che viene creato sempre nuovo?
+		final DefaultTableModel tableModel = new DefaultTableModel(TABLE_COLUMNS_NAMES, 0 ){ //TODO: forse il problema è che viene creato sempre nuovo?
 			private static final long serialVersionUID = 737530902377505148L;
-			public boolean isCellEditable(int row, int column){
+			public boolean isCellEditable(final int row, final int column){
 				return false;
 			}
 		};

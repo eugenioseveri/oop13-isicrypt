@@ -2,7 +2,7 @@ package gui.views;
 
 import gui.controllers.IStartScreenViewObserver;
 import gui.controllers.StartScreenController;
-import gui.models.ThemeChooser;
+import gui.controllers.ThemeChooser;
 
 import java.awt.Color;
 import java.awt.Font;

@@ -22,11 +22,11 @@ import algorithms.interfacesandabstractclasses.ISymmetricCryptography;
 import gui.models.CorruptedDataException;
 import gui.models.FileInterpret;
 import gui.models.IFileInterpret;
-import gui.models.OpenButtons;
-import gui.models.OpenButtons.FileTypes;
 import gui.views.CryptographyView;
 import gui.views.ICryptographyView;
+import gui.views.OpenButtons;
 import gui.views.StartScreenView;
+import gui.views.OpenButtons.FileTypes;
 import static algorithms.ErrorMessages.*;
 import static algorithms.EnumAvailableCompressionAlgorithms.*;
 import static algorithms.EnumAsymmetricKeyTypes.*;
@@ -41,25 +41,25 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 	private final static String TEMP_CIPHER_FILE_NAME = TEMP_DIRECTORY + "/tempCipherFile.tmp";
 	private final static String TEMP_COMPRESSION_FILE_NAME = TEMP_DIRECTORY + "/tempCompressionFile.tmp";
 	private final static String TEMP_PAYLOAD_FILE_NAME = TEMP_DIRECTORY + "/tempPayloadExtracted.tmp";
-	private File tempFileToEncrypt = null;
-	private File tempPublicKeyFile = null;
-	private File tempFileToDecrypt = null;
-	private File tempPrivateKeyFile = null;
-	private ICryptographyView view;
+	private File tempFileToEncrypt;
+	private File tempPublicKeyFile;
+	private File tempFileToDecrypt;
+	private File tempPrivateKeyFile;
+	final private ICryptographyView view;
 	private IFileInterpret model;
 	
 	/**
 	 * Creates a new controller for the cryptography function. No model is required.
 	 * @param view
 	 */
-	public CryptographyController(CryptographyView view) {
+	public CryptographyController(final CryptographyView view) {
 		this.view = view;
 		this.view.attachViewObserver(this);
 	}
 	
 	@Override
 	public void command_SelectFileToEncrypt() {
-		File selectedFile = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
+		final File selectedFile = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
 		if(selectedFile != null) {
 			this.view.setText_encryptTextField(selectedFile.getAbsolutePath());
 			this.tempFileToEncrypt = selectedFile;
@@ -68,7 +68,7 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 	
 	@Override
 	public void command_SelectPublicKeyFile() {
-		File selectedFile = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
+		final File selectedFile = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
 		if(selectedFile != null) {
 			this.view.setText_publicKeyTextField(selectedFile.getAbsolutePath());
 			this.tempPublicKeyFile = selectedFile;
@@ -77,20 +77,19 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 	
 	@Override
 	public void command_GenerateNewKeyPair() {
-		RSA newRSA = new RSA();
+		final RSA newRSA = new RSA();
 		try {
 			newRSA.generateKeyPair(2048); // TODO: magic number
 		} catch (InvalidKeyException e) {
-			e.printStackTrace();
+			// This exceptions can not occur since key size is built-in
 		}
-		File selectedFile = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
+		final File selectedFile = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
 		if(selectedFile != null) {
 			try {
 				newRSA.saveKeyToFile(PUBLIC_KEY, new FileOutputStream(selectedFile.getAbsolutePath() + ".pub"));
 				newRSA.saveKeyToFile(PRIVATE_KEY, new FileOutputStream(selectedFile.getAbsolutePath() + ".pvk"));
 			} catch (IOException e) {
 				this.view.showMessageDialog(IO_WRITING_ERROR);
-				e.printStackTrace();
 			}
 		}
 	}
@@ -98,14 +97,15 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 	//TODO: aggiungere commenti textarea
 	@Override
 	public void command_Encrypt() {
-		File tempOutputFileEncrypt = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
+		final File tempOutputFileEncrypt = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
 		if(this.tempFileToEncrypt != null && tempOutputFileEncrypt != null && this.tempPublicKeyFile != null) {
 			BufferedInputStream filetoencrypt = null;
 			BufferedOutputStream tempCipherFile = null;
 			BufferedOutputStream tempCompressionFile = null;
 			ISymmetricCryptography newSymmetricCipher = null;
-			IAsymmetricCryptography newRSA = new RSA(); // Unico algoritmo simmetrico supportato (per ora)
+			final IAsymmetricCryptography newRSA = new RSA(); // Only currrently supported asymmetric algorithm
 			ObjectInputStream streamPublicKeyFile = null;
+			this.view.getTextArea().setText(null);
 			try {
 				filetoencrypt = new BufferedInputStream(new FileInputStream(tempFileToEncrypt));
 				tempCipherFile = new BufferedOutputStream(new FileOutputStream(TEMP_CIPHER_FILE_NAME));
@@ -119,7 +119,7 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 				streamPublicKeyFile = new ObjectInputStream(new FileInputStream(tempPublicKeyFile));
 				newRSA.setKeyPair((PublicKey)streamPublicKeyFile.readObject(), null);
 				this.view.getTextArea().append("\nThe public key has been loaded.");
-				byte[] tempEncryptedSymmetricKey = newRSA.encode(newSymmetricCipher.getSymmetricKeySpec().getEncoded());
+				final byte[] tempEncryptedSymmetricKey = newRSA.encode(newSymmetricCipher.getSymmetricKeySpec().getEncoded());
 				this.view.setValue_progressBarEncryption(40);
 				this.view.getTextArea().append("\nThe symmetric key has been encrypted.");
 				String payloadFile = TEMP_CIPHER_FILE_NAME;
@@ -139,14 +139,14 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 				this.view.showMessageDialog(FILE_NOT_FOUND_GENERIC_ERROR);
 			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 				this.view.showMessageDialog(REFLECTION_ERROR);
-				e.printStackTrace();
+			} catch (ClassCastException e){
+				this.view.showMessageDialog(WRONK_KEY_TYPE);
 			}  catch (InvalidKeyException e) {
-				this.view.showMessageDialog(WRONG_KEYSIZE_ERROR);
-				e.printStackTrace();
+				this.view.showMessageDialog(e.getMessage());
 			} catch (StreamCorruptedException e) {
 				this.view.showMessageDialog(STREAM_CORRUPTED_ERROR);
 			} catch (IOException e) {
-				e.printStackTrace();
+				this.view.showMessageDialog(e.getMessage());
 			} finally {
 				try {
 					if(filetoencrypt != null) {
@@ -164,13 +164,17 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 						new File(TEMP_COMPRESSION_FILE_NAME).delete();
 					}
 				} catch (IOException e) {
-					e.printStackTrace();
+					// This exception should not occur
 				}
 				this.view.getTextArea().append("\nTemporary files have been cleaned.");
 			}
 			if(this.view.getNumberOfWipingPassages() > 0) {
 				this.view.getTextArea().append("\nWiping source file enabled.");
-				Wiping.getInstance().wipe(tempFileToEncrypt, this.view.getNumberOfWipingPassages());
+				try {
+					Wiping.getInstance().wipe(tempFileToEncrypt, this.view.getNumberOfWipingPassages());
+				} catch (IOException e) {
+					this.view.showMessageDialog(e.getMessage());
+				}
 			}
 			this.view.setValue_progressBarEncryption(100);
 		} else {
@@ -181,7 +185,7 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 
 	@Override
 	public void command_SelectFileToDecrypt() {
-		File selectedFile = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
+		final File selectedFile = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
 		if(selectedFile != null) {
 			this.view.setText_decryptTextField(selectedFile.getAbsolutePath());
 			this.tempFileToDecrypt = selectedFile;
@@ -190,7 +194,7 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 	
 	@Override
 	public void command_SelectPrivateKeyFile() {
-		File selectedFile = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
+		final File selectedFile = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
 		if(selectedFile != null) {
 			this.view.setText_privateKeyTextField(selectedFile.getAbsolutePath());
 			this.tempPrivateKeyFile = selectedFile;
@@ -200,14 +204,15 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 
 	@Override
 	public void command_Decrypt() {
-		File tempOutputFileDecrypt = new OpenButtons().fileChooser(FileTypes.DIRECTORY);
+		final File tempOutputFileDecrypt = new OpenButtons().fileChooser(FileTypes.DIRECTORY);
 		if(this.tempFileToDecrypt != null && tempOutputFileDecrypt != null && this.tempPrivateKeyFile != null) {
 			BufferedInputStream tempCipherFile = null;
 			BufferedOutputStream outputFile = null;
 			BufferedOutputStream tempCompressionFile = null;
 			ISymmetricCryptography newSymmetricCipher = null;
-			IAsymmetricCryptography newRSA = new RSA();
+			final IAsymmetricCryptography newRSA = new RSA();
 			ObjectInputStream streamPrivateKeyFile = null;
+			this.view.getTextArea().setText(null);
 			try {
 				this.view.setValue_progressBarDecryption(5);
 				this.view.getTextArea().append("\nObjects initializazion completed.");
@@ -219,11 +224,11 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 				newRSA.setKeyPair(null, (PrivateKey)streamPrivateKeyFile.readObject()); // controllare che la chiave sia giusta
 				this.view.setValue_progressBarDecryption(35);
 				this.view.getTextArea().append("\nThe private key has been loaded.");
-				byte[] tempDecryptedSymmetricKey = newRSA.decode(this.model.getEncryptedSymmetricKey());
-				String reflectionSymmetricAlgorithm = this.model.getSymmetricAlgorithm().name();
+				final byte[] tempDecryptedSymmetricKey = newRSA.decode(this.model.getEncryptedSymmetricKey());
+				final String reflectionSymmetricAlgorithm = this.model.getSymmetricAlgorithm().name();
 				this.view.setValue_progressBarDecryption(45);
 				this.view.getTextArea().append("\nThe symmetric key has been decrypted.");
-				this.view.getTextArea().append("\nAlgorithm: " + reflectionSymmetricAlgorithm + ", key size:" + tempDecryptedSymmetricKey.length);
+				this.view.getTextArea().append("\nAlgorithm: " + reflectionSymmetricAlgorithm + ", key size:" + (tempDecryptedSymmetricKey.length*8) + " bits.");
 				newSymmetricCipher = (ISymmetricCryptography)Class.forName("algorithms." + reflectionSymmetricAlgorithm).newInstance();
 				newSymmetricCipher.setSymmetricKeySpec(new SecretKeySpec(tempDecryptedSymmetricKey, reflectionSymmetricAlgorithm));
 				this.view.setValue_progressBarDecryption(55);
@@ -232,14 +237,15 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 				this.view.setValue_progressBarDecryption(70);
 				this.view.getTextArea().append("\nThe payload has been written to disk.");
 				String payloadFile = TEMP_PAYLOAD_FILE_NAME;
-				if(this.model.getCompressionAlgorithm() != No_Compression) {
+				if(this.model.getCompressionAlgorithm() == No_Compression) {
+					this.view.getTextArea().append("\nThe file is not compressed.");
+				} else {
 					this.view.getTextArea().append("\nGZip compression found: the file is going to be decompressed.");
 					tempCompressionFile = new BufferedOutputStream(new FileOutputStream(TEMP_COMPRESSION_FILE_NAME));
+					tempCipherFile = new BufferedInputStream(new FileInputStream(TEMP_PAYLOAD_FILE_NAME));
 					algorithms.GZip.getInstance().decompress(tempCipherFile, tempCompressionFile);
 					payloadFile = TEMP_COMPRESSION_FILE_NAME;
 					this.view.getTextArea().append("\nThe file has been decompressed.");
-				} else {
-					this.view.getTextArea().append("\nThe file is not compressed.");
 				}
 				this.view.setValue_progressBarDecryption(80);
 				newSymmetricCipher.decode(new BufferedInputStream(new FileInputStream(payloadFile)), outputFile);
@@ -249,12 +255,16 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 				this.view.showMessageDialog(FILE_NOT_FOUND_GENERIC_ERROR);
 			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 				this.view.showMessageDialog(REFLECTION_ERROR);
-				e.printStackTrace();
+			} catch (ClassCastException e){
+				this.view.showMessageDialog(WRONK_KEY_TYPE);
+			} catch (StreamCorruptedException e) {
+				this.view.showMessageDialog(STREAM_CORRUPTED_ERROR);
 			} catch (IOException e) {
-				e.printStackTrace();
+				this.view.showMessageDialog(IO_WRITING_ERROR);
 			} catch (CorruptedDataException e) {
 				this.view.showMessageDialog(CORRUPTED_FILE_ERROR);
-				e.printStackTrace();
+			} catch (InvalidKeyException e) {
+				this.view.showMessageDialog(e.getMessage());
 			} finally {
 				try {
 					if(tempCipherFile != null) {
@@ -272,7 +282,7 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 						streamPrivateKeyFile.close();
 					}
 				} catch (IOException e) {
-					e.printStackTrace();
+					// This exception should not occur
 				}
 			}
 			this.view.setValue_progressBarDecryption(100);

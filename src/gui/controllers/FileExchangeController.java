@@ -20,6 +20,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Map;
 import java.util.Map.Entry;
+
 //Used for set the JTable
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -33,10 +34,10 @@ import algorithms.Steganography;
 import algorithms.TypeConverter;
 import gui.models.ContactInfo;
 import gui.models.IFileExchangeModel;
-import gui.models.OpenButtons;
-import gui.models.OpenButtons.FileTypes;
 import gui.views.IFileExchangeView;
+import gui.views.OpenButtons;
 import gui.views.StartScreenView;
+import gui.views.OpenButtons.FileTypes;
 
 public class FileExchangeController implements IFileExchangeViewObserver, IGeneralViewObserver{
 	//Initialize FileEchange Gui
@@ -52,7 +53,7 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 		this.model = model;
 		this.view = view;
 		this.view.getContactTable().setModel(this.tableBuilder());
-		this.view.attacFileExchangeViewObserve(this);
+		this.view.attachFileExchangeViewObserve(this);
 		server.start();
 	}
 

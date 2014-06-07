@@ -18,7 +18,7 @@ import static algorithms.ErrorMessages.*;
  */
 public final class Wiping implements IWiping {
 	
-	private static Wiping SINGLETON;
+	private static Wiping singleton;
 	
 	private Wiping() {
 	}
@@ -27,15 +27,14 @@ public final class Wiping implements IWiping {
 	 * Returns an instance of this class
 	 */
 	public static Wiping getInstance() {
-		if (SINGLETON == null) {
-			SINGLETON = new Wiping();
+		if (singleton == null) {
+			singleton = new Wiping();
 		}
-		return SINGLETON;
+		return singleton;
 	}
 
 	@Override
-	public void wipe(File fileToWipe, int numberOfPassages) {
-		// Gestire l'eccezione e l'input dei parametri
+	public void wipe(File fileToWipe, int numberOfPassages) throws IOException {
 		if(fileToWipe.exists()) {
 			SecureRandom rand = new SecureRandom();
 			RandomAccessFile randomFile = null;
@@ -53,16 +52,12 @@ public final class Wiping implements IWiping {
 					numberOfPassages--;
 				}
 			} catch (IOException e) {
-				System.err.println(IO_WRITING_ERROR + " File: " + fileToWipe.getAbsolutePath());
-				e.printStackTrace();
+				throw new IOException(IO_WRITING_ERROR + " File: " + fileToWipe.getAbsolutePath());
 			} finally {
-				try {
+				if(randomFile != null) {
 					randomFile.close();
-					fileToWipe.delete(); // Al momento il file non è cancellato(?)
-				} catch (IOException e) {
-					e.printStackTrace();
+					fileToWipe.delete();
 				}
-				
 			}
 		}
 	}

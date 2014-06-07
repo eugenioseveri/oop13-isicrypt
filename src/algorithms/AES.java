@@ -37,8 +37,8 @@ public class AES extends AbstractSymmetricCryptography implements ISymmetricCryp
 		super();
 		try {
 			super.cryptoCipher = Cipher.getInstance(ALGORITHM);
-		} catch (NoSuchAlgorithmException | NoSuchPaddingException e) { // Queste eccezioni non possono verificarsi (algorithm è costante)
-			e.printStackTrace();
+		} catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+			// This exceptions can not occur since ALGORITHM is built-in
 		}
 	}
 	
@@ -47,7 +47,7 @@ public class AES extends AbstractSymmetricCryptography implements ISymmetricCryp
 	 * @param key AES key
 	 * @throws InvalidKeyException If the key size is not valid.
 	 */
-	public void setSymmetricKeySpec(byte[] key) throws InvalidKeyException {
+	public void setSymmetricKeySpec(final byte[] key) throws InvalidKeyException {
 		if(!checkKeySize(key.length * 8)) {
 			throw new InvalidKeyException(WRONG_KEYSIZE_ERROR);
 		}
@@ -55,53 +55,52 @@ public class AES extends AbstractSymmetricCryptography implements ISymmetricCryp
 	}
 	
 	@Override
-	public void encode(InputStream input, OutputStream output) throws IOException {
+	public void encode(final InputStream input, final OutputStream output) throws IOException, InvalidKeyException {
 		int i;
-		byte[] b = new byte[BUFFER_SIZE];
+		final byte[] b = new byte[BUFFER_SIZE];
 		try {
 			super.cryptoCipher.init(Cipher.ENCRYPT_MODE, super.symmetricKeySpec);
 		} catch (InvalidKeyException e) {
 			if(super.isSymmetricKeyInitialized()) {
-				e.printStackTrace();
+				throw e;
 			} else {
-				System.err.println(NOKEY_ERROR);
+				throw new InvalidKeyException(NOKEY_ERROR);
 			}
 		}
-		CipherOutputStream out = new CipherOutputStream(output, super.cryptoCipher);
+		final CipherOutputStream out = new CipherOutputStream(output, super.cryptoCipher);
 		try {
 			while((i=input.read(b)) != END_OF_FILE) {
 				out.write(b, 0, i);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw e;
 		} finally {
 			if(out != null) {
-				// TODO: bisogna chiudere anche input? (idem in decode())
 				out.close();
 			}
 		}
 	}
 
 	@Override
-	public void decode(InputStream input, OutputStream output) throws IOException {
+	public void decode(final InputStream input, final OutputStream output) throws IOException, InvalidKeyException {
 		int i;
-		byte[] b = new byte[BUFFER_SIZE];
+		final byte[] b = new byte[BUFFER_SIZE];
 		try {
 			super.cryptoCipher.init(Cipher.DECRYPT_MODE, super.symmetricKeySpec);
 		} catch (InvalidKeyException e) {
 			if(super.isSymmetricKeyInitialized()) {
-				e.printStackTrace();
+				throw e;
 			} else {
-				System.err.println(NOKEY_ERROR);
+				throw new InvalidKeyException(NOKEY_ERROR);
 			}
 		}
-		CipherInputStream in = new CipherInputStream(input, super.cryptoCipher);
+		final CipherInputStream in = new CipherInputStream(input, super.cryptoCipher);
 		try {
 			while((i=in.read(b)) != END_OF_FILE) {
 				output.write(b, 0, i);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw e;
 		} finally {
 			if(in != null) {
 				in.close();
@@ -110,20 +109,19 @@ public class AES extends AbstractSymmetricCryptography implements ISymmetricCryp
 	}
 
 	@Override
-	public void generateKey(int keySize) throws InvalidKeyException {
+	public void generateKey(final int keySize) throws InvalidKeyException {
 		if(!checkKeySize(keySize)) {
 			throw new InvalidKeyException(WRONG_KEYSIZE_ERROR);
 		}
-		// SecretKeyFactory potrebbe essere interessante per generare la chiave in maniera migliore...
 		KeyGenerator keyGen = null;
 		try {
 			keyGen = KeyGenerator.getInstance(ALGORITHM);
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} // Aggiungere keysize "AES(128)" e provider
+			// This exception can not occur since ALGORITHM is built-in
+		}
 		keyGen.init(keySize);
-		SecretKey key = keyGen.generateKey();
-		byte[] aesKey = key.getEncoded();
+		final SecretKey key = keyGen.generateKey();
+		final byte[] aesKey = key.getEncoded();
 		super.symmetricKeySpec = new SecretKeySpec(aesKey, ALGORITHM);
 	}
 	
@@ -132,7 +130,7 @@ public class AES extends AbstractSymmetricCryptography implements ISymmetricCryp
 	 * @param keySize The length (in bits) of the generated key
 	 * @return If the key length matches with one of the supported values
 	 */
-	private boolean checkKeySize(int keySize) {
+	private boolean checkKeySize(final int keySize) {
 		for(int validKeyLength: AES_KEYSIZES) {
 			if(validKeyLength == keySize) {
 				return true;

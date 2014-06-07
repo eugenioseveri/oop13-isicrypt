@@ -8,8 +8,6 @@ import java.util.zip.GZIPOutputStream;
 
 import algorithms.interfacesandabstractclasses.ICompression;
 
-import static algorithms.ErrorMessages.*;
-
 /**
  * Class used to implement GZIP compression and decompression.
  * The Singleton pattern with lazy initialization has been used.
@@ -18,26 +16,26 @@ import static algorithms.ErrorMessages.*;
 public final class GZip implements ICompression {
 	
 	private final static int BUFFER_SIZE = 1024;
-	private static GZip SINGLETON;
+	private static GZip singleton;
 	
-	private GZip() { // Costruttore privato
+	private GZip() {
 	}
 	
 	/**
 	 * Returns an instance of this class
 	 */
 	public static GZip getInstance() {
-		if (SINGLETON == null) {
-			SINGLETON = new GZip();
+		if (singleton == null) {
+			singleton = new GZip();
 		}
-		return SINGLETON;
+		return singleton;
 	}
 
 	@Override
-	public void compress(InputStream origin, OutputStream destination) {
+	public void compress(final InputStream origin, final OutputStream destination) throws IOException {
 		GZIPOutputStream zip = null;
 		int spaceLeft;
-	    byte[] buffer = new byte[BUFFER_SIZE];
+	    final byte[] buffer = new byte[BUFFER_SIZE];
 		try {
 			zip = new GZIPOutputStream(destination);
 			while ((spaceLeft = origin.read(buffer)) > 0) {
@@ -45,38 +43,35 @@ public final class GZip implements ICompression {
 		    }
 		    zip.finish();
 		} catch (IOException e) {
-			System.err.println(IO_WRITING_ERROR);
-			e.printStackTrace();
+			throw e;
 		} finally {
-			try {
+			if(zip != null) {
 				zip.close();
+			}
+			if(origin != null) {
 				origin.close();
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
 		}
 	}
 	
 	@Override
-	public void decompress(InputStream origin, OutputStream destination) {
-		// Aggiungere try-catch
+	public void decompress(final InputStream origin, final OutputStream destination) throws IOException {
 		GZIPInputStream zip = null;
 		int spaceLeft;
-		byte[] buffer = new byte[BUFFER_SIZE];
+		final byte[] buffer = new byte[BUFFER_SIZE];
 		try {
 			zip = new GZIPInputStream(origin);
 			while ((spaceLeft = zip.read(buffer)) > 0) {
 				destination.write(buffer, 0, spaceLeft);
 			}
 		} catch (IOException e) {
-			System.err.println(IO_WRITING_ERROR);
-			e.printStackTrace();
+			throw e;
 		} finally {
-			try {
+			if(zip != null) {
 				zip.close();
+			}
+			if(destination != null) {
 				destination.close();
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
 		}
 	}

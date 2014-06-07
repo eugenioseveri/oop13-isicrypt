@@ -1,4 +1,4 @@
-package gui.models;
+package algorithms;
 /**
  * @author Filippo Vimini //half take from Internet but optimized by myself
  * @data 25/04/2014

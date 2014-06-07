@@ -9,7 +9,6 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public abstract class AbstractSymmetricCryptography implements ISymmetricCryptography {
 
-	// TODO: codice duplicato per la crittografia assimmetrica?
 	protected SecretKeySpec symmetricKeySpec;
 	protected Cipher cryptoCipher;
 	
@@ -19,7 +18,7 @@ public abstract class AbstractSymmetricCryptography implements ISymmetricCryptog
 	}
 
 	@Override
-	public void setSymmetricKeySpec(SecretKeySpec symmetricKeySpec) {
+	public void setSymmetricKeySpec(final SecretKeySpec symmetricKeySpec) {
 		this.symmetricKeySpec = symmetricKeySpec;
 	}
 	

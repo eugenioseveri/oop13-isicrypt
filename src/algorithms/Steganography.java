@@ -4,8 +4,8 @@ package algorithms;
  * @version 1.0
  * created 08/04/2014
  */
-import gui.models.OpenButtons;
-import gui.models.OpenButtons.FileTypes;
+import gui.views.OpenButtons;
+import gui.views.OpenButtons.FileTypes;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;

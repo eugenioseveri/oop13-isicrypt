@@ -2,7 +2,7 @@ package gui.views;
 
 import gui.controllers.CryptographyController;
 import gui.controllers.ICryptographyViewObserver;
-import gui.models.ThemeChooser;
+import gui.controllers.ThemeChooser;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -36,7 +36,7 @@ import algorithms.EnumAvailableSymmetricAlgorithms;
  * Class used to implement the cryptography function view.
  * @author Eugenio Severi
  */
-public class CryptographyView extends AbstractGuiMethodSetter implements ICryptographyView { // TODO: si può non estendere JFrame?
+public class CryptographyView extends AbstractGuiMethodSetter implements ICryptographyView {
 
 	private static final long serialVersionUID = -162452746296023405L;
 	private static final String APPLICATION_ICON = "isiCryptICON_MetroStyle.jpg";
@@ -44,7 +44,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 	private Color panelBackColor;
 	private Color buttonColor;
 	private Color foregroundColor;
-	private static boolean isOpen = false;
+	private static boolean isOpen; // Default=false
 	// Arrays that contains various dimension of insets
 	private static final int insetsDefault[] = { 10, 10, 10, 10 };
 	private static final int insetsBigButton[] = { 10, 10, 70, 70 };
@@ -107,7 +107,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 	private ICryptographyViewObserver controller;
 	
 	@Override
-	public void attachViewObserver(ICryptographyViewObserver listener){
+	public void attachViewObserver(final ICryptographyViewObserver listener){
 		this.controller = listener;
 	}
 	
@@ -115,6 +115,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 	 * Creates a new cryptography function view.
 	 */
 	public CryptographyView(){
+		super();
 		buildLayout();
 		componentSetting();
 		setFrame();
@@ -125,11 +126,11 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 	 * Creates the frame layout (same for all the views)
 	 */
 	private void buildLayout() {
-		buttonColor = (ThemeChooser.getButtonColor());
-		font = (ThemeChooser.getFont());
-		foregroundColor = (ThemeChooser.getForegroundColor());
-		panelBackColor = (ThemeChooser.getPanelBackColor());
-		GridBagLayout layout = new GridBagLayout();
+		buttonColor = ThemeChooser.getButtonColor();
+		font = ThemeChooser.getFont();
+		foregroundColor = ThemeChooser.getForegroundColor();
+		panelBackColor = ThemeChooser.getPanelBackColor();
+		final GridBagLayout layout = new GridBagLayout();
 		limit = new GridBagConstraints();
 		container.setLayout(layout);
 		container.setBackground(panelBackColor);
@@ -139,20 +140,20 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 	 * Sets the properties for the frame.
 	 */
 	private void setFrame() {
-		JFrame frame = new JFrame();
+		final JFrame frame = new JFrame();
 		try {
 			frame.setIconImage(ImageIO.read(ClassLoader.getSystemResource(APPLICATION_ICON)));
 		} catch (IOException e) {
-			e.printStackTrace();
+			// This exception can not occur since the resource is built in
 		}
-		WindowAdapter listener = new WindowAdapter() {
+		final WindowAdapter listener = new WindowAdapter() {
 
 	        @Override
-	        public void windowOpened(WindowEvent e) {
+	        public void windowOpened(final WindowEvent e) {
 	        	CryptographyView.setOpen(true);	        }
 
 	        @Override
-	        public void windowClosing(WindowEvent e) {
+	        public void windowClosing(final WindowEvent e) {
 	            CryptographyView.setOpen(false);
 	            StartScreenView.redraw();
 	        }
@@ -206,6 +207,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		setGridposition(limit, xPosition+1, yPosition+4, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, wipeSource);
 		// JCombobox SELECT WIPING TYPE
+		wipingComboBox.removeAllItems();
 		wipingComboBox.addItem(0);
 		wipingComboBox.addItem(1);
 		wipingComboBox.addItem(2);
@@ -247,6 +249,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		setGridposition(limit, xPosition+1, yPosition+9, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, algorithmLabel);
 		//JCombobox ALGORITHM TEXT FIELD
+		algorithmComboBox.removeAllItems();
 		for(EnumAvailableSymmetricAlgorithms item: EnumAvailableSymmetricAlgorithms.values()) {
 			algorithmComboBox.addItem(item);
 		}
@@ -261,6 +264,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		setGridposition(limit, xPosition+1, yPosition+11, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, hashingLabel);
 		//JCombobox HASHING TEXT FIELD
+		hashingComboBox.removeAllItems();
 		for(EnumAvailableHashingAlgorithms item: EnumAvailableHashingAlgorithms.values()) {
 			hashingComboBox.addItem(item);
 		}
@@ -275,6 +279,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		setGridposition(limit, xPosition+1, yPosition+12, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, compressionLabel);
 		//JCombobox COMPRESSION TEXT FIELD
+		compressionComboBox.removeAllItems();
 		for(EnumAvailableCompressionAlgorithms item: EnumAvailableCompressionAlgorithms.values()) {
 			compressionComboBox.addItem(item);
 		}
@@ -380,50 +385,50 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 	private void setHandlers() {
 		CryptographyView.fileToEncryptButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				controller.command_SelectFileToEncrypt();
 			}
 		});
 		CryptographyView.fileToDecryptButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				controller.command_SelectFileToDecrypt();				
 			}
 		});
 		CryptographyView.newKeyPairButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				controller.command_GenerateNewKeyPair();
 			}
 		});
 		CryptographyView.publicKeyButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				controller.command_SelectPublicKeyFile();				
 			}
 		});
 		CryptographyView.privateKeyButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				controller.command_SelectPrivateKeyFile();
 			}
 		});
 		CryptographyView.startDecryptionButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				controller.command_Decrypt();
 			}
 		});
 		CryptographyView.startEncryptionButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				controller.command_Encrypt();
 			}
 		});
 		CryptographyView.backButton.addActionListener(new ActionListener() {
 			
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				((CryptographyController)controller).showStart();
 			}
 		});
@@ -431,22 +436,22 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 	
 	//Getters and setters
 	@Override
-	public void setText_encryptTextField(String text) {
+	public void setText_encryptTextField(final String text) {
 		CryptographyView.encryptTextField.setText(text);
 	}
 
 	@Override
-	public void setText_publicKeyTextField(String text) {
+	public void setText_publicKeyTextField(final String text) {
 		CryptographyView.publicKeyTextField.setText(text);
 	}
 
 	@Override
-	public void setText_decryptTextField(String text) {
+	public void setText_decryptTextField(final String text) {
 		CryptographyView.decryptTextField.setText(text);
 	}
 
 	@Override
-	public void setText_privateKeyTextField(String text) {
+	public void setText_privateKeyTextField(final String text) {
 		CryptographyView.privateKeyTextField.setText(text);
 	}
 	
@@ -476,17 +481,17 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 	}
 
 	@Override
-	public void setValue_progressBarEncryption(int value) {
+	public void setValue_progressBarEncryption(final int value) {
 		progressBarEncryption.getModel().setValue(value);
 	}
 
 	@Override
-	public void setValue_progressBarDecryption(int value) {
+	public void setValue_progressBarDecryption(final int value) {
 		progressBarDecryption.getModel().setValue(value);
 	}
 
 	@Override
-	public void showMessageDialog(String message) {
+	public void showMessageDialog(final String message) {
 		JOptionPane.showMessageDialog(this, message);
 	}
 	
@@ -494,7 +499,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		return isOpen;
 	}
 
-	public static void setOpen(boolean isOpen) {
+	public static void setOpen(final boolean isOpen) {
 		CryptographyView.isOpen = isOpen;
 	}
 

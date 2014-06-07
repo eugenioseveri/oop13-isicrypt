@@ -36,7 +36,7 @@ public abstract class AbstractGuiMethodSetter extends JFrame {
 	 * @param container		JPanel where visualize the element
 	 * @param C				Component to save on panel
 	 */
-	public static void setLimit( GridBagConstraints limit, int ipadx, int ipady, int insets[], int fill, int anchor,
+	protected static void setLimit( GridBagConstraints limit, int ipadx, int ipady, int insets[], int fill, int anchor,
 			Container container, Component C ){
 		limit.ipadx = ipadx;
 		limit.ipady = ipady;
@@ -73,7 +73,7 @@ public abstract class AbstractGuiMethodSetter extends JFrame {
 	 * @param buttonFont				Text JButton font
 	 * @param focusArea					Boolean for setFocusPainted
 	 */
-	public static void setJButton(Component button, Color backgroundColor, Color foregroundButtonColor,
+	protected static void setJButton(Component button, Color backgroundColor, Color foregroundButtonColor,
 			Font buttonFont, boolean focusArea, boolean border){
 		if(button instanceof JButton){
 			((JButton)button).setBackground(backgroundColor);
@@ -96,7 +96,7 @@ public abstract class AbstractGuiMethodSetter extends JFrame {
 	 * @param container		JPanel where visualize the element
 	 * @param C				Component to save on panel
 	 */
-	public static void setGridposition(GridBagConstraints limit, int gridx, int gridy, int gridwidth, int gridheight,
+	protected static void setGridposition(GridBagConstraints limit, int gridx, int gridy, int gridwidth, int gridheight,
 			int weightx, int weighty, Container container, Component C ){
 		limit.gridx = gridx;
 		limit.gridy = gridy;

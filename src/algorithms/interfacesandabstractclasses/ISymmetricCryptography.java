@@ -18,16 +18,18 @@ public interface ISymmetricCryptography {
 	 * @param input The stream you want to encrypt
 	 * @param output The stream you want the encrypted stream goes to
 	 * @throws IOException If an error occurs while writing the output stream
+	 * @throws InvalidKeyException If a key has not been set or is not valid
 	 */
-	void encode(InputStream input, OutputStream output) throws IOException;
+	void encode(InputStream input, OutputStream output) throws IOException, InvalidKeyException;
 	
 	/**
 	 * Decode a stream into another one, using a previously set key (via @link {@link #generateKey(int)} or @link {@link #setSymmetricKeySpec(SecretKeySpec)})
 	 * @param input The stream you want to encrypt
 	 * @param output The stream you want the encrypted stream goes to
 	 * @throws IOException If an error occurs while writing the output stream
+	 * @throws InvalidKeyException If a key has not been set or is not valid
 	 */
-	void decode(InputStream input, OutputStream output) throws IOException;
+	void decode(InputStream input, OutputStream output) throws IOException, InvalidKeyException;
 	
 	/**
 	 * Generates a new symmetric key of the specified size

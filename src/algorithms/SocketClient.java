@@ -173,8 +173,10 @@ public class SocketClient {
 	 * Sent the byte[] to the server.
 	 * 
 	 * @param sendByte		byte[] that will be sent to the server
+	 * @throws IOException  
+	 * @throws InvalidKeyException  If a key has not been set or is not valid
 	 */
-	private void sendSequence(byte[] sendByte) throws IOException{
+	private void sendSequence(byte[] sendByte) throws IOException, InvalidKeyException{
 		//Get connection with server by creating new socket
 		getConnection();
 		ByteArrayOutputStream encryptedByteArraybuffer = new ByteArrayOutputStream();

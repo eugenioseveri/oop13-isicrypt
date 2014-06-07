@@ -13,7 +13,7 @@ public class Triple<X,Y,Z> implements Serializable {
 	private Y second;
 	private Z third;
 	
-	public Triple(X first, Y second, Z third) {
+	public Triple(final X first, final Y second, final Z third) {
 		this.first = first;
 		this.second = second;
 		this.third = third;
@@ -23,7 +23,7 @@ public class Triple<X,Y,Z> implements Serializable {
 		return first;
 	}
 
-	public void setFirst(X first) {
+	public void setFirst(final X first) {
 		this.first = first;
 	}
 
@@ -31,7 +31,7 @@ public class Triple<X,Y,Z> implements Serializable {
 		return second;
 	}
 
-	public void setSecond(Y second) {
+	public void setSecond(final Y second) {
 		this.second = second;
 	}
 
@@ -39,7 +39,7 @@ public class Triple<X,Y,Z> implements Serializable {
 		return third;
 	}
 
-	public void setThird(Z third) {
+	public void setThird(final Z third) {
 		this.third = third;
 	}
 	
@@ -60,7 +60,7 @@ public class Triple<X,Y,Z> implements Serializable {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)
@@ -68,7 +68,7 @@ public class Triple<X,Y,Z> implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		@SuppressWarnings("unchecked")
-		Triple<X, Y, Z> other = (Triple<X, Y, Z>) obj;
+		final Triple<X, Y, Z> other = (Triple<X, Y, Z>) obj;
 		if (first == null) {
 			if (other.first != null)
 				return false;
