@@ -51,7 +51,7 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 	@Override
 	public void  setViewAndModel(IFileExchangeView view, IFileExchangeModel model){
 		SocketServer server = new SocketServer();
-		server.attacFileExchangeViewObserve(this);
+		server.attachFileExchangeViewObserve(this);
 		this.model = model;
 		this.view = view;
 		this.view.getContactTable().setModel(this.tableBuilder());

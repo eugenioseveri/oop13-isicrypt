@@ -423,10 +423,4 @@ public class FileExchangeView extends AbstractGuiMethodSetter implements IFileEx
 		String back = JOptionPane.showInputDialog(name, text);
 		return back;
 	}
-	@Override
-	public void attackFileExchangeViewObserve(
-			IFileExchangeViewObserver controller) {
-		// TODO Auto-generated method stub
-		
-	}
  }

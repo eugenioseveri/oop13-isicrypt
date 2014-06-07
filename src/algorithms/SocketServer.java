@@ -35,7 +35,7 @@ public class SocketServer extends Thread{
 
 	private IFileExchangeViewObserver controller;
 
-	public void attacFileExchangeViewObserve(IFileExchangeViewObserver controller){
+	public void attachFileExchangeViewObserve(IFileExchangeViewObserver controller){
 		this.controller = controller;
 	}
 	

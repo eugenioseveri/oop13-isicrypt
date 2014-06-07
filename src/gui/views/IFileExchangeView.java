@@ -16,7 +16,6 @@ public interface IFileExchangeView {
 	 * link the controller to the view
 	 * @param controller		controller to be linked
 	 */
-	void attackFileExchangeViewObserve(IFileExchangeViewObserver controller);
 	
 	JTextArea getVisualtextarea();
 	

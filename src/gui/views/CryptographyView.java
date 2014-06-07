@@ -201,7 +201,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		setGridposition(limit, xPosition+2, yPosition+2, defaultCellArea, defaultCellArea,
 				resizable, noResizable, container, encryptTextField);
 		//checkbox WIPE SOURCE CHECKBOX
-		wipeSource.setForeground(Color.WHITE);
+		wipeSource.setForeground(buttonColor);
 		setLimit(limit, zeroIpad, zeroIpad, zeroInsets,
 				GridBagConstraints.CENTER, GridBagConstraints.CENTER, container, wipeSource);
 		setGridposition(limit, xPosition+1, yPosition+4, defaultCellArea, defaultCellArea,
@@ -370,7 +370,7 @@ public class CryptographyView extends AbstractGuiMethodSetter implements ICrypto
 		logTextArea.setEditable(false);
 		logTextArea.setLineWrap(true);//Format text on TextArea
 		logTextArea.setWrapStyleWord(true);	//Format text on TextArea
-		scrollPane.setPreferredSize(((JTextArea) logTextArea).getSize());
+		scrollPane.setPreferredSize(logTextArea.getSize());
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); 	//Only vertical scroll bar
 		setLimit(limit, zeroIpad, zeroIpad, insetsDefault,
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, scrollPane);
