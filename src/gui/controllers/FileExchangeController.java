@@ -1,8 +1,5 @@
 package gui.controllers;
-/**
- * @author Filippo Vimini
- * Created 24/05/2014
- */
+
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -41,6 +38,11 @@ import gui.views.OpenButtons;
 import gui.views.StartScreenView;
 import gui.views.OpenButtons.FyleTypes;
 
+/**
+ * Class used to implement the file exchange function controller.
+ * @author Filippo Vimini
+ * Created 24/05/2014
+ */
 public class FileExchangeController implements IFileExchangeViewObserver, IGeneralViewObserver{
 	//Initialize FileEchange Gui
 	private IFileExchangeView view;

@@ -8,7 +8,7 @@ import algorithms.EnumAvailableSymmetricAlgorithms;
 import gui.controllers.ICryptographyViewObserver;
 
 /**
- * 
+ * Interface for CryptographyView
  * @author Eugenio Severi
  */
 public interface ICryptographyView {

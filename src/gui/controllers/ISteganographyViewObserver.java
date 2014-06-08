@@ -2,9 +2,8 @@ package gui.controllers;
 
 import gui.views.ISteganographyView;
 /**
- * 
- * @author Filippo
- *Inteface for SteganographyController
+ * Inteface for SteganographyController
+ * @author Filippo Vimini
  */
 public interface ISteganographyViewObserver {
 	/**

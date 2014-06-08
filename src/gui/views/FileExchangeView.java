@@ -38,6 +38,10 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+/**
+ * Class used to implement the file exchange function view.
+ * @author Filippo Vimini
+ */
 public class FileExchangeView extends AbstractGuiMethodSetter implements IFileExchangeView{
 	
 	private static final long serialVersionUID = -1686107590453441615L;

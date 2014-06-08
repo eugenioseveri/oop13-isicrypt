@@ -5,8 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 /**
- *Model of pattern MVC that contain the data of server that the client will contact
- * @author Filippo
+ * Model of pattern MVC that contain the data of server that the client will contact
+ * @author Filippo Vimini
  */
 public interface IFileExchangeModel {
 	/**

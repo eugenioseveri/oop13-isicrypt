@@ -1,8 +1,8 @@
 package gui.controllers;
+
 /**
- * 
- * @author Filippo
- *Interface for StartScreenController
+ * Interface for StartScreenController
+ * @author Filippo Vimini
  */
 public interface IStartScreenViewObserver {
 	/**

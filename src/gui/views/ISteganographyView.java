@@ -7,10 +7,10 @@ import java.awt.Component;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
+
 /**
- * 
+ * Interface for SteganographyView
  * @author Filippo Vimini
- *
  */
 public interface ISteganographyView {
 	/**

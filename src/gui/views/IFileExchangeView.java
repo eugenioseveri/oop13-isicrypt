@@ -11,10 +11,14 @@ import javax.swing.table.TableModel;
 
 import gui.controllers.IFileExchangeViewObserver;
 
+/**
+ * Interface for FileExchangeView
+ * @author Filippo Vimini
+ *
+ */
 public interface IFileExchangeView {
 	/**
 	 * link controller to the view
-	 * 
 	 * @param controller		to be linked
 	 */
 	void attachFileExchangeViewObserve(IFileExchangeViewObserver controller);

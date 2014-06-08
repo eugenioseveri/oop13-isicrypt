@@ -1,24 +1,23 @@
 package gui.views;
-/**
- * @author Filippo Vimini 
- */
-import java.io.File;
 
+import java.io.File;
 
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;	//need for the interface that select the file
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
- * 
- * @author Filippo
- *Enum that represent the theme that the user can set
+ * Class used to open files
+ * @author Filippo Vimini
  */
 public class OpenButtons extends JPanel{
 
 	private static final long serialVersionUID = 1L;
 	private final JFileChooser selectFile = new JFileChooser();
 	
+	/**
+	 * Enum that represent the theme that the user can set
+	 */
 	public static enum FyleTypes {
 		GENERIC_FILE, IMAGE, TEXT, DIRECTORY;
 	}
@@ -35,7 +34,7 @@ public class OpenButtons extends JPanel{
 		switch( fileTypes ){
 		case IMAGE: 	
 			selectFile.setDialogTitle("select Image");
-			selectFile.addChoosableFileFilter(new FileNameExtensionFilter("Image(*.png;*.jpg)","png","jpg"));
+			selectFile.addChoosableFileFilter(new FileNameExtensionFilter("Image(*.jpg)","jpg"));
 			break;
 		case TEXT:
 			selectFile.setDialogTitle("select Text");

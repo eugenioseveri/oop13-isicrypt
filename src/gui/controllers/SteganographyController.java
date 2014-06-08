@@ -1,8 +1,5 @@
 package gui.controllers;
-/**
- * @author Filippo Vimini
- *
- */
+
 import static gui.views.OpenButtons.FyleTypes.IMAGE;
 import static gui.views.OpenButtons.FyleTypes.TEXT;
 import gui.views.AbstractGuiMethodSetter;
@@ -21,6 +18,10 @@ import org.apache.commons.lang3.StringUtils;
 import algorithms.Steganography;
 import algorithms.TypeConverter;
 
+/**
+ * Class used to implement the steganography function controller.
+ * @author Filippo Vimini
+ */
 public class SteganographyController implements ISteganographyViewObserver, IGeneralViewObserver {
 
 	private static ISteganographyView view;

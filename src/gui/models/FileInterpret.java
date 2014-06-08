@@ -24,7 +24,7 @@ import static algorithms.ErrorMessages.*;
  * - Hashing algorithm
  * - Hash of payload file (self-generated)
  * - Compression algorithm
- * - File name (self-generated)
+ * - File name
  * - Payload (encrypted file)
  * @author Eugenio Severi
  */

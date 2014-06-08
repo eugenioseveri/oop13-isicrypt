@@ -35,6 +35,10 @@ import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
+/**
+ * Class used to implement the steganography function view.
+ * @author Filippo Vimini
+ */
 public class SteganographyView extends AbstractGuiMethodSetter implements ISteganographyView{
 	private static final long serialVersionUID = 1L;
 	private static final String APPLICATION_ICON = "isiCryptICON_MetroStyle.jpg";

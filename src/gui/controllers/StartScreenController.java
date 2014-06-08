@@ -16,10 +16,10 @@ import gui.views.ISteganographyView;
 import gui.views.KeyringView;
 import gui.views.StartScreenView;
 import gui.views.SteganographyView;
+
 /**
- * 
+ * Create controller for standard pattern MVC
  * @author Filippo Vimini
- *Create controller for standard pattern MVC
  */
 public class StartScreenController implements IStartScreenViewObserver{
 	

@@ -9,6 +9,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 
+/**
+ * Model for file exchange function. Loads and stores contacts
+ * @author Filippo Vimini
+ */
 public class FileExchangeModel implements IFileExchangeModel {
 	private  ContactInfo contactTemp;
 	private  HashMap<String, String> contactList = new HashMap<String, String>();

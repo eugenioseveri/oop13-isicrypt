@@ -4,17 +4,16 @@ import gui.controllers.IStartScreenViewObserver;
 
 import java.awt.Color;
 import java.awt.Font;
+
 /**
- * 
+ * Interface of the view in pattern MVC
  * @author Filippo Vimini
- *	Interface of the view in pattern MVC
  */
 public interface IStartScreenView {
 	/**
 	 * @param controller 	link the controller at the view
 	 */
-	public abstract void attacStartScreenViewObserver(
-			IStartScreenViewObserver controller);
+	public abstract void attacStartScreenViewObserver(IStartScreenViewObserver controller);
 
 	//getters for change the theme
 	public abstract Font getFont();

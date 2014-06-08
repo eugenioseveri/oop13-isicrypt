@@ -7,10 +7,9 @@ import java.awt.Font;
 import java.io.IOException;
 
 /**
+ * Class that read from file a text that contain a enum ( in String form ) and set the corresponding theme
  * @author Filippo Vimini
  * Created 30/05/2014
- * 
- * Class that read from file a text that contain a enum ( in String form ) and set the corresponding theme
  */
 public class ThemeChooser {
 
@@ -23,7 +22,7 @@ public class ThemeChooser {
 	// Default foreground color of JButton
 	private static Color foregroundColor;
 	
-	public static enum Theme {
+	public static enum AvailableThemes {
 		WINTER_IS_COMING, NIGHTS_WATCH, FIRE_AND_BLOOD, OURS_IS_THE_FURY
 	}
 	
@@ -38,21 +37,21 @@ public class ThemeChooser {
 		} catch (IOException e) {
 			// Do nothing
 		}
-		if(name.equals(Theme.WINTER_IS_COMING.name())){
-			setGraphic(Theme.WINTER_IS_COMING);
+		if(name.equals(AvailableThemes.WINTER_IS_COMING.name())){
+			setGraphic(AvailableThemes.WINTER_IS_COMING);
 		}
-		else if(name.equals(Theme.FIRE_AND_BLOOD.name())){
-			setGraphic(Theme.FIRE_AND_BLOOD);
+		else if(name.equals(AvailableThemes.FIRE_AND_BLOOD.name())){
+			setGraphic(AvailableThemes.FIRE_AND_BLOOD);
 		}
-		else if(name.equals(Theme.NIGHTS_WATCH.name())){
-			setGraphic(Theme.NIGHTS_WATCH);
+		else if(name.equals(AvailableThemes.NIGHTS_WATCH.name())){
+			setGraphic(AvailableThemes.NIGHTS_WATCH);
 		}
-		else if(name.equals(Theme.OURS_IS_THE_FURY.name())){
-			setGraphic(Theme.OURS_IS_THE_FURY);
+		else if(name.equals(AvailableThemes.OURS_IS_THE_FURY.name())){
+			setGraphic(AvailableThemes.OURS_IS_THE_FURY);
 		}
 		//Default graphic
 		else{
-			setGraphic(Theme.NIGHTS_WATCH);
+			setGraphic(AvailableThemes.NIGHTS_WATCH);
 		}
 	}
 	/**
@@ -61,7 +60,7 @@ public class ThemeChooser {
 	 * @param theme enum that represent a String 
 	 * for choose the correspondent set of color and fort
 	 */
-	private void setGraphic(final Theme theme){
+	private void setGraphic(final AvailableThemes theme){
 		setFont(new Font("Verdana",Font.BOLD, 12));
 		switch (theme){
 		case NIGHTS_WATCH:

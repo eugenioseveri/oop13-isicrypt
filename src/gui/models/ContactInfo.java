@@ -1,10 +1,9 @@
 package gui.models;
+
 /**
- * 
+ * Class that store info about contact for client/server
  * @author Filippo
- *Created 10/05/2014
- *
- *Class that store info about contact for client/server
+ * Created 10/05/2014
  */
 public class ContactInfo {
 	private String name;

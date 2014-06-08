@@ -1,8 +1,8 @@
 package gui.controllers;
+
 /**
- * 
- * @author Filippo Vimini
  * General Interface for implement show start button
+ * @author Filippo Vimini
  */
 public interface IGeneralViewObserver {
 	/**
