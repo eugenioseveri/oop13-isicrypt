@@ -37,7 +37,5 @@ public interface ISteganography {
 	 * @return
 	 * @throws IOException 
 	 */
-	public File stegaForClient(File rawImage, String extension, String text)
-			throws IOException, SecurityException;
-
+	File stegaForClient(File rawImage, String extension, String text) throws IOException, SecurityException;
 }

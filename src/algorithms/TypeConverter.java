@@ -25,17 +25,17 @@ public class TypeConverter {
 	 * @return	byte[]
 	 * @throws IOException 
 	 */
-	public static byte[] fileToByte(File file) throws IOException, FileNotFoundException{	
+	public static byte[] fileToByte(final File file) throws IOException, FileNotFoundException {	
 		//Create Buffer in/out for read and write the file
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		FileInputStream filebufferInput = new FileInputStream(file);		
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		final FileInputStream filebufferInput = new FileInputStream(file);		
 		//write byte after byte of file on byte[]
 		int variable = 0;
 		while((variable = filebufferInput.read()) != -1){
 			baos.write(variable);
 		}
 		//Write byte[] of buffer on normal byte[]
-		byte[] fileArray = baos.toByteArray();
+		final byte[] fileArray = baos.toByteArray();
 		if(baos != null){
 			baos.close();
 		}
@@ -123,7 +123,7 @@ public class TypeConverter {
 		final BufferedInputStream bis = new BufferedInputStream(inputStream);
 		final String nomeTemp = name;
 		final String tempExtension = extension;
-		File tempFile = File.createTempFile(nomeTemp, tempExtension);
+		final File tempFile = File.createTempFile(nomeTemp, tempExtension);
 		tempFile.deleteOnExit();
         final FileOutputStream out = new FileOutputStream(tempFile);
         IOUtils.copy(bis, out);

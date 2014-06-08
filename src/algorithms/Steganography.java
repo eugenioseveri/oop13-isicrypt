@@ -24,30 +24,30 @@ import algorithms.interfacesandabstractclasses.ISteganography;
 
 public class Steganography implements ISteganography {
 
-	private static BufferedImage image = null;
+	private static BufferedImage image;
 
 	@Override
-	public void messageEncrypter(File rawImage, String extension, String text) throws IOException, IllegalArgumentException{
+	public void messageEncrypter(final File rawImage, final String extension, final String text) throws IOException, IllegalArgumentException{
 		//insert the file in buffer
 		image = fileToBufferedImage(rawImage);
 		//add the text in buffer
 		image = messageAdder(image, text);
 		//Choose the destination folder
-		String newName = FilenameUtils.removeExtension(rawImage.getName());
-		String fileName = new OpenButtons().fileChooser(Theme.DIRECTORY)+"/Stega_"+newName+".png";
-		File savier = new File(fileName);
+		final String newName = FilenameUtils.removeExtension(rawImage.getName());
+		final String fileName = new OpenButtons().fileChooser(Theme.DIRECTORY)+"/Stega_"+newName+".png";
+		final File savier = new File(fileName);
 		ImageIO.write(image, extension, savier);
 	}
 
 	@Override
-	public String messageFinder(File rawImage) throws IOException{
+	public String messageFinder(final File rawImage) throws IOException{
 		byte[] hiddenMessage;
 		//insert the file in buffer
 		image = fileToBufferedImage(rawImage);
 		//Convert image to raster
 		image = imageAnalizer( image );
 		//Convert raster to byte[] for search the message
-		byte[] imageByte = bufferImageToByteArray(image);
+		final byte[] imageByte = bufferImageToByteArray(image);
 		//try to find a message on image
 		hiddenMessage = textFinder(imageByte);
 		if(hiddenMessage == null || StringUtils.isBlank(new String(hiddenMessage)))return null;
@@ -55,7 +55,7 @@ public class Steganography implements ISteganography {
 	}
 
 	@Override
-	public File stegaForClient(File rawImage, String extension, String text) throws IOException, SecurityException, IllegalArgumentException{
+	public File stegaForClient(final File rawImage, final String extension, final String text) throws IOException, SecurityException, IllegalArgumentException{
 		// convert File to buffer and add text
 		image = fileToBufferedImage(rawImage);
 		try{
@@ -63,10 +63,9 @@ public class Steganography implements ISteganography {
 		}catch(IllegalArgumentException e ){
 			throw e;
 		}
-		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(rawImage));
+		final BufferedInputStream bis = new BufferedInputStream(new FileInputStream(rawImage));
 		//Create temp file, because save file is not necessary
-		File temp = TypeConverter.bufferedInputTOtempFile(bis, rawImage.getName(), ".png");
-		return temp;
+		return TypeConverter.bufferedInputTOtempFile(bis, rawImage.getName(), ".png");
 	}
 	/**
 	 * This method take in input a buffer that contains an image and a text, then convert in byte[] and join them, 
@@ -76,7 +75,7 @@ public class Steganography implements ISteganography {
 	 * @param text				String that represent the text that will be hidden in the image
 	 * @return	BufferImage		Buffer that contains the image with hidden text
 	 */
-	private static BufferedImage messageAdder( BufferedImage image, String text )throws IllegalArgumentException{
+	private static BufferedImage messageAdder(final BufferedImage image, final String text) throws IllegalArgumentException{
 		//number that represent the star byte of the message
 		final int DIMENSIONSTART = 0;
 		//number that represent the star byte of the message length
@@ -107,7 +106,7 @@ public class Steganography implements ISteganography {
 		}
 		//loop long all message, that it is the length of offset or the length of text
 		for( int i=0; i < text.length; i++ ){
-			int code = text[i];
+			final int code = text[i];
 			/*This "for" make the right shit of all bits and save int the less significant in the image,
 			 * it's start from 7, not from because it will save a lot of operations.
 			 */
@@ -127,11 +126,11 @@ public class Steganography implements ISteganography {
 	 * @param image	
 	 * @return
 	 */
-	private byte[] textFinder(byte[]image){
+	private byte[] textFinder(final byte[]image){
 		int length = 0; 
 		int offset = 32;
 		//if the number is more than int there is an error
-		int intMaxDimension = 2147483647;
+		final int intMaxDimension = 2147483647;
 		for( int i = 0; i < 32; i++){
 			length = (length << 1) | (image[i] & 1 ); 
 			if(length >= intMaxDimension || length < 0)throw new IllegalArgumentException("Hidden file not found in the image");
@@ -151,7 +150,7 @@ public class Steganography implements ISteganography {
 	 * @param originalImage		BufferedImage that contain the image
 	 * @return BufferedImage
 	 */
-	private BufferedImage imageAnalizer( BufferedImage originalImage){
+	private BufferedImage imageAnalizer(final BufferedImage originalImage){
 		/*Create a new buffer with specific information and raster of the selected image, choosing TYPE_3BYTE_BRG for better 8bit
 		 * shift operation in "encode" function*/
 		final BufferedImage rasterImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
@@ -169,9 +168,8 @@ public class Steganography implements ISteganography {
 	 * @return BufferedImage
 	 * @throws IOException 
 	 */
-	private static BufferedImage fileToBufferedImage( final File rawImage ) throws IOException{
-		 BufferedImage imageBuffer = ImageIO.read(rawImage);
-		return imageBuffer;
+	private static BufferedImage fileToBufferedImage(final File rawImage) throws IOException{
+		return ImageIO.read(rawImage);
 	}
 	/**
 	 * Convert a BufferedImage to byte[]

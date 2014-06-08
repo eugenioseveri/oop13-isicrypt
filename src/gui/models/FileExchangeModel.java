@@ -29,7 +29,7 @@ public class FileExchangeModel implements IFileExchangeModel {
 	}
 	
 	@Override
-	public void setContactInfo(ContactInfo setContact){
+	public void setContactInfo(final ContactInfo setContact){
 		contactTemp = setContact;
 	}
 	

@@ -114,7 +114,7 @@ public abstract class AbstractGuiMethodSetter extends JFrame {
 	 * @param originalImage
 	 * @return BufferedImage
 	 */
-	private static BufferedImage getResizedImage(BufferedImage originalImage, int maxWidth, int maxHeight){
+	private static BufferedImage getResizedImage(final BufferedImage originalImage, final int maxWidth, final int maxHeight){
 
 		int width = originalImage.getWidth();
 		int height = originalImage.getHeight();

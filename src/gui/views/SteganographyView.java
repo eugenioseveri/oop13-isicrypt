@@ -40,34 +40,32 @@ public class SteganographyView extends AbstractGuiMethodSetter implements IStega
 	private static final String APPLICATION_ICON = "isiCryptICON_MetroStyle.jpg";
 	//Color and Fond take from file
 	private Font font;
-	private Color panelBackColor;
 	private Color buttonColor;
 	private Color foregroundColor;
 	//is used in StartScreenView for check if frame is open
-	private static boolean isOpen = false;
+	private static boolean isOpen; // Default=false
 	// Arrays that contains various dimension of insets
 	private final int insetsDefault[] = { 10, 10, 10, 10 };
 	private final int insetsZero[] = { 0, 0, 0, 0 };
 	private final int insetsTextButton[] = { 0, 0, 10, 10 };
 	private final int backInsets []= { 10, 0, 10, 10 };
 	//Position and dimension of element
-	private final int xPosition = 0;
-	private final int yPosition = 0;
-	private final int resizable = 1;
-	private final int noResizable = 0;
-	private final int defaultCellArea = 1;
-	private final int zeroIpad = 0;
-	private final int ipadDefaultx = 10;
-	private final int ipadDefaulty = 30;
-	private ImageIcon icon = null;
-	private final String STEGANOGRAPHY_BACKGROUND = "SteganographyDefaultIcon.jpg";
+	private static final int xPosition = 0;
+	private static final int yPosition = 0;
+	private static final int resizable = 1;
+	private static final int noResizable = 0;
+	private static final int defaultCellArea = 1;
+	private static final int zeroIpad = 0;
+	private static final int ipadDefaultx = 10;
+	private static final int ipadDefaulty = 30;
+	private static final String STEGANOGRAPHY_BACKGROUND = "SteganographyDefaultIcon.jpg";
 	private final int buttonFill = GridBagConstraints.BOTH;
 	private final int buttonAnchor = GridBagConstraints.CENTER;
-	private final int iconHeigth = 480;
-	private final int iconWidth = 640;
-	private final int textAreaYdimension = 100;
+	private static final int iconHeigth = 480;
+	private static final int iconWidth = 640;
+	private static final int textAreaYdimension = 100;
 	private final Dimension dim = new Dimension(0,textAreaYdimension);
-	GridBagConstraints limit;
+	private GridBagConstraints limit;
 	//Graphic Element initialization
 	private final JButton backButton = new JButton("Show Start");
 	private final JButton selectImageButton = new JButton("Select image");
@@ -90,6 +88,7 @@ public class SteganographyView extends AbstractGuiMethodSetter implements IStega
 	private ISteganographyViewObserver controller;
 
 	public SteganographyView() {
+		super();
 		buildLayout();
 		componentSettings();
 		setHandlers();
@@ -97,7 +96,7 @@ public class SteganographyView extends AbstractGuiMethodSetter implements IStega
 	}
 
 	@Override
-	public void attackSteganographyViewObserver(ISteganographyViewObserver controller) {
+	public void attackSteganographyViewObserver(final ISteganographyViewObserver controller) {
 		this.controller = controller;
 	}
 	/**
@@ -105,10 +104,11 @@ public class SteganographyView extends AbstractGuiMethodSetter implements IStega
 	 * and set the layout
 	 */
 	private void buildLayout() {
-		buttonColor = (ThemeChooser.getButtonColor());
-		font = (ThemeChooser.getFont());
-		foregroundColor = (ThemeChooser.getForegroundColor());
-		panelBackColor = (ThemeChooser.getPanelBackColor());
+		Color panelBackColor;
+		buttonColor = ThemeChooser.getButtonColor();
+		font = ThemeChooser.getFont();
+		foregroundColor = ThemeChooser.getForegroundColor();
+		panelBackColor = ThemeChooser.getPanelBackColor();
 		//set layout
 		final GridBagLayout layout = new GridBagLayout();
 		limit = new GridBagConstraints();
@@ -120,20 +120,20 @@ public class SteganographyView extends AbstractGuiMethodSetter implements IStega
 	 */
 	private void setFrame() {	
 		//new frame created in this method because it will be re-draw every time a new frame is needed
-		JFrame frame = new JFrame();
+		final JFrame frame = new JFrame();
 		try {
 			frame.setIconImage(ImageIO.read(ClassLoader.getSystemResourceAsStream(APPLICATION_ICON)));
 		} catch (IOException e) {
-			e.printStackTrace();
+			// This exception can not occur since APPLICATION_ICON is built-in
 		}
-		WindowAdapter listener = new WindowAdapter() {
+		final WindowAdapter listener = new WindowAdapter() {
 
 	        @Override
-	        public void windowOpened(WindowEvent e) {
+	        public void windowOpened(final WindowEvent e) {
 	        	SteganographyView.setOpen(true);	        }
 
 	        @Override
-	        public void windowClosing(WindowEvent e) {
+	        public void windowClosing(final WindowEvent e) {
 	            SteganographyView.setOpen(false);
 	            StartScreenView.redraw();
 	        }
@@ -180,14 +180,15 @@ public class SteganographyView extends AbstractGuiMethodSetter implements IStega
 		setGridposition(limit, xPosition+3, yPosition, defaultCellArea, defaultCellArea+6,
 				resizable, resizable, container, fillerSecond);	
 		// JLabel ICON LABEL
+		ImageIcon icon = null;
 		try { 
-			BufferedImage defaultStartimage = ImageIO.read(ClassLoader.getSystemResourceAsStream(STEGANOGRAPHY_BACKGROUND));
+			final BufferedImage defaultStartimage = ImageIO.read(ClassLoader.getSystemResourceAsStream(STEGANOGRAPHY_BACKGROUND));
 			icon = iconOptimizer(iconLabel, defaultStartimage, iconHeigth, iconWidth);
 		} catch (IOException e) {
 			optionPane(e);
 		}
 		iconLabel.setIcon(icon);
-		int insetsIcon[] = { 20, 10, 10, 10 };
+		final int insetsIcon[] = { 20, 10, 10, 10 };
 		iconLabel.setMinimumSize(iconLabel.getPreferredSize());
 		setLimit(limit, zeroIpad, zeroIpad, insetsIcon, 
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, iconLabel);
@@ -251,43 +252,43 @@ public class SteganographyView extends AbstractGuiMethodSetter implements IStega
 		backButton.addActionListener(new ActionListener() {
 			
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				((SteganographyController) controller).showStart();
 			}
 		});
 		// Select image button handlers
 		selectImageButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				controller.selectImage();
 			}
 		});
 		// Select text button handlers
 		selectTextButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				controller.selectText();
 			}
 		});
 		// Start button handlers
 		startButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				controller.start();
 			}
 		});
 		// Find text button handlers
 		findTextButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				controller.findText();
 			}
 		});
 		// Clear setting button handlers
 		clearSettingsButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				controller.clearSetting();
 			}
 		});
 		// Insert text button handlers
 		insertTextButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				controller.insertText();
 			}
 		});
@@ -295,7 +296,7 @@ public class SteganographyView extends AbstractGuiMethodSetter implements IStega
 
 	//return the dialog for show the error 
 	@Override
-	public void optionPane( Object error ){
+	public void optionPane(final Object error ){
 		if(error instanceof Exception){
 			JOptionPane.showMessageDialog(dialog, error);
 		}
@@ -341,7 +342,7 @@ public class SteganographyView extends AbstractGuiMethodSetter implements IStega
 	public JFrame getDialog() {
 		return dialog;
 	}
-	private static void setOpen(boolean isOpen) {
+	private static void setOpen(final boolean isOpen) {
 		SteganographyView.isOpen = isOpen;
 	}
 	

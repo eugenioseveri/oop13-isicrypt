@@ -2,7 +2,6 @@ package gui.models;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -21,16 +20,12 @@ import algorithms.AES;
 public class KeyringModel extends HashSet<Triple<String, String, String>> implements IKeyringModel, Serializable {
 
 	private static final long serialVersionUID = -4180040339126413292L;
-	
-	/*public KeyringModel() {
-		super();
-	}*/
 
 	@Override
 	public void saveData(final OutputStream outputFile, final byte[] aesKey) throws IOException, InvalidKeyException {
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		final ObjectOutputStream oos = new ObjectOutputStream(baos);
-		oos.writeObject(this); // TODO: crash se l'hashset non è vuoto
+		oos.writeObject(this);
 		oos.flush();
 		oos.close();
 		final ByteArrayInputStream is = new ByteArrayInputStream(baos.toByteArray());
@@ -61,6 +56,12 @@ public class KeyringModel extends HashSet<Triple<String, String, String>> implem
 	@Override
 	public void removeItem(final String host, final String username, final String password) {
 		this.remove(new Triple<String, String, String>(host, username, password));
+	}
+
+	@Override
+	public boolean contains(String host, String username, String password) {
+		Triple<String, String, String> item = new Triple<String, String, String>(host, username, password);
+		return super.contains(item);
 	}
 	
 }

@@ -17,10 +17,12 @@ import java.io.*;
 
 public class SocketClient {
 	//initialization of class field
-	private AES aesEncryptor = null;
-	private Socket client = null;
-	private String host = null;
-	private String clientName = "UserClientDefault";
+	private AES aesEncryptor;
+	private Socket client;
+	private final static int PORT = 19999;
+	private final static int DEFAULT_AES_KEY_SIZE = 128;
+	final private String host;
+	final private String clientName = "UserClientDefault";
 	
 	private IFileExchangeViewObserver controller;
 
@@ -43,8 +45,8 @@ public class SocketClient {
 	 * @throws IOException					General I/O problem
 	 */
 	
-	public SocketClient(final ContactInfo contact, final InputStream fileStream, final String name, final IFileExchangeViewObserver controllerObserver) throws InvalidKeyException, NoSuchAlgorithmException,
-	InvalidKeySpecException, IOException {
+	public SocketClient(final ContactInfo contact, final InputStream fileStream, final String name, final IFileExchangeViewObserver controllerObserver)
+			throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, IOException {
 		attacFileExchangeViewObserve(controllerObserver);
 		byte[] clientNameByte;
 		//set Host
@@ -82,8 +84,8 @@ public class SocketClient {
 	 * 										to produce a public key.
 	 * @throws IOException					General I/O problem
 	 */
-	public SocketClient(final ContactInfo contact, final String text, final IFileExchangeViewObserver controllerObserver) throws InvalidKeyException, 
-	NoSuchAlgorithmException, InvalidKeySpecException, IOException{
+	public SocketClient(final ContactInfo contact, final String text, final IFileExchangeViewObserver controllerObserver)
+			throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, IOException {
 		attacFileExchangeViewObserve(controllerObserver);
 		byte[] clientNameByte;
 		/*initialize a string that will be used from server
@@ -150,11 +152,11 @@ public class SocketClient {
 			final ByteArrayOutputStream out  = new ByteArrayOutputStream();
 			int counter;
 	    	try {
-				while ( (counter = inStream.read()) != -1) {
+				while ((counter = inStream.read()) != -1) {
 				    out.write(counter);
 				}
 			} catch (IOException e) {
-				throw new IOException(e);
+				throw e;
 			}		
 			//new RSA for encrypt AES key
 	    	final RSA aesKeyEncryptor = new RSA();
@@ -172,9 +174,9 @@ public class SocketClient {
 	    	}
 			//initialize new AES
 			aesEncryptor = new AES();
-			//Generate 128bit key
+			//Generate a DEFAULT_AES_KEY_SIZE bits long key
 			try{
-				aesEncryptor.generateKey(128);
+				aesEncryptor.generateKey(DEFAULT_AES_KEY_SIZE);
 				//Create new key from Public Server's key
 				final byte[] key = aesEncryptor.getSymmetricKeySpec().getEncoded();
 				//Create new byte[] with decode key for send it on server
@@ -259,11 +261,10 @@ public class SocketClient {
 	 * @throws IOException    I/O problem when try to create a Socket or InetAddress
 	 */
 	private void getConnection() throws IOException{
-		final int port = 19999;
 		//New InetAddress from host passed to client
 		try {
 			final InetAddress address = InetAddress.getByName(host);
-			client = new Socket(address, port);
+			client = new Socket(address, PORT);
 		} catch (UnknownHostException e){
 			//Override original track
 			throw new UnknownHostException("no IP address for the host could be found");

@@ -21,7 +21,7 @@ import static algorithms.ErrorMessages.*;
 public class GlobalSettings implements Serializable {
 
 	transient private final static String USER_HOME_PATH = System.getProperty("user.home") + "/isicrypt";
-	transient private final static String SETTINGS_FILE_PATH = USER_HOME_PATH + "/globalsettings.dat"; // TODO: Funziona multipiattaforma?
+	transient private final static String SETTINGS_FILE_PATH = USER_HOME_PATH + "/globalsettings.dat";
 	private static final long serialVersionUID = -3375259654271655816L;
 	private String defaultTheme = "NIGHTS_WATCH";
 	

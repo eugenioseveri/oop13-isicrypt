@@ -25,18 +25,18 @@ public class SteganographyController implements ISteganographyViewObserver, IGen
 
 	private static ISteganographyView view;
 	//Contains the selected image. Used like ICON.
-	private File imageIcon = null;
+	private File imageIcon;
 	//Contains the selected image.
-	private File imageChoosen = null;
+	private File imageChoosen;
 	//String that contains the path of default icon;
-	private final String STEGANOGRAPHY_BACKGROUND = "SteganographyDefaultIcon.jpg";
+	private final static String STEGANOGRAPHY_BACKGROUND = "SteganographyDefaultIcon.jpg";
 	//Set dimension of resized image
-	private final int iconHeigth = 480;
-	private final int iconWidth = 640;
-	private String textDefault = null;
+	private final static int iconHeigth = 480;
+	private final static int iconWidth = 640;
+	private String textDefault;
 	
 	@Override
-	public void setView(ISteganographyView view){
+	public void setView(final ISteganographyView view){
 		SteganographyController.view = view;
 		SteganographyController.view.attackSteganographyViewObserver(this);
 	}
@@ -94,15 +94,14 @@ public class SteganographyController implements ISteganographyViewObserver, IGen
 				view.getIconLabel().
 					setIcon(AbstractGuiMethodSetter.iconOptimizer(view.getIconLabel(), ImageIO.read(iconFinder), iconHeigth, iconWidth));
 				 //String that contains the extract text for image
-				String textBorrowed = new Steganography().messageFinder(iconFinder);
+				final String textBorrowed = new Steganography().messageFinder(iconFinder);
 				if(view.getTextArea() != null){
 					view.getTextArea().setText("");
 				}
-				if(textBorrowed != null){
-					view.getTextArea().append(textBorrowed);
-				}
-				else{
+				if(textBorrowed == null){
 					view.optionPane("Message not found");
+				} else{
+					view.getTextArea().append(textBorrowed);
 				}
 				//Change button status
 				(view.getStartButton()).setEnabled(false);

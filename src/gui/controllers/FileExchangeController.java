@@ -61,7 +61,11 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 
 	@Override
 	public void selectFile() {
-		if(searchContact(model.getContactInfo())!= null){	
+		if(searchContact(model.getContactInfo())== null) {
+			view.optionPanel("select contact");
+			
+		}
+		else {
 			final File fileTemp = new OpenButtons().fileChooser(Theme.GENERIC_FILE);
 			FileInputStream streamTemp = null;
 			try {
@@ -71,12 +75,14 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 			}
 			socketClientSend(model.getContactInfo(), streamTemp, fileTemp.getName());
 		}
-		else view.optionPanel("select contact");
 	}
 
 	@Override
 	public void stegaImage() {
-		if(searchContact(model.getContactInfo())!= null){
+		if(searchContact(model.getContactInfo())== null){
+			view.optionPanel("select contact");
+		}
+		else {
 			final File imageTemp = new OpenButtons().fileChooser(Theme.IMAGE);
 			final File textTemp = new OpenButtons().fileChooser(Theme.TEXT);
 			if(imageTemp!= null && textTemp != null){
@@ -96,12 +102,14 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 				}
 			}
 		}
-		else view.optionPanel("select contact");
 	}
 
 	@Override
 	public void selectCompressedFile() {
-		if(searchContact(model.getContactInfo())!= null){
+		if(searchContact(model.getContactInfo())== null){
+			view.optionPanel("select contact");
+		}
+		else {
 			final File tempFile = new OpenButtons().fileChooser(Theme.GENERIC_FILE);
 			final ByteArrayOutputStream outByteBuffer = new ByteArrayOutputStream();
 			ByteArrayInputStream inByteBuffer = null;
@@ -119,13 +127,12 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 			}
 			socketClientSend(model.getContactInfo(), inByteBuffer, tempFile.getName()+".Gzip");
 		}
-		else view.optionPanel("select contact");
 	}
 
 	@Override
 	public void selectContact() {
 		view.getContactTable().addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent event) {
+			public void mouseClicked(final MouseEvent event) {
 			      if (event.getClickCount() == 2){
 				    	final Point p = event.getPoint();
 				    	final int row = view.getContactTable().rowAtPoint(p);
@@ -165,7 +172,7 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 	public void deleteContact() {
 		final int selectedRow = view.getContactTable().getSelectedRow();
 		if(selectedRow != -1) {
-			TableModel getTableModel = tableBuilder();
+			final TableModel getTableModel = tableBuilder();
 			final String host = (String) getTableModel.getValueAt(selectedRow, 0);
 			final String name = (String)getTableModel.getValueAt(selectedRow, 1);
 			model.getContactList().remove(host, name);
@@ -193,7 +200,7 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 			view.optionPanel("none text entered");
 		}
 		else {
-			String textTemp = view.getChattextarea().getText();
+			final String textTemp = view.getChattextarea().getText();
 			socketClientSend(model.getContactInfo(), null, textTemp);
 			view.getChattextarea().setText("");
 		}		
@@ -218,15 +225,16 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 		final DefaultTableModel tableModel = new DefaultTableModel( new Object[] { "Host", "Name" }, 0 ){
 			private static final long serialVersionUID = 737530902377505148L;
 			//set the cell non editable, read only table
-			public boolean isCellEditable(int row, int column){ 
+			public boolean isCellEditable(final int row, final int column){ 
 				return false;
 			}
 		};
 		try {
 			model.loadContacts(new File(EXCHANGESETTINGS));
 		}
-		//Not visible to the user
-		catch (FileNotFoundException e) {} 
+		catch (FileNotFoundException e) {
+			//Not visible to the user
+		} 
 		  catch (ClassNotFoundException e) {
 			view.optionPanel(e);
 		} catch (IOException e) {
@@ -239,7 +247,7 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 	}
 
 	@Override
-	public void textApendClient(String text){
+	public void textApendClient(final String text){
 	//	JTextArea area = view.getVisualtextarea();
 		final String append = "\nYOU\n			"+text;
 		view.getVisualtextarea().append(append);
@@ -263,7 +271,7 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 	/*Public because is used even when the FileExchange 
 	 *is closed (bugFix for closure after contact selection)*/
 	@Override
-	public void setEnableButton(boolean state){
+	public void setEnableButton(final boolean state){
 		view.getScrollpanetable().setVisible(!state);
 		view.getScrollpanetable().setEnabled(!state);
 		view.getScrollpanevisual().setVisible(state);
@@ -278,7 +286,7 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 	}
 	
 	@Override
-	public void setProgressbar(int value){
+	public void setProgressbar(final int value){
 		view.setSendprogress(value);
 	}
 	/**

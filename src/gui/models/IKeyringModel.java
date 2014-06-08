@@ -45,4 +45,6 @@ public interface IKeyringModel {
 	 * @return The current element
 	 */
 	java.util.Iterator<Triple<String, String, String>> iterator();
+	
+	boolean contains(String host, String username, String password);
 }

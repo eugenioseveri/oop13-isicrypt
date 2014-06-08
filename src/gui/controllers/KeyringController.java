@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.security.InvalidKeyException;
-
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -39,6 +38,7 @@ public class KeyringController implements IKeyringViewObserver, IGeneralViewObse
 	private final static String EMPTY_RECORD_MESSAGE = "You cannot enter an empty line!";
 	private final static String ERROR_WHILE_SAVING = "An error has occurred while saving data!";
 	private final static String ERROR_WHILE_LOADING = "An error has occurred while loading data!";
+	private final static String ALREADY_EXISTING_ITEM = "This item has already been added!";
 	private final static String[] TABLE_COLUMNS_NAMES = {"Host name", "Username", "Password"};
 	private final static String USER_HOME_PATH = System.getProperty("user.home") + "/isicrypt"; //TODO: duplicato in più classi
 	private final static String KEYRING_FILE_PATH = USER_HOME_PATH + "/keyring.dat";
@@ -78,9 +78,6 @@ public class KeyringController implements IKeyringViewObserver, IGeneralViewObse
 				this.view.showMessageDialog(WRONG_KEYSIZE_ERROR);
 			}
 		}
-		if(this.aesKey == null) {
-			//TODO: chiudere il keyring
-		}
 	}
 
 	@Override
@@ -95,8 +92,12 @@ public class KeyringController implements IKeyringViewObserver, IGeneralViewObse
 		final String user = this.view.showInputDialog("Username", "Enter username:");
 		final String pass = this.view.showInputDialog("Password", "Enter password:");
 		if(host != null && user != null && pass != null) {
-			this.model.addItem(host, user, pass);
-			this.view.getTable().setModel(this.tableBuilder()); // TODO: controllare che non sia un duplicato
+			if(this.model.contains(host, user, pass)) {
+				this.view.showMessageDialog(ALREADY_EXISTING_ITEM);
+			} else {
+				this.model.addItem(host, user, pass);
+				this.view.getTable().setModel(this.tableBuilder());
+			}
 		} else {
 			this.view.showMessageDialog(EMPTY_RECORD_MESSAGE);
 		}
@@ -208,10 +209,10 @@ public class KeyringController implements IKeyringViewObserver, IGeneralViewObse
 	 * @return A new table model, used to store data for the JTable in the view
 	 */
 	private TableModel tableBuilder(){
-		final DefaultTableModel tableModel = new DefaultTableModel(TABLE_COLUMNS_NAMES, 0 ){ //TODO: forse il problema è che viene creato sempre nuovo?
+		final DefaultTableModel tableModel = new DefaultTableModel(TABLE_COLUMNS_NAMES, 0 ){
 			private static final long serialVersionUID = 737530902377505148L;
 			public boolean isCellEditable(final int row, final int column){
-				return false;
+				return false; // Sets the table as not editable
 			}
 		};
 		for(Triple<String, String, String> entry: (KeyringModel)this.model) {

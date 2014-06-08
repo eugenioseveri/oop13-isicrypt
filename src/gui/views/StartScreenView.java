@@ -51,12 +51,13 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 	//Initialize GUI view observer
 	private IStartScreenViewObserver controller;
 	
-	public void attacStartScreenViewObserver(IStartScreenViewObserver controller){
+	public void attacStartScreenViewObserver(final IStartScreenViewObserver controller){
 		this.controller = controller;
 	}
 	
 	public StartScreenView(){
-		StartScreenController controller = new StartScreenController();
+		super();
+		final StartScreenController controller = new StartScreenController();
 		controller.setView(this);
 		buildLayout();
 		componentSetting();
@@ -67,12 +68,12 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 	private static void buildLayout() {
 		//set all graphic parameters
 		new ThemeChooser();
-		dialog.getContentPane().setBackground(panelBackColor);;
-		buttonColor = (ThemeChooser.getButtonColor());
-		font = (ThemeChooser.getFont());
-		foregroundColor = (ThemeChooser.getForegroundColor());
-		panelBackColor = (ThemeChooser.getPanelBackColor());
-		GridBagLayout layout = new GridBagLayout();
+		dialog.getContentPane().setBackground(panelBackColor);
+		buttonColor = ThemeChooser.getButtonColor();
+		font = ThemeChooser.getFont();
+		foregroundColor = ThemeChooser.getForegroundColor();
+		panelBackColor = ThemeChooser.getPanelBackColor();
+		final GridBagLayout layout = new GridBagLayout();
 		limit = new GridBagConstraints();
 		container.setLayout(layout);
 		container.setBackground(panelBackColor);
@@ -162,32 +163,32 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 		//select CRYPTOGRAPHY
 		cryptography.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				controller.selectCryptography();
 			}
 		});
 		//select STEGANOGRAPHY
 		steganography.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				controller.selectSteganography();
 			}
 		});
 		keyring.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				controller.selectKeyring();
 			}
 		});
 		fileExchange.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				controller.selectFileExchange();
 			}
 		});
 		theme.addActionListener(new ActionListener(	) {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				controller.selectTheme();
 				
 			}

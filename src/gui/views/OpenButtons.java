@@ -9,19 +9,20 @@ import javax.swing.JFileChooser;
 import javax.swing.JPanel;	//need for the interface that select the file
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-
+/**
+ * 
+ * @author Filippo
+ *Enum that represent the theme that the user can set
+ */
 public class OpenButtons extends JPanel{
-	/**
-	 * 
-	 * @author Filippo
-	 *Enum that represent the theme that the user can set
-	 */
+
+	private static final long serialVersionUID = 1L;
+	private final JFileChooser selectFile = new JFileChooser();
+	
 	public static enum Theme {
 		GENERIC_FILE, IMAGE, TEXT, DIRECTORY;
 	}
-	private static final long serialVersionUID = 1L;
 	
-	JFileChooser selectFile = new JFileChooser();
 	/**
 	 * Switch from enum for choose the correct file to open from file system
 	 *  and return the selected file on file system 
@@ -29,7 +30,7 @@ public class OpenButtons extends JPanel{
 	 * @param themes 		enum to be checked
 	 * @return File			selected file
 	 */
-	public File fileChooser(Theme themes) {
+	public File fileChooser(final Theme themes) {
 			selectFile.setAcceptAllFileFilterUsed(false);			
 		switch( themes ){
 		case IMAGE: 	
@@ -43,6 +44,7 @@ public class OpenButtons extends JPanel{
 		case DIRECTORY: 
 			selectFile.setDialogTitle("select Folder");
 			selectFile.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			break;
 		case GENERIC_FILE:
 			selectFile.setAcceptAllFileFilterUsed(true);		
 			break;

@@ -6,8 +6,10 @@ import gui.views.StartScreenView;
 
 public class Main {
 
+	private static final String appId = "isiCrypt07062014";
+	
 	public static void main(String[] args) {
-		final String appId = "isiCrypt07062014";
+		
 		boolean alreadyRunning;
 		try {
 			JUnique.acquireLock(appId);
@@ -16,8 +18,7 @@ public class Main {
 			alreadyRunning = true;
 		}
 		if (!alreadyRunning) {
-			@SuppressWarnings("unused")
-			StartScreenView view = new StartScreenView();
+			new StartScreenView();
 		}
 	}
 

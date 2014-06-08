@@ -7,8 +7,8 @@ package gui.models;
  *Class that store info about contact for client/server
  */
 public class ContactInfo {
-	String name = null;
-	String host = null; 
+	private String name;
+	private String host; 
 	
 	public ContactInfo(final String name, final String host){
 		this.name = name;

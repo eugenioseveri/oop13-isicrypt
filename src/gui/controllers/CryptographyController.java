@@ -41,6 +41,8 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 	private final static String TEMP_CIPHER_FILE_NAME = TEMP_DIRECTORY + "/tempCipherFile.tmp";
 	private final static String TEMP_COMPRESSION_FILE_NAME = TEMP_DIRECTORY + "/tempCompressionFile.tmp";
 	private final static String TEMP_PAYLOAD_FILE_NAME = TEMP_DIRECTORY + "/tempPayloadExtracted.tmp";
+	private final static int DEFAULT_AES_KEY_SIZE = 128;
+	private final static int DEFAULT_RSA_KEY_SIZE = 2048;
 	private File tempFileToEncrypt;
 	private File tempPublicKeyFile;
 	private File tempFileToDecrypt;
@@ -79,7 +81,7 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 	public void command_GenerateNewKeyPair() {
 		final RSA newRSA = new RSA();
 		try {
-			newRSA.generateKeyPair(2048); // TODO: magic number
+			newRSA.generateKeyPair(DEFAULT_RSA_KEY_SIZE);
 		} catch (InvalidKeyException e) {
 			// This exceptions can not occur since key size is built-in
 		}
@@ -94,7 +96,6 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 		}
 	}
 	
-	//TODO: aggiungere commenti textarea
 	@Override
 	public void command_Encrypt() {
 		final File tempOutputFileEncrypt = new OpenButtons().fileChooser(Theme.GENERIC_FILE);
@@ -103,7 +104,7 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 			BufferedOutputStream tempCipherFile = null;
 			BufferedOutputStream tempCompressionFile = null;
 			ISymmetricCryptography newSymmetricCipher = null;
-			final IAsymmetricCryptography newRSA = new RSA(); // Only currrently supported asymmetric algorithm
+			final IAsymmetricCryptography newRSA = new RSA(); // Only currently supported asymmetric algorithm
 			ObjectInputStream streamPublicKeyFile = null;
 			this.view.getTextArea().setText(null);
 			try {
@@ -112,7 +113,7 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 				this.view.getTextArea().append("\nObjects initializazion completed.");
 				this.view.setValue_progressBarEncryption(5);
 				newSymmetricCipher = (ISymmetricCryptography)Class.forName("algorithms." + this.view.getSymmetricAlgorithm().name()).newInstance(); // Reflection
-				newSymmetricCipher.generateKey(128); // TODO: magic number
+				newSymmetricCipher.generateKey(DEFAULT_AES_KEY_SIZE);
 				newSymmetricCipher.encode(filetoencrypt, tempCipherFile);
 				this.view.setValue_progressBarEncryption(30);
 				this.view.getTextArea().append("\nThe "+ this.view.getSymmetricAlgorithm().name() + " algorithm has been instantiated.");

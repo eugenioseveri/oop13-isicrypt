@@ -6,17 +6,14 @@ import java.awt.Color;
 import java.awt.Font;
 import java.io.IOException;
 
+/**
+ * @author Filippo Vimini
+ * Created 30/05/2014
+ * 
+ * Class that read from file a text that contain a enum ( in String form ) and set the corresponding theme
+ */
 public class ThemeChooser {
-	/**
-	 * @author Filippo Vimini
-	 * Created 30/05/2014
-	 * 
-	 * Class that read from file a text that contain a enum ( in String form ) and set the corresponding theme
-	 */
-	public static enum FileTypes {
-		WINTER_IS_COMING, NIGHTS_WATCH, FIRE_AND_BLOOD, OURS_IS_THE_FURY
-	}
-	
+
 	// Default font of buttons
 	private static Font font;
 	// Default background JPanel color
@@ -25,6 +22,11 @@ public class ThemeChooser {
 	private static Color buttonColor;
 	// Default foreground color of JButton
 	private static Color foregroundColor;
+	
+	public static enum FileTypes {
+		WINTER_IS_COMING, NIGHTS_WATCH, FIRE_AND_BLOOD, OURS_IS_THE_FURY
+	}
+	
 	//Switch implementation
 	/**
 	 * Select the correct enum from file 
@@ -50,7 +52,7 @@ public class ThemeChooser {
 		}
 		//Default graphic
 		else{
-			setGraphic(FileTypes.NIGHTS_WATCH);;
+			setGraphic(FileTypes.NIGHTS_WATCH);
 		}
 	}
 	/**
@@ -107,19 +109,19 @@ public class ThemeChooser {
 		return foregroundColor;
 	}
 
-	public void setFont(Font font) {
+	public void setFont(final Font font) {
 		ThemeChooser.font = font;
 	}
 
-	public void setPanelBackColor(Color panelBackColor) {
+	public void setPanelBackColor(final Color panelBackColor) {
 		ThemeChooser.panelBackColor = panelBackColor;
 	}
 
-	public void setButtonColor(Color buttonColor) {
+	public void setButtonColor(final Color buttonColor) {
 		ThemeChooser.buttonColor = buttonColor;
 	}
 
-	public void setForegroundColor(Color foregroundColor) {
+	public void setForegroundColor(final Color foregroundColor) {
 		ThemeChooser.foregroundColor = foregroundColor;
 	}
 }
