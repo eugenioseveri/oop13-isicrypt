@@ -19,7 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-public class StartScreenView extends AbstractGuiMethodSetter{
+public class StartScreenView extends AbstractGuiMethodSetter implements IStartScreenView{
 	private static final long serialVersionUID = 4934353268761561329L;
 	private static final String APPLICATION_ICON = "isiCryptICON_MetroStyle.jpg";
 	private static Font font;
@@ -51,6 +51,10 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 	//Initialize GUI view observer
 	private IStartScreenViewObserver controller;
 	
+	/* (non-Javadoc)
+	 * @see gui.views.IStartScreenView#attacStartScreenViewObserver(gui.controllers.IStartScreenViewObserver)
+	 */
+	@Override
 	public void attacStartScreenViewObserver(final IStartScreenViewObserver controller){
 		this.controller = controller;
 	}
@@ -195,7 +199,8 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 		});
 	}
 	
-	//initialize again many method for draw the start screen
+	/*initialize again some method for draw the start screen, static because
+	is used by all the controller*/
 	public static void redraw() {
 		buildLayout();
 		componentSetting();
@@ -203,18 +208,22 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 	}
 	
 	//GETTERS 
+	@Override
 	public Font getFont() {
 		return font;
 	}
 
+	@Override
 	public Color getPanelBakColor() {
 		return panelBackColor;
 	}
 
+	@Override
 	public Color getButtonColor() {
 		return buttonColor;
 	}
-	
+
+	@Override
 	public Color getForegroundColor() {
 		return foregroundColor;
 	}

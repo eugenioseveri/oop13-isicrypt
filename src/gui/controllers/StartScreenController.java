@@ -11,6 +11,7 @@ import gui.models.KeyringModel;
 import gui.views.CryptographyView;
 import gui.views.FileExchangeView;
 import gui.views.IFileExchangeView;
+import gui.views.IStartScreenView;
 import gui.views.ISteganographyView;
 import gui.views.KeyringView;
 import gui.views.StartScreenView;
@@ -22,9 +23,9 @@ import gui.views.SteganographyView;
  */
 public class StartScreenController implements IStartScreenViewObserver{
 	
-	private static StartScreenView view;
+	private static IStartScreenView view;
 	
-	public void setView(final StartScreenView view){
+	public void setView(final IStartScreenView view){
 		StartScreenController.view = view;
 		StartScreenController.view.attacStartScreenViewObserver(this);
 	}
