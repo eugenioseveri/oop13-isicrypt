@@ -1,10 +1,7 @@
 package algorithms;
-/**
- * @author Filippo Vimini
- * created 08/04/2014
- */
+
 import gui.views.OpenButtons;
-import gui.views.OpenButtons.Theme;
+import gui.views.OpenButtons.FyleTypes;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -21,7 +18,12 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import algorithms.interfacesandabstractclasses.ISteganography;
-
+/**
+ * @author Filippo Vimini
+ * created 08/04/2014
+ * 
+ * Class for doing steganography of text in a image
+ */
 public class Steganography implements ISteganography {
 
 	private static BufferedImage image;
@@ -34,7 +36,7 @@ public class Steganography implements ISteganography {
 		image = messageAdder(image, text);
 		//Choose the destination folder
 		final String newName = FilenameUtils.removeExtension(rawImage.getName());
-		final String fileName = new OpenButtons().fileChooser(Theme.DIRECTORY)+"/Stega_"+newName+".png";
+		final String fileName = new OpenButtons().fileChooser(FyleTypes.DIRECTORY)+"/Stega_"+newName+".png";
 		final File savier = new File(fileName);
 		ImageIO.write(image, extension, savier);
 	}
@@ -73,7 +75,7 @@ public class Steganography implements ISteganography {
 	 * 
 	 * @param image				Buffer that contains image
 	 * @param text				String that represent the text that will be hidden in the image
-	 * @return	BufferImage		Buffer that contains the image with hidden text
+	 * @return Buffer that contains the image with hidden text
 	 */
 	private static BufferedImage messageAdder(final BufferedImage image, final String text) throws IllegalArgumentException{
 		//number that represent the star byte of the message
@@ -98,7 +100,7 @@ public class Steganography implements ISteganography {
 	 * @param image		byte[] that contains the raster of image
 	 * @param text		byte[] that contains the text in byte
 	 * @param offset	Integer that represent the offset on message start
-	 * @return	image	byte[] that contains the image with text hidden
+	 * @return contains the image with text hidden
 	 */
 	private static byte[] textHiding(byte[] image, final byte[] text, int offset)throws IllegalArgumentException{
 		if(text.length + offset> image.length){
@@ -108,12 +110,14 @@ public class Steganography implements ISteganography {
 		for( int i=0; i < text.length; i++ ){
 			final int code = text[i];
 			/*This "for" make the right shit of all bits and save int the less significant in the image,
-			 * it's start from 7, not from because it will save a lot of operations.
+			 * it's start from 7, not from because it will save operations.
 			 */
 			for( int bit = 7; bit >= 0; bit--, offset++ ){
 				final int positionBit = ( code >>> bit ) & 1;
-				/*0xFE is equal at 11111110, doing the "AND"  with byte, leave unchanged all the bit except the last that will be
-				 * change with the one of the text, doing this the less significant bit of the image will be the one of text based on the location of offset
+				/*0xFE is equal at 11111110, doing the "AND"  with byte,
+				 *  leave unchanged all the bit except the last that will be
+				 * change with the one of the text, doing this the less significant
+				 *  bit of the image will be the one of text based on the location of offset
 				 */
 				image[offset] = (byte)(image[offset] & 0xFE | positionBit );
 			}
@@ -123,8 +127,8 @@ public class Steganography implements ISteganography {
 	/**
 	 * Search if a text is hidden in the byte[] image. Starting from first 32 byte, search first the dimension of the text, then the text cycling 
 	 * the byte[] for all the text dimension length
-	 * @param image	
-	 * @return
+	 * @param image		raster of image to control
+	 * @return contains the hidden text
 	 */
 	private byte[] textFinder(final byte[]image){
 		int length = 0; 
@@ -136,9 +140,10 @@ public class Steganography implements ISteganography {
 			if(length >= intMaxDimension || length < 0)throw new IllegalArgumentException("Hidden file not found in the image");
 		}
 		byte[] decodeLength = new byte[length];
-		//Take the less significant bit of byte[] for all the text length and then shift right TODO finisci di spiegare bene
+		//for all byte of image raster take the less significant and put it in a byte[]
 		for(int a = 0; a < decodeLength.length; ++a){
 			for(int i=0; i<8; i++, offset++){
+										//shift for the bit take from the byte of image
 				decodeLength[a] = (byte)((decodeLength[a] << 1) | (image[offset] & 1));
 			}
 		}
@@ -165,7 +170,7 @@ public class Steganography implements ISteganography {
 	 * Convert File to BufferedImage
 	 * 
 	 * @param rawImage	input file to convert
-	 * @return BufferedImage
+	 * @return File buffered
 	 * @throws IOException 
 	 */
 	private static BufferedImage fileToBufferedImage(final File rawImage) throws IOException{
@@ -175,7 +180,7 @@ public class Steganography implements ISteganography {
 	 * Convert a BufferedImage to byte[]
 	 * 
 	 * @param picture 	input buffer to convert
-	 * @return byte[]
+	 * @return picture buffered
 	 */
 	private static byte[] bufferImageToByteArray( final BufferedImage picture ){
 		final WritableRaster raster   = picture.getRaster();

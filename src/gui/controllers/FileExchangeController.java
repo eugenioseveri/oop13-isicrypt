@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 
 
 
+
 //Used for set the JTable
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -38,7 +39,7 @@ import gui.models.IFileExchangeModel;
 import gui.views.IFileExchangeView;
 import gui.views.OpenButtons;
 import gui.views.StartScreenView;
-import gui.views.OpenButtons.Theme;
+import gui.views.OpenButtons.FyleTypes;
 
 public class FileExchangeController implements IFileExchangeViewObserver, IGeneralViewObserver{
 	//Initialize FileEchange Gui
@@ -66,7 +67,7 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 			
 		}
 		else {
-			final File fileTemp = new OpenButtons().fileChooser(Theme.GENERIC_FILE);
+			final File fileTemp = new OpenButtons().fileChooser(FyleTypes.GENERIC_FILE);
 			FileInputStream streamTemp = null;
 			try {
 				streamTemp = new FileInputStream(fileTemp);
@@ -83,8 +84,8 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 			view.optionPanel("select contact");
 		}
 		else {
-			final File imageTemp = new OpenButtons().fileChooser(Theme.IMAGE);
-			final File textTemp = new OpenButtons().fileChooser(Theme.TEXT);
+			final File imageTemp = new OpenButtons().fileChooser(FyleTypes.IMAGE);
+			final File textTemp = new OpenButtons().fileChooser(FyleTypes.TEXT);
 			if(imageTemp!= null && textTemp != null){
 				new Steganography();
 				File imageToSend = null;
@@ -110,7 +111,7 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 			view.optionPanel("select contact");
 		}
 		else {
-			final File tempFile = new OpenButtons().fileChooser(Theme.GENERIC_FILE);
+			final File tempFile = new OpenButtons().fileChooser(FyleTypes.GENERIC_FILE);
 			final ByteArrayOutputStream outByteBuffer = new ByteArrayOutputStream();
 			ByteArrayInputStream inByteBuffer = null;
 			BufferedInputStream bufferForZip = null;
@@ -155,16 +156,21 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 		//Input dialog with a text field
 		final String name =  view.setOptionPane("Name", "Enter in some text:");
 		final String host =  view.setOptionPane("Host", "Enter in some text:");
-		model.setContactList(host, name);
-		try {
-			model.saveContacts(new File(EXCHANGESETTINGS));
-		} catch (FileNotFoundException e) {
-			view.optionPanel("Contact file not found");
-		} catch (IOException e) {
-			view.optionPanel("i/o error occured");
+		if(StringUtils.isBlank(name) || StringUtils.isBlank(host)){
+			view.optionPanel("None text entered");
 		}
-		setEnableButton(false);
-		view.getContactTable().setModel(tableBuilder());
+		else{
+			model.setContactList(host, name);
+			try {
+				model.saveContacts(new File(EXCHANGESETTINGS));
+			} catch (FileNotFoundException e) {
+				view.optionPanel("Contact file not found");
+			} catch (IOException e) {
+				view.optionPanel("i/o error occured");
+			}
+			setEnableButton(false);
+			view.getContactTable().setModel(tableBuilder());
+		}
 		
 	}
 
@@ -293,7 +299,7 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 	 * Search a ContactInfo from HashMap "ContactList"
 	 * 
 	 * @param search		ContactInfo to search
-	 * @return ContactInfo
+	 * @return clock sought
 	 */
 	private ContactInfo searchContact(final ContactInfo search){
 		for(final Entry<String, String> entry : model.getContactList().entrySet()){

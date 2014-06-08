@@ -3,8 +3,8 @@ package gui.controllers;
  * @author Filippo Vimini
  *
  */
-import static gui.views.OpenButtons.Theme.IMAGE;
-import static gui.views.OpenButtons.Theme.TEXT;
+import static gui.views.OpenButtons.FyleTypes.IMAGE;
+import static gui.views.OpenButtons.FyleTypes.TEXT;
 import gui.views.AbstractGuiMethodSetter;
 import gui.views.ISteganographyView;
 import gui.views.OpenButtons;

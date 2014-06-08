@@ -11,7 +11,6 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -35,7 +34,7 @@ public abstract class AbstractGuiMethodSetter extends JFrame {
 	 * @param fill			VIsible space of cell occupies by the element.
 	 * @param anchor		Anchor of the element in the cell.
 	 * @param container		JPanel where visualize the element
-	 * @param component				Component to save on panel
+	 * @param component		Component to save on panel
 	 */
 	protected static void setLimit( final GridBagConstraints limit, final int ipadx, final int ipady,
 			final int insets[], final int fill, final int anchor, final Container container,final Component component ){
@@ -56,6 +55,7 @@ public abstract class AbstractGuiMethodSetter extends JFrame {
 	 * @param foregroundButtonColor		Color of foreground
 	 * @param buttonFont				Text JButton font
 	 * @param focusArea					Boolean for setFocusPainted
+	 * @param border					Boolean that decide if the border must be visualized
 	 */
 	protected static void setJButton(final JButton button, final Color backgroundColor, final Color foregroundButtonColor,
 		final Font buttonFont, final boolean focusArea, final boolean border){
@@ -76,7 +76,7 @@ public abstract class AbstractGuiMethodSetter extends JFrame {
 	 * @param weightx		Weight of the element on x axis of the cell.
 	 * @param weighty		Weight of the element on y axis of the cell.
 	 * @param container		JPanel where visualize the element
-	 * @param component				Component to save on panel
+	 * @param component		Component to save on panel
 	 */
 	protected static void setGridposition(final GridBagConstraints limit, final int gridx, final int gridy, final int gridwidth, final int gridheight,
 			final int weightx, final int weighty, final Container container, final Component component ){
@@ -94,7 +94,6 @@ public abstract class AbstractGuiMethodSetter extends JFrame {
 	 * @param label			JLabel to change .
 	 * @param originalImage		BufferedImage that contains image to set in label.
 	 * @return imageIcon	optimized height and width ImageIcon.
-	 * @throws IOException
 	 */
 	public static ImageIcon iconOptimizer(final JLabel label, final BufferedImage originalImage, final int height, final int width){
 		BufferedImage newImage = originalImage;
@@ -112,7 +111,7 @@ public abstract class AbstractGuiMethodSetter extends JFrame {
 	 * take an image in input that resize it whit specific width and height
 	 * take from input
 	 * @param originalImage
-	 * @return BufferedImage
+	 * @return resized Image
 	 */
 	private static BufferedImage getResizedImage(final BufferedImage originalImage, final int maxWidth, final int maxHeight){
 
@@ -137,7 +136,7 @@ public abstract class AbstractGuiMethodSetter extends JFrame {
 	 * Replace the Dimension type with default dimension
 	 * 
 	 * @param imageDimension 	the dimension of original image
-	 * @param limit 	the new specific dimension of the image
+	 * @param limit 			the new specific dimension of the image
 	 */
 	private static Dimension getResizedDimension(final Dimension imageDimension, final Dimension limit){
 	   //Set first the original dimension, in case that the image is already of the correct dimension

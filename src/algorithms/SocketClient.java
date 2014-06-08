@@ -1,8 +1,5 @@
 package algorithms;
-/**
- * @author Filippo Vimini
- * Created 05/05/2014
- */
+
 import gui.controllers.IFileExchangeViewObserver;
 import gui.models.ContactInfo;
 
@@ -14,7 +11,11 @@ import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.io.*;
-
+/**
+ * Class used for send data from client to server
+ * @author Filippo Vimini
+ * Created 05/05/2014
+ */
 public class SocketClient {
 	//initialization of class field
 	private AES aesEncryptor;
@@ -34,9 +35,12 @@ public class SocketClient {
 	 * 
 	 * @param contact						A ContactInfo object that contain 
 	 * 										the name and the address of the server
+	 * 
 	 * @param fileStream					InputStream that contain the file 
 	 * 										that will be sent at the server
-	 * @param name							The name of the file that will be sent at the server	
+	 * 
+	 * @param name							The name of the file that will be sent at the server
+	 * @param controllerObserver			Link the controller to the view
 	 * @throws InvalidKeyException			Problem with the generation of AES key
 	 * @throws NoSuchAlgorithmException		if no Provider supports a KeyFactorySpi
 	 * 										 implementation for the specified algorithm.
@@ -75,7 +79,9 @@ public class SocketClient {
 	 * 
 	 * @param contact						A ContactInfo object that contain the name and the 
 	 * 										address of the server
+	 * 
 	 * @param text							String that will be encrypted and sent to the Server
+	 * @param controllerObserver			Link the controller to the view
 	 * @throws InvalidKeyException			Problem with the generation of AES key
 	 * @throws NoSuchAlgorithmException		if no Provider supports a KeyFactorySpi
 	 * 										implementation for the specified algorithm.
@@ -116,9 +122,9 @@ public class SocketClient {
 	 * then a byte[] that contain the name of the file or String if ir's a 
 	 * text and last the a byte[] that contain the file or text 	
 	 * 
-	 * @param clientName
-	 * @param fileName
-	 * @param fileArray
+	 * @param clientName		Byte[] that contains the client name
+	 * @param fileName			Byte[] that contains the file name
+	 * @param fileArray			Byte[] that contains the file 
 	 */
 	private void sendByteArray( final byte[] clientName, final byte[] fileName, final byte[] fileArray) throws IOException, InvalidKeyException,
 																	NoSuchAlgorithmException, InvalidKeySpecException{
@@ -133,7 +139,7 @@ public class SocketClient {
 	 * This method take a Public key from server and 
 	 * create a new AES key for encrypt the file.
 	 * 
-	 * @return aesKeyEncryted				 byte[] that contain the encryption key 
+	 * @return byte[] that contain the encryption key 
 	 * @throws IOException 					if there is an error when try to 
 	 * create the socket or the input stream,a specific Exception is catch and throw
 	 */

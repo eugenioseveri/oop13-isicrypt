@@ -1,18 +1,18 @@
 package algorithms;
-/**
- * @author Filippo Vimini
- *Created 08/03/2014
- *
- *Class that generate hashing algorithm for check the correctness of file
- *implements singleton pattern
- */
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.io.IOException;
 import java.io.InputStream;
 
 import algorithms.interfacesandabstractclasses.IHashing;
-
+/**
+ *	Class that generate hashing algorithm for check the correctness of file
+ *	implements singleton pattern
+ *
+ * @author Filippo Vimini
+ *	Created 08/03/2014
+ */
 public final class Hashing implements IHashing {
 	
 	private static final int DIM_BUFFER = 1024;

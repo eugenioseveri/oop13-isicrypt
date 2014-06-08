@@ -16,7 +16,7 @@ public interface IHashing {
 	 * 
 	 * @param hashingAlgorithm 	enum that represent the String of hashing algorithm 
 	 * @param stream			InputStream for the file which will be calculated the algorithm
-	 * @return String			The generated checksum
+	 * @return The generated checksum
 	 * @throws IOException		If an error occurs while reading the stream
 	 */
 	 String generateHash(EnumAvailableHashingAlgorithms hashingAlgorithm, InputStream stream) throws IOException;
@@ -26,7 +26,7 @@ public interface IHashing {
 	  * 
 	  * @param hashOne			The hash of the first stream
 	  * @param hashTwo			The hash of the second stream
-	  * @return boolean			If the hashes match
+	  * @return If the hashes match
 	  */
 	 boolean compare(String hashOne, String hashTwo);
 	
@@ -36,7 +36,7 @@ public interface IHashing {
 	  * @param hashingAlgorithm		enum that represent the String of hashing algorithm 
 	  * @param streamOne			InputStream for the file which will be calculated the algorithm
 	  * @param streamTwo			InputStream for the file which will be calculated the algorithm
-	  * @return boolean
+	  * @return If the hashes match
 	 * @throws IOException 			If an error occurs while reading a stream
 	  */
 	 boolean compare(EnumAvailableHashingAlgorithms hashingAlgorithm, InputStream streamOne, InputStream streamTwo) throws IOException;
@@ -47,7 +47,7 @@ public interface IHashing {
 	  * @param hashingAlgorithm		enum that represent the String of hashing algorithm 
 	  * @param streamOne			InputStream for the file which will be calculated the algorithm
 	  * @param hashTwo				String that contain a hash
-	  * @return
+	  * @return If the hashes match
 	 * @throws IOException 			If an error occurs while reading a stream
 	  */
 	 boolean compare(EnumAvailableHashingAlgorithms hashingAlgorithm, InputStream streamOne, String hashTwo) throws IOException;

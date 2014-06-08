@@ -101,7 +101,8 @@ public interface IFileExchangeViewObserver {
 	/**
 	 * Method for launch error in run method
 	 * 
-	 * @param error
+	 * @param error		Exception sent by thread for visualize the dialog 
+	 * with run() method
 	 */
 	void threadErrorThrow(Exception error);
 }

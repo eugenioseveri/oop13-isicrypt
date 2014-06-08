@@ -5,7 +5,7 @@ package algorithms;
  */
 import gui.controllers.IFileExchangeViewObserver;
 import gui.views.OpenButtons;
-import gui.views.OpenButtons.Theme;
+import gui.views.OpenButtons.FyleTypes;
 
 import java.net.*;
 import java.security.GeneralSecurityException;
@@ -107,7 +107,7 @@ public class SocketServer extends Thread{
 			controller.fileAppendServer(fileName, client);
 			if( 0 == JOptionPane.showConfirmDialog(null, "Download the File?", "choose one", JOptionPane.YES_NO_OPTION)){
 				// Select directory where to save file
-				final File directory = new OpenButtons().fileChooser(Theme.DIRECTORY);
+				final File directory = new OpenButtons().fileChooser(FyleTypes.DIRECTORY);
 				if(directory == null){
 					controller.textAppendServer("File Discarded", client);
 				} else {
@@ -207,8 +207,7 @@ public class SocketServer extends Thread{
 		controller.textAppendServer(append, client);
 	}	
 	/**
-	 * Return the server for closing it from control
-	 * @return
+	 * @return the server for closing it from control
 	 */
 	public static ServerSocket getSocket() {
 		return server;
@@ -217,7 +216,7 @@ public class SocketServer extends Thread{
 	 * decompress the file and set right extension
 	 * 
 	 * @param fileName String that contain the name whit Gzip extension
-	 * return String 	name of file without Gzip extension
+	 * return name of file without Gzip extension
 	 */
 	private String decompressFile(final String fileName){
 		final ByteArrayInputStream arrayInStream = new ByteArrayInputStream(this.fileArray);

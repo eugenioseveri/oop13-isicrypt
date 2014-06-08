@@ -1,10 +1,5 @@
 package algorithms;
-/**
- * @author Filippo Vimini
- * Created 12/03/2014
- * 
- * class that implement some method for convert object
- */
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -16,13 +11,18 @@ import java.io.FileOutputStream;
 import java.util.Scanner;
 
 import org.apache.commons.io.IOUtils;
-
+/**
+* class that implement some method for convert object
+* 
+* @author Filippo Vimini
+* Created 12/03/2014
+*/
 public class TypeConverter {
 	/**
 	 * Convert a File to byte[]
 	 * 
-	 * @param file	input file to convert
-	 * @return	byte[]
+	 * @param file		input file to convert
+	 * @return	converted byte[]
 	 * @throws IOException 
 	 */
 	public static byte[] fileToByte(final File file) throws IOException, FileNotFoundException {	
@@ -47,13 +47,14 @@ public class TypeConverter {
 	/**
 	 * Method that convert a File to String
 	 * 
-	 * @param file	input file to convert
-	 * @return String
+	 * @param file		input file to convert
+	 * @return converted string
 	 * @throws FileNotFoundException
 	 */
 	public  static String fileToString(final File file) throws FileNotFoundException{
 		Scanner myScanner = null;
 		String contents = null;
+		//Try catch used for close the scanner
 		try
 		{
 			if(file != null){
@@ -77,7 +78,7 @@ public class TypeConverter {
 	 * Convert Integer to byte[]
 	 * 
 	 * @param value int value to convert
-	 * @return byte[]
+	 * @return converted byte
 	 */
 	public static byte[] intToByteArray(final int value){
 		return new byte[]{
@@ -90,7 +91,7 @@ public class TypeConverter {
 	 * Convert byte[] to Integer
 	 * 
 	 * @param byteArray		byte[] to convert
-	 * @return int
+	 * @return converted int
 	 */
 	public int byteArrayToInt(final byte[] byteArray){
 	    final int MASK = 0xFF;
@@ -105,7 +106,7 @@ public class TypeConverter {
 	 * Convert a byte[] to String
 	 * 
 	 * @param byteArray		byte[] to convert
-	 * @return	String
+	 * @return	converted string
 	 */
 	public static String byteArrayToString(final byte[] byteArray){			
 		final StringBuilder sb = new StringBuilder(new String(byteArray));
@@ -114,9 +115,10 @@ public class TypeConverter {
 	/**
 	 * Convert a BufferedInputStream to temporary file
 	 * 
-	 * @param bis		InputStream to convert
-	 * @param name		name of file
-	 * @returnFile
+	 * @param inputStream		InputStream to convert
+	 * @param name				name of file
+	 * @param extension 		file extension
+	 * @return converted file
 	 * @throws IOException 		General I/O problem
 	 */
 	public static File bufferedInputTOtempFile(final InputStream inputStream, final String name, final String extension) throws IOException{

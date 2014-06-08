@@ -19,7 +19,7 @@ public class OpenButtons extends JPanel{
 	private static final long serialVersionUID = 1L;
 	private final JFileChooser selectFile = new JFileChooser();
 	
-	public static enum Theme {
+	public static enum FyleTypes {
 		GENERIC_FILE, IMAGE, TEXT, DIRECTORY;
 	}
 	
@@ -27,12 +27,12 @@ public class OpenButtons extends JPanel{
 	 * Switch from enum for choose the correct file to open from file system
 	 *  and return the selected file on file system 
 	 * 
-	 * @param themes 		enum to be checked
-	 * @return File			selected file
+	 * @param fileTypes 		enum to be checked
+	 * @return selected file
 	 */
-	public File fileChooser(final Theme themes) {
+	public File fileChooser(final FyleTypes fileTypes) {
 			selectFile.setAcceptAllFileFilterUsed(false);			
-		switch( themes ){
+		switch( fileTypes ){
 		case IMAGE: 	
 			selectFile.setDialogTitle("select Image");
 			selectFile.addChoosableFileFilter(new FileNameExtensionFilter("Image(*.png;*.jpg)","png","jpg"));

@@ -26,7 +26,7 @@ import gui.views.CryptographyView;
 import gui.views.ICryptographyView;
 import gui.views.OpenButtons;
 import gui.views.StartScreenView;
-import gui.views.OpenButtons.Theme;
+import gui.views.OpenButtons.FyleTypes;
 import static algorithms.ErrorMessages.*;
 import static algorithms.EnumAvailableCompressionAlgorithms.*;
 import static algorithms.EnumAsymmetricKeyTypes.*;
@@ -61,7 +61,7 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 	
 	@Override
 	public void command_SelectFileToEncrypt() {
-		final File selectedFile = new OpenButtons().fileChooser(Theme.GENERIC_FILE);
+		final File selectedFile = new OpenButtons().fileChooser(FyleTypes.GENERIC_FILE);
 		if(selectedFile != null) {
 			this.view.setText_encryptTextField(selectedFile.getAbsolutePath());
 			this.tempFileToEncrypt = selectedFile;
@@ -70,7 +70,7 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 	
 	@Override
 	public void command_SelectPublicKeyFile() {
-		final File selectedFile = new OpenButtons().fileChooser(Theme.GENERIC_FILE);
+		final File selectedFile = new OpenButtons().fileChooser(FyleTypes.GENERIC_FILE);
 		if(selectedFile != null) {
 			this.view.setText_publicKeyTextField(selectedFile.getAbsolutePath());
 			this.tempPublicKeyFile = selectedFile;
@@ -85,7 +85,7 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 		} catch (InvalidKeyException e) {
 			// This exceptions can not occur since key size is built-in
 		}
-		final File selectedFile = new OpenButtons().fileChooser(Theme.GENERIC_FILE);
+		final File selectedFile = new OpenButtons().fileChooser(FyleTypes.GENERIC_FILE);
 		if(selectedFile != null) {
 			try {
 				newRSA.saveKeyToFile(PUBLIC_KEY, new FileOutputStream(selectedFile.getAbsolutePath() + ".pub"));
@@ -98,7 +98,7 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 	
 	@Override
 	public void command_Encrypt() {
-		final File tempOutputFileEncrypt = new OpenButtons().fileChooser(Theme.GENERIC_FILE);
+		final File tempOutputFileEncrypt = new OpenButtons().fileChooser(FyleTypes.GENERIC_FILE);
 		if(this.tempFileToEncrypt != null && tempOutputFileEncrypt != null && this.tempPublicKeyFile != null) {
 			BufferedInputStream filetoencrypt = null;
 			BufferedOutputStream tempCipherFile = null;
@@ -186,7 +186,7 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 
 	@Override
 	public void command_SelectFileToDecrypt() {
-		final File selectedFile = new OpenButtons().fileChooser(Theme.GENERIC_FILE);
+		final File selectedFile = new OpenButtons().fileChooser(FyleTypes.GENERIC_FILE);
 		if(selectedFile != null) {
 			this.view.setText_decryptTextField(selectedFile.getAbsolutePath());
 			this.tempFileToDecrypt = selectedFile;
@@ -195,7 +195,7 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 	
 	@Override
 	public void command_SelectPrivateKeyFile() {
-		final File selectedFile = new OpenButtons().fileChooser(Theme.GENERIC_FILE);
+		final File selectedFile = new OpenButtons().fileChooser(FyleTypes.GENERIC_FILE);
 		if(selectedFile != null) {
 			this.view.setText_privateKeyTextField(selectedFile.getAbsolutePath());
 			this.tempPrivateKeyFile = selectedFile;
@@ -205,7 +205,7 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 
 	@Override
 	public void command_Decrypt() {
-		final File tempOutputFileDecrypt = new OpenButtons().fileChooser(Theme.DIRECTORY);
+		final File tempOutputFileDecrypt = new OpenButtons().fileChooser(FyleTypes.DIRECTORY);
 		if(this.tempFileToDecrypt != null && tempOutputFileDecrypt != null && this.tempPrivateKeyFile != null) {
 			BufferedInputStream tempCipherFile = null;
 			BufferedOutputStream outputFile = null;

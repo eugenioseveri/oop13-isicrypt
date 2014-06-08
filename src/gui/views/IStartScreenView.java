@@ -11,7 +11,7 @@ import java.awt.Font;
  */
 public interface IStartScreenView {
 	/**
-	 * link the controller at the view
+	 * @param controller 	link the controller at the view
 	 */
 	public abstract void attacStartScreenViewObserver(
 			IStartScreenViewObserver controller);

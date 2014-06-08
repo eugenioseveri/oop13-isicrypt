@@ -5,15 +5,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 /**
- * 
- * @author Filippo
  *Model of pattern MVC that contain the data of server that the client will contact
+ * @author Filippo
  */
 public interface IFileExchangeModel {
 	/**
 	 * Return the hashmap that contain a String for name and host of the server
 	 * 
-	 * @return HashMap
+	 * @return HashMap that contains contact for client
 	 */
 	HashMap<String, String> getContactList();
 	/**
@@ -30,9 +29,9 @@ public interface IFileExchangeModel {
 	 */
 	ContactInfo getContactInfo();
 	/**
-	 * Set a ContactInfo for represent the cu+rrent connection with the server
+	 * Set a ContactInfo for represent the current connection with the server
 	 * 
-	 * @param setContact
+	 * @param setContact	set current contact
 	 */
 	void setContactInfo(ContactInfo setContact);
 	/**
