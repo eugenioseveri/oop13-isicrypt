@@ -19,7 +19,7 @@ public class FileExchangeModel implements IFileExchangeModel {
 	}
 	
 	@Override
-	public void setContactList(String host, String name){
+	public void setContactList(final String host, final String name){
 		contactList.put(host, name);
 	}
 	
@@ -34,15 +34,15 @@ public class FileExchangeModel implements IFileExchangeModel {
 	}
 	
 	@Override
-	public void saveContacts(File path) throws FileNotFoundException, IOException{
-		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path));
+	public void saveContacts(final File path) throws FileNotFoundException, IOException{
+		final ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path));
 		oos.writeObject(contactList);
 		oos.close();
 	}
 	@Override
 	@SuppressWarnings("unchecked")
-	public void loadContacts(File path) throws FileNotFoundException, IOException, ClassNotFoundException{
-		ObjectInputStream ois = new ObjectInputStream(new FileInputStream(path));
+	public void loadContacts(final File path) throws FileNotFoundException, IOException, ClassNotFoundException{
+		final ObjectInputStream ois = new ObjectInputStream(new FileInputStream(path));
 		contactList = (HashMap<String, String>)ois.readObject();
 		ois.close();
 		

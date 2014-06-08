@@ -27,7 +27,8 @@ public interface ISteganography {
 	String messageFinder(File rawImage) throws IOException;
 
 	/**
-	 * Take in input an image and text then hide the text inside image like messageEncrypter but save the file in Temp
+	 * Take in input an image and text then hide the text inside image
+	 *  like messageEncrypter but save the file in Temp
 	 * folder because it will be send at Server and then saved on disk
 	 * 
 	 * @param rawImage

@@ -38,20 +38,20 @@ import gui.models.IFileExchangeModel;
 import gui.views.IFileExchangeView;
 import gui.views.OpenButtons;
 import gui.views.StartScreenView;
-import gui.views.OpenButtons.FileTypes;
+import gui.views.OpenButtons.Theme;
 
 public class FileExchangeController implements IFileExchangeViewObserver, IGeneralViewObserver{
 	//Initialize FileEchange Gui
 	private IFileExchangeView view;
 	private IFileExchangeModel model;
-	private static String textTemp;
-	private final static String userHomePath = System.getProperty("user.home") + "/isicrypt";
-	private final static String fileExchangeSettings = userHomePath + "/accountContacts.dat";
+	//Parh where save settings file
+	private final static String USERHOMEPATH = System.getProperty("user.home") + "/isicrypt";
+	private final static String EXCHANGESETTINGS = USERHOMEPATH + "/accountContacts.dat";
 
 	@Override
-	public void  setViewAndModel(IFileExchangeView view, IFileExchangeModel model){
-		SocketServer server = new SocketServer();
-		server.attachFileExchangeViewObserve(this);
+	public void  setViewAndModel(final IFileExchangeView view, final IFileExchangeModel model){
+		final SocketServer server = new SocketServer();
+		server.attachFileExchangeViewObserver(this);
 		this.model = model;
 		this.view = view;
 		this.view.getContactTable().setModel(this.tableBuilder());
@@ -62,7 +62,7 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 	@Override
 	public void selectFile() {
 		if(searchContact(model.getContactInfo())!= null){	
-			File fileTemp = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
+			final File fileTemp = new OpenButtons().fileChooser(Theme.GENERIC_FILE);
 			FileInputStream streamTemp = null;
 			try {
 				streamTemp = new FileInputStream(fileTemp);
@@ -77,22 +77,23 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 	@Override
 	public void stegaImage() {
 		if(searchContact(model.getContactInfo())!= null){
-			File imageTemp = new OpenButtons().fileChooser(FileTypes.IMAGE);
-			File textTemp = new OpenButtons().fileChooser(FileTypes.TEXT);
+			final File imageTemp = new OpenButtons().fileChooser(Theme.IMAGE);
+			final File textTemp = new OpenButtons().fileChooser(Theme.TEXT);
 			if(imageTemp!= null && textTemp != null){
-			new Steganography();
-			File imageToSend = null;
-			BufferedInputStream bis = null;
-			try {
-				imageToSend = new Steganography().stegaForClient(imageTemp,"png", TypeConverter.fileToString(textTemp));
-				bis = new BufferedInputStream(new FileInputStream(imageToSend));
-			} catch (FileNotFoundException e) {
-				view.optionPanel(e);	
-			} catch (IOException e) {
-				view.optionPanel(e);	
-			}
-			if(imageToSend != null)
-				socketClientSend(model.getContactInfo(), bis, imageToSend.getName());
+				new Steganography();
+				File imageToSend = null;
+				BufferedInputStream bis = null;
+				try {
+					imageToSend = new Steganography().stegaForClient(imageTemp,"png", TypeConverter.fileToString(textTemp));
+					bis = new BufferedInputStream(new FileInputStream(imageToSend));
+				} catch (FileNotFoundException e) {
+					view.optionPanel(e);	
+				} catch (IOException e) {
+					view.optionPanel(e);	
+				}
+				if(imageToSend != null){
+					socketClientSend(model.getContactInfo(), bis, imageToSend.getName());
+				}
 			}
 		}
 		else view.optionPanel("select contact");
@@ -101,8 +102,8 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 	@Override
 	public void selectCompressedFile() {
 		if(searchContact(model.getContactInfo())!= null){
-			File tempFile = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
-			ByteArrayOutputStream outByteBuffer = new ByteArrayOutputStream();
+			final File tempFile = new OpenButtons().fileChooser(Theme.GENERIC_FILE);
+			final ByteArrayOutputStream outByteBuffer = new ByteArrayOutputStream();
 			ByteArrayInputStream inByteBuffer = null;
 			BufferedInputStream bufferForZip = null;
 			try {
@@ -124,14 +125,14 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 	@Override
 	public void selectContact() {
 		view.getContactTable().addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
-			      if (e.getClickCount() == 2){
-				    	Point p = e.getPoint();
-				    	int row = view.getContactTable().rowAtPoint(p);
-				    	String host = view.getContactTable().getValueAt(row, 1).toString();
-				  		String name = view.getContactTable().getValueAt(row, 0).toString(); 
+			public void mouseClicked(MouseEvent event) {
+			      if (event.getClickCount() == 2){
+				    	final Point p = event.getPoint();
+				    	final int row = view.getContactTable().rowAtPoint(p);
+				    	final String host = view.getContactTable().getValueAt(row, 1).toString();
+				  		final String name = view.getContactTable().getValueAt(row, 0).toString(); 
 				  		if(host != null && name != null){
-				  			ContactInfo contact = new ContactInfo(host, name);
+				  			final ContactInfo contact = new ContactInfo(host, name);
 				  			model.setContactInfo(contact);
 					  		view.getVisualtextarea().setText("");
 					  		setEnableButton(true);
@@ -145,11 +146,11 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 	@Override
 	public void addContact() {
 		//Input dialog with a text field
-		String name =  view.setOptionPane("Name", "Enter in some text:");
-		String host =  view.setOptionPane("Host", "Enter in some text:");
+		final String name =  view.setOptionPane("Name", "Enter in some text:");
+		final String host =  view.setOptionPane("Host", "Enter in some text:");
 		model.setContactList(host, name);
 		try {
-			model.saveContacts(new File(fileExchangeSettings));
+			model.saveContacts(new File(EXCHANGESETTINGS));
 		} catch (FileNotFoundException e) {
 			view.optionPanel("Contact file not found");
 		} catch (IOException e) {
@@ -162,14 +163,14 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 
 	@Override
 	public void deleteContact() {
-		int selectedRow = view.getContactTable().getSelectedRow();
+		final int selectedRow = view.getContactTable().getSelectedRow();
 		if(selectedRow != -1) {
 			TableModel getTableModel = tableBuilder();
-			String host = (String) getTableModel.getValueAt(selectedRow, 0);
-			String name = (String)getTableModel.getValueAt(selectedRow, 1);
+			final String host = (String) getTableModel.getValueAt(selectedRow, 0);
+			final String name = (String)getTableModel.getValueAt(selectedRow, 1);
 			model.getContactList().remove(host, name);
 			try {
-				model.saveContacts(new File(fileExchangeSettings));
+				model.saveContacts(new File(EXCHANGESETTINGS));
 			} catch (FileNotFoundException e) {
 				view.optionPanel("Contact file not found");
 			} catch (IOException e) {
@@ -188,10 +189,11 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 
 	@Override
 	public void sendText() {
-		if(StringUtils.isBlank(view.getChattextarea().getText()))
+		if(StringUtils.isBlank(view.getChattextarea().getText())){
 			view.optionPanel("none text entered");
+		}
 		else {
-			textTemp = view.getChattextarea().getText();
+			String textTemp = view.getChattextarea().getText();
 			socketClientSend(model.getContactInfo(), null, textTemp);
 			view.getChattextarea().setText("");
 		}		
@@ -213,7 +215,7 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 
 	@Override
 	public TableModel tableBuilder(){
-		DefaultTableModel tableModel = new DefaultTableModel( new Object[] { "Host", "Name" }, 0 ){
+		final DefaultTableModel tableModel = new DefaultTableModel( new Object[] { "Host", "Name" }, 0 ){
 			private static final long serialVersionUID = 737530902377505148L;
 			//set the cell non editable, read only table
 			public boolean isCellEditable(int row, int column){ 
@@ -221,7 +223,7 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 			}
 		};
 		try {
-			model.loadContacts(new File(fileExchangeSettings));
+			model.loadContacts(new File(EXCHANGESETTINGS));
 		}
 		//Not visible to the user
 		catch (FileNotFoundException e) {} 
@@ -239,26 +241,27 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 	@Override
 	public void textApendClient(String text){
 	//	JTextArea area = view.getVisualtextarea();
-		String append = "\nYOU\n			"+text;
+		final String append = "\nYOU\n			"+text;
 		view.getVisualtextarea().append(append);
 	}
 
 	@Override
-	public void textAppendServer(String text, String name){
+	public void textAppendServer(final String text, final String name){
 	//	JTextArea area = view.getVisualtextarea();
-		String append = "\n"+name+"\n			"+text;
+		final String append = "\n"+name+"\n			"+text;
 		view.getVisualtextarea().append(append);
 	}
 
 	@Override
-	public boolean fileAppendServer(String text, String name){
+	public boolean fileAppendServer(final String text, final String name){
 	//	JTextArea area = view.getVisualtextarea();
-		String append = "\n"+name+"\n			DOWNLOADING FILE? (yes/no): "+text;
+		final String append = "\n"+name+"\n					DOWNLOADING FILE? (yes/no): "+text;
 		view.getVisualtextarea().append(append);
 		return false;
 	}
 
-	//Public because is used even when the FileExchange is closed (bugFix for closure after contact selection)
+	/*Public because is used even when the FileExchange 
+	 *is closed (bugFix for closure after contact selection)*/
 	@Override
 	public void setEnableButton(boolean state){
 		view.getScrollpanetable().setVisible(!state);
@@ -284,8 +287,8 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 	 * @param search		ContactInfo to search
 	 * @return ContactInfo
 	 */
-	private ContactInfo searchContact(ContactInfo search){
-		for(Entry<String, String> entry : model.getContactList().entrySet()){
+	private ContactInfo searchContact(final ContactInfo search){
+		for(final Entry<String, String> entry : model.getContactList().entrySet()){
 			if(search.getHost().equals(entry.getKey())){
 				return search;
 			}
@@ -294,24 +297,27 @@ public class FileExchangeController implements IFileExchangeViewObserver, IGener
 	}
 	
 	@Override
-	public void threadErrorThrow(Exception error){
+	public void threadErrorThrow(final Exception error){
 		view.optionPanel(error);
 	}
 	/**
-	 * Create a socket for client and set a series of exception, for better class formatting.
+	 * Create a socket for client and set a series of exception,
+	 *  for better class formatting.
 	 * 
 	 * @param contact		info for the server.
 	 * @param buffer		represent the File.
 	 * @param name			For first constructor, represent the text that will be sent
 	 * 						for the second, represent the name of file.
 	 */
-	private void socketClientSend(ContactInfo contact, InputStream buffer, String name){
+	private void socketClientSend(final ContactInfo contact, final InputStream buffer, final String name){
 		try {
 			//the buffer represent the file
 			if(buffer == null){
 				new SocketClient(contact, name, this);
 			}
-			else new SocketClient(contact, buffer, name, this);
+			else{
+				new SocketClient(contact, buffer, name, this);
+			}
 		} catch (InvalidKeyException e) {
 			view.optionPanel("Problem with key exchange");		
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {

@@ -27,14 +27,13 @@ public final class Hashing implements IHashing {
 
 	@Override
 	public String generateHash(final EnumAvailableHashingAlgorithms hashingAlgorithm, final InputStream stream) throws IOException {
-		final StringBuffer stringBuffer = new StringBuffer("");
-		int nread;
 		byte[] mdBytes = null;
 		try {
 			// Create MessageDigest object that implements the selected algorithm
 			final MessageDigest md = MessageDigest.getInstance(hashingAlgorithm.name());
 			// Select the key dimension 
 			final byte[] dataBytes = new byte[DIM_BUFFER];
+			int nread;
 			nread = stream.read(dataBytes);
 			// Calculating checksum with its class
 			while(nread > 0){
@@ -42,7 +41,6 @@ public final class Hashing implements IHashing {
 				nread = stream.read(dataBytes);
 			}	
 			mdBytes = md.digest();
-			
 		} catch (IOException e) {
 			throw e;
 		} catch (NoSuchAlgorithmException e) {
@@ -52,6 +50,7 @@ public final class Hashing implements IHashing {
 				stream.close();
 			}
 		}
+		final StringBuffer stringBuffer = new StringBuffer("");
 		for(byte temp : mdBytes){
 			//String format for messageDigest to convert byte to Hexadecimal, temp & 0xff: get the last byte
 			stringBuffer.append(String.format("%02x", temp & 0xff));

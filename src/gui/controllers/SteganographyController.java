@@ -3,8 +3,8 @@ package gui.controllers;
  * @author Filippo Vimini
  *
  */
-import static gui.views.OpenButtons.FileTypes.IMAGE;
-import static gui.views.OpenButtons.FileTypes.TEXT;
+import static gui.views.OpenButtons.Theme.IMAGE;
+import static gui.views.OpenButtons.Theme.TEXT;
 import gui.views.AbstractGuiMethodSetter;
 import gui.views.ISteganographyView;
 import gui.views.OpenButtons;
@@ -28,12 +28,11 @@ public class SteganographyController implements ISteganographyViewObserver, IGen
 	private File imageIcon = null;
 	//Contains the selected image.
 	private File imageChoosen = null;
-	 //String that contains the extract text for image
-	String textBorrowed;
 	//String that contains the path of default icon;
 	private final String STEGANOGRAPHY_BACKGROUND = "SteganographyDefaultIcon.jpg";
-	private final int iconHeigth = 240;
-	private final int iconWidth = 320;
+	//Set dimension of resized image
+	private final int iconHeigth = 480;
+	private final int iconWidth = 640;
 	private String textDefault = null;
 	
 	@Override
@@ -94,10 +93,17 @@ public class SteganographyController implements ISteganographyViewObserver, IGen
 			if(iconFinder != null){
 				view.getIconLabel().
 					setIcon(AbstractGuiMethodSetter.iconOptimizer(view.getIconLabel(), ImageIO.read(iconFinder), iconHeigth, iconWidth));
-				textBorrowed = new Steganography().messageFinder(iconFinder);
-				if(view.getTextArea() != null)view.getTextArea().setText("");
-				if(textBorrowed != null)view.getTextArea().append(textBorrowed);
-				else view.optionPane("Message not found");
+				 //String that contains the extract text for image
+				String textBorrowed = new Steganography().messageFinder(iconFinder);
+				if(view.getTextArea() != null){
+					view.getTextArea().setText("");
+				}
+				if(textBorrowed != null){
+					view.getTextArea().append(textBorrowed);
+				}
+				else{
+					view.optionPane("Message not found");
+				}
 				//Change button status
 				(view.getStartButton()).setEnabled(false);
 				(view.getSelectImageButton()).setEnabled(false);
@@ -124,9 +130,6 @@ public class SteganographyController implements ISteganographyViewObserver, IGen
 		(view.getSelectImageButton()).setEnabled(true);
 		(view.getSelectTextButton()).setEnabled(true);
 		(view.getInsertTextButton()).setEnabled(true);
-		imageChoosen = null;
-		textDefault = null;
-		textBorrowed = null;
 	}
 	
 	@Override
@@ -136,8 +139,9 @@ public class SteganographyController implements ISteganographyViewObserver, IGen
 	}
 	@Override
 	public void insertText(){
-		if(StringUtils.isBlank(view.getTextArea().
-					getText()))view.optionPane("None text entered");
+		if(StringUtils.isBlank(view.getTextArea().getText())){
+			view.optionPane("None text entered");
+		}
 		else{ 
 			textDefault = view.getTextArea().getText();
 			if(imageIcon != null){

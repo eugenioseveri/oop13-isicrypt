@@ -35,7 +35,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
-public class SteganographyView extends AbstractGuiMethodSetter implements ISteganographyView {
+public class SteganographyView extends AbstractGuiMethodSetter implements ISteganographyView{
 	private static final long serialVersionUID = 1L;
 	private static final String APPLICATION_ICON = "isiCryptICON_MetroStyle.jpg";
 	//Color and Fond take from file
@@ -63,8 +63,8 @@ public class SteganographyView extends AbstractGuiMethodSetter implements IStega
 	private final String STEGANOGRAPHY_BACKGROUND = "SteganographyDefaultIcon.jpg";
 	private final int buttonFill = GridBagConstraints.BOTH;
 	private final int buttonAnchor = GridBagConstraints.CENTER;
-	private final int iconHeigth = 240;
-	private final int iconWidth = 320;
+	private final int iconHeigth = 480;
+	private final int iconWidth = 640;
 	private final int textAreaYdimension = 100;
 	private final Dimension dim = new Dimension(0,textAreaYdimension);
 	GridBagConstraints limit;
@@ -80,7 +80,7 @@ public class SteganographyView extends AbstractGuiMethodSetter implements IStega
 	private final JTextArea textArea = new JTextArea(10, 10);
 	private final JScrollPane scrollPane = new JScrollPane(textArea);
 	private final JButton findTextButton = new JButton("Find Text");
-	private final JButton clearSettingButton = new JButton("Clear Setting");
+	private final JButton clearSettingsButton = new JButton("Clear Setting");
 	private final JButton insertTextButton = new JButton("Enter text");
 	private final JLabel filler = new JLabel();
 	private final JLabel fillerSecond = new JLabel();
@@ -148,42 +148,43 @@ public class SteganographyView extends AbstractGuiMethodSetter implements IStega
 	 * Method that create a Graphic, is optimized for GridBagLayout
 	 */
 	private void componentSettings() {
-		//JButton BACK TO START 
+		// JButton BACK TO START 
 		setJButton(backButton, buttonColor, foregroundColor, font, false, false);
 		setLimit(limit, ipadDefaultx-5, ipadDefaulty-10, backInsets,
 				GridBagConstraints.CENTER, GridBagConstraints.WEST, container, backButton);
 		setGridposition(limit, xPosition, yPosition , defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, backButton);		
-		// JButton select image
+		// JButton SELECT IMAGE
 		setJButton(selectImageButton, buttonColor, foregroundColor, font, false, false);
 		setLimit(limit, ipadDefaultx, ipadDefaulty, insetsDefault,
 				buttonFill, GridBagConstraints.CENTER, container, selectImageButton);
 		setGridposition(limit, xPosition, yPosition+1, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, selectImageButton);
-		// JButton select text
+		// JButton SELECT TEXT
 		setJButton(selectTextButton, buttonColor, foregroundColor, font, false, false);
 		setLimit(limit, ipadDefaultx+5, ipadDefaulty, insetsDefault,
 				buttonFill, GridBagConstraints.CENTER, container, selectTextButton);
 		setGridposition(limit, xPosition+1, yPosition+1, defaultCellArea, defaultCellArea,
 				noResizable, noResizable, container, selectTextButton);
-		// JSeparator
+		// JSeparator SEPARATOR
 		separator.setBackground(Color.white);
 		separator.setMinimumSize(((JSeparator)separator).getPreferredSize());
 		setLimit(limit, zeroIpad, zeroIpad, insetsZero, 
 				GridBagConstraints.BOTH, GridBagConstraints.CENTER, container, separator);
 		setGridposition(limit, xPosition+2, yPosition, defaultCellArea, defaultCellArea+6,
 				noResizable, resizable, container, separator);
-		//filler2
+		// JLabel FILLER
 		fillerSecond.setMaximumSize(fillerSecond.getPreferredSize());
 		setLimit(limit, zeroIpad, zeroIpad, insetsZero,
 				buttonFill, GridBagConstraints.CENTER, container, fillerSecond);
 		setGridposition(limit, xPosition+3, yPosition, defaultCellArea, defaultCellArea+6,
 				resizable, resizable, container, fillerSecond);	
-		// JLabel for icon
+		// JLabel ICON LABEL
 		try { 
 			BufferedImage defaultStartimage = ImageIO.read(ClassLoader.getSystemResourceAsStream(STEGANOGRAPHY_BACKGROUND));
 			icon = iconOptimizer(iconLabel, defaultStartimage, iconHeigth, iconWidth);
 		} catch (IOException e) {
+			optionPane(e);
 		}
 		iconLabel.setIcon(icon);
 		int insetsIcon[] = { 20, 10, 10, 10 };
@@ -199,39 +200,39 @@ public class SteganographyView extends AbstractGuiMethodSetter implements IStega
 				GridBagConstraints.WEST, container, encryptCheckbox);
 		setGridposition(limit, xPosition, yPosition+2, defaultCellArea+1, defaultCellArea,
 				noResizable, noResizable, container, encryptCheckbox);							*/
-		// JButton start button
+		// JButton START BUTTON
 		startButton.setEnabled(false);
 		setJButton(startButton, buttonColor, foregroundColor, font, false, false);
 		setLimit(limit, ipadDefaultx, ipadDefaulty, insetsDefault,
 				buttonFill, buttonAnchor, container, startButton);	
 		setGridposition(limit, xPosition, yPosition+3, defaultCellArea+1, defaultCellArea, 
 				noResizable, noResizable, container, startButton);
-		// JButton Find text
+		// JButton FIND TEXT
 		setJButton(findTextButton, buttonColor, foregroundColor, font, false,false);
 		setLimit(limit, ipadDefaultx, ipadDefaulty, insetsDefault, 
 				buttonFill, buttonAnchor, container, findTextButton);
 		setGridposition(limit, xPosition, yPosition+4, defaultCellArea+1, defaultCellArea,
 				noResizable, noResizable, container, findTextButton);	
-		// JButton clear setting
-		clearSettingButton.setEnabled(false);
-		setJButton(clearSettingButton, buttonColor, foregroundColor, font, false, false);
+		// JButton CLEAR SETTINGS
+		clearSettingsButton.setEnabled(false);
+		setJButton(clearSettingsButton, buttonColor, foregroundColor, font, false, false);
 		setLimit(limit, ipadDefaultx, ipadDefaulty, insetsDefault,
-				buttonFill, buttonAnchor, container, clearSettingButton);
+				buttonFill, buttonAnchor, container, clearSettingsButton);
 		setGridposition(limit, xPosition, yPosition+5, defaultCellArea+1, defaultCellArea, 
-				noResizable, noResizable, container, clearSettingButton);
-		// Filler for good buttons resizable setting
+				noResizable, noResizable, container, clearSettingsButton);
+		// JLable FILLER
 		filler.setVisible(false);
 		setLimit(limit, zeroIpad, zeroIpad, insetsZero,
 				buttonFill, GridBagConstraints.CENTER, container, filler);
 		setGridposition(limit, xPosition, yPosition+6, defaultCellArea+1, defaultCellArea,
 				noResizable, resizable, container, filler);	
-		// JButton insert text
+		// JButton INSERT TEXT
 		setJButton(insertTextButton, buttonColor, foregroundColor, font, false, true);
 		setLimit(limit, ipadDefaultx, zeroIpad, insetsTextButton,
 				buttonFill, GridBagConstraints.WEST, container, insertTextButton);
 		setGridposition(limit, xPosition, yPosition+7, defaultCellArea, defaultCellArea, 
 				noResizable, noResizable, container, insertTextButton);
-		// JScrollPane(JtextArea)
+		// JScrollPane(JtextArea) TEXT AREA
 		scrollPane.setPreferredSize(dim);
 		scrollPane.setMinimumSize(dim);
 		//Format text on TextArea
@@ -279,7 +280,7 @@ public class SteganographyView extends AbstractGuiMethodSetter implements IStega
 			}
 		});
 		// Clear setting button handlers
-		clearSettingButton.addActionListener(new ActionListener() {
+		clearSettingsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				controller.clearSetting();
 			}
@@ -295,8 +296,12 @@ public class SteganographyView extends AbstractGuiMethodSetter implements IStega
 	//return the dialog for show the error 
 	@Override
 	public void optionPane( Object error ){
-		if(error instanceof Exception)JOptionPane.showMessageDialog(dialog, error);
-		if(error instanceof String)JOptionPane.showMessageDialog(dialog, error);
+		if(error instanceof Exception){
+			JOptionPane.showMessageDialog(dialog, error);
+		}
+		if(error instanceof String){
+			JOptionPane.showMessageDialog(dialog, error);
+		}
 	}
 	
 	//Setter and Getter
@@ -326,7 +331,7 @@ public class SteganographyView extends AbstractGuiMethodSetter implements IStega
 	}
 	@Override
 	public JButton getClearSettingButton() {
-		return clearSettingButton;
+		return clearSettingsButton;
 	}
 	@Override
 	public JButton getInsertTextButton() {

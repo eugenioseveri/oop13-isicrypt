@@ -4,7 +4,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
-
+/**
+ * 
+ * @author Filippo
+ *Model of pattern MVC that contain the data of server that the client will contact
+ */
 public interface IFileExchangeModel {
 	/**
 	 * Return the hashmap that contain a String for name and host of the server

@@ -1,18 +1,26 @@
 package gui.controllers;
 
 import gui.views.ISteganographyView;
-
+/**
+ * 
+ * @author Filippo
+ *Inteface for SteganographyController
+ */
 public interface ISteganographyViewObserver {
 	/**
-	 * Select the image and check if even the text is selected, the show the start button for doing the merge
+	 * Select the image and check if even the text is selected, 
+	 * the show the start button for doing the merge
 	 */
 	void selectImage();
 	/**
-	 * Select the image and check if even the text is selected, the show the start button for doing the merge
+	 * Select the image and check if even the text is selected,
+	 *  the show the start button for doing the merge
 	 */
 	void selectText();
 	/**
-	 * when both image and text are selected, the start button launch the Steganography, then set disable "insert text"
+	 * when both image and text are selected,
+	 *  the start button launch the Steganography,
+	 *  then set disable "insert text"
 	 * button for not allow concurrency
 	 */
 	void start();
@@ -25,7 +33,8 @@ public interface ISteganographyViewObserver {
 	 */
 	void clearSetting();
 	/**
-	 * take text from TextArea and use that for Steganography, then set disable "select text"
+	 * take text from TextArea and use that for Steganography, 
+	 * then set disable "select text"
 	 * button for not allow concurrency
 	 */
 	void insertText();

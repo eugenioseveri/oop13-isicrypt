@@ -1,11 +1,10 @@
 package algorithms;
 /**
  * @author Filippo Vimini
- * @version 1.0
  * created 08/04/2014
  */
 import gui.views.OpenButtons;
-import gui.views.OpenButtons.FileTypes;
+import gui.views.OpenButtons.Theme;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -18,6 +17,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import algorithms.interfacesandabstractclasses.ISteganography;
@@ -31,12 +31,10 @@ public class Steganography implements ISteganography {
 		//insert the file in buffer
 		image = fileToBufferedImage(rawImage);
 		//add the text in buffer
-		try{
-			image = messageAdder(image, text);
-		}catch(IllegalArgumentException e ){
-			throw e;
-		}		//Choose the destination folder
-		String fileName = new OpenButtons().fileChooser(FileTypes.DIRECTORY)+"/Stega_"+rawImage.getName();
+		image = messageAdder(image, text);
+		//Choose the destination folder
+		String newName = FilenameUtils.removeExtension(rawImage.getName());
+		String fileName = new OpenButtons().fileChooser(Theme.DIRECTORY)+"/Stega_"+newName+".png";
 		File savier = new File(fileName);
 		ImageIO.write(image, extension, savier);
 	}
@@ -80,21 +78,17 @@ public class Steganography implements ISteganography {
 	 */
 	private static BufferedImage messageAdder( BufferedImage image, String text )throws IllegalArgumentException{
 		//number that represent the star byte of the message
-		int DIMENSIONSTART = 0;
+		final int DIMENSIONSTART = 0;
 		//number that represent the star byte of the message length
-		int MESSAGESTART = 32; 
+		final int MESSAGESTART = 32; 
 		// convert text, text length and image to byte[] then the text byte[] will put inside image byte[]
-		byte[] message = text.getBytes();
-		byte[] bitTextLength = TypeConverter.intToByteArray(text.length());
-		byte[] imageData = bufferImageToByteArray(image);
-		try{
-			//Hide message offset
-			textHiding(imageData, bitTextLength, DIMENSIONSTART);
-			//Hide message
-			textHiding(imageData, message, MESSAGESTART);
-		}catch (IllegalArgumentException e) {
-			throw e;
-		}
+		final byte[] message = text.getBytes();
+		final byte[] bitTextLength = TypeConverter.intToByteArray(text.length());
+		final byte[] imageData = bufferImageToByteArray(image);
+		//Hide message offset
+		textHiding(imageData, bitTextLength, DIMENSIONSTART);
+		//Hide message
+		textHiding(imageData, message, MESSAGESTART);
 		return image;
 	}
 	/**
@@ -107,7 +101,7 @@ public class Steganography implements ISteganography {
 	 * @param offset	Integer that represent the offset on message start
 	 * @return	image	byte[] that contains the image with text hidden
 	 */
-	private static byte[] textHiding(byte[] image, byte[] text, int offset)throws IllegalArgumentException{
+	private static byte[] textHiding(byte[] image, final byte[] text, int offset)throws IllegalArgumentException{
 		if(text.length + offset> image.length){
 			throw new IllegalArgumentException("The file is not longh enoght for the message!!");
 		}
@@ -118,7 +112,7 @@ public class Steganography implements ISteganography {
 			 * it's start from 7, not from because it will save a lot of operations.
 			 */
 			for( int bit = 7; bit >= 0; bit--, offset++ ){
-				int positionBit = ( code >>> bit ) & 1;
+				final int positionBit = ( code >>> bit ) & 1;
 				/*0xFE is equal at 11111110, doing the "AND"  with byte, leave unchanged all the bit except the last that will be
 				 * change with the one of the text, doing this the less significant bit of the image will be the one of text based on the location of offset
 				 */
@@ -130,7 +124,6 @@ public class Steganography implements ISteganography {
 	/**
 	 * Search if a text is hidden in the byte[] image. Starting from first 32 byte, search first the dimension of the text, then the text cycling 
 	 * the byte[] for all the text dimension length
-	 * 
 	 * @param image	
 	 * @return
 	 */
@@ -141,7 +134,7 @@ public class Steganography implements ISteganography {
 		int intMaxDimension = 2147483647;
 		for( int i = 0; i < 32; i++){
 			length = (length << 1) | (image[i] & 1 ); 
-			if(length >= intMaxDimension || length < 0)return null;
+			if(length >= intMaxDimension || length < 0)throw new IllegalArgumentException("Hidden file not found in the image");
 		}
 		byte[] decodeLength = new byte[length];
 		//Take the less significant bit of byte[] for all the text length and then shift right TODO finisci di spiegare bene
@@ -161,9 +154,9 @@ public class Steganography implements ISteganography {
 	private BufferedImage imageAnalizer( BufferedImage originalImage){
 		/*Create a new buffer with specific information and raster of the selected image, choosing TYPE_3BYTE_BRG for better 8bit
 		 * shift operation in "encode" function*/
-		BufferedImage rasterImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+		final BufferedImage rasterImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
 		/*this function create graphic2d specific for this buffer for better graphics operations*/
-		Graphics2D graphicalImage = rasterImage.createGraphics();
+		final Graphics2D graphicalImage = rasterImage.createGraphics();
 		//Draw the picture in the workspace
 		graphicalImage.drawRenderedImage(originalImage, null);
 		graphicalImage.dispose();
@@ -176,9 +169,8 @@ public class Steganography implements ISteganography {
 	 * @return BufferedImage
 	 * @throws IOException 
 	 */
-	private static BufferedImage fileToBufferedImage( File rawImage ) throws IOException{
-		BufferedImage imageBuffer = null;
-		imageBuffer = ImageIO.read(rawImage);
+	private static BufferedImage fileToBufferedImage( final File rawImage ) throws IOException{
+		 BufferedImage imageBuffer = ImageIO.read(rawImage);
 		return imageBuffer;
 	}
 	/**
@@ -187,9 +179,9 @@ public class Steganography implements ISteganography {
 	 * @param picture 	input buffer to convert
 	 * @return byte[]
 	 */
-	private static byte[] bufferImageToByteArray( BufferedImage picture ){
-		WritableRaster raster   = picture.getRaster();
-		DataBufferByte buffer = (DataBufferByte)raster.getDataBuffer();
+	private static byte[] bufferImageToByteArray( final BufferedImage picture ){
+		final WritableRaster raster   = picture.getRaster();
+		final DataBufferByte buffer = (DataBufferByte)raster.getDataBuffer();
 		return buffer.getData();
 	}
 	

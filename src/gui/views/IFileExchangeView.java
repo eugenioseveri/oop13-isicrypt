@@ -13,9 +13,11 @@ import gui.controllers.IFileExchangeViewObserver;
 
 public interface IFileExchangeView {
 	/**
-	 * link the controller to the view
-	 * @param controller		controller to be linked
+	 * link controller to the view
+	 * 
+	 * @param controller		to be linked
 	 */
+	void attachFileExchangeViewObserve(IFileExchangeViewObserver controller);
 	
 	JTextArea getVisualtextarea();
 	
@@ -50,10 +52,5 @@ public interface IFileExchangeView {
 	String setOptionPane(String name, String text);
 	
 	TableModel getModel();
-	/**
-	 * link controller to the view
-	 * 
-	 * @param controller		to be linked
-	 */
-	void attachFileExchangeViewObserve(IFileExchangeViewObserver controller);
+
 }

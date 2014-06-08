@@ -16,6 +16,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class StartScreenView extends AbstractGuiMethodSetter{
@@ -76,7 +77,22 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 		container.setLayout(layout);
 		container.setBackground(panelBackColor);
 	}
-
+	
+	private static void setFrame() {
+		frame.getContentPane().removeAll();
+		try {
+			frame.setIconImage(ImageIO.read(ClassLoader.getSystemResourceAsStream(APPLICATION_ICON)));
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(dialog, e);
+		}
+		frame.setResizable(false);
+		frame.setTitle("Start Screen");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(450, 350);
+		frame.getContentPane().add(container);
+		frame.setVisible(true);
+	}
+	
 	private static void componentSetting(){
 		//JButton CRYPTOGRAPHY
 		setJButton(cryptography, buttonColor, foregroundColor, font, false, false);
@@ -84,32 +100,48 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 				GridBagConstraints.BOTH, GridBagConstraints.NORTH, container, cryptography);
 		setGridposition(limit, xPosition, yPosition, defaultCellArea, defaultCellArea, 
 				noResizable, noResizable, container, cryptography);
-		if(CryptographyView.isOpen())cryptography.setEnabled(false);
-		else cryptography.setEnabled(true);
+		if(CryptographyView.isOpen()){
+			cryptography.setEnabled(false);
+		}
+		else {
+			cryptography.setEnabled(true);
+		}
 		//JButton STEGANOGRAPHY
 		setJButton(steganography, buttonColor, foregroundColor, font, false, false);
 		setLimit(limit, ipadDefaultx, ipadDefaulty, insetsTop, 
 				GridBagConstraints.BOTH, GridBagConstraints.NORTH, container, steganography);
 		setGridposition(limit, xPosition+1, yPosition, defaultCellArea, defaultCellArea, 
 				noResizable, noResizable, container, steganography);	
-		if(SteganographyView.isOpen())steganography.setEnabled(false);
-		else steganography.setEnabled(true);
+		if(SteganographyView.isOpen()){
+			steganography.setEnabled(false);
+		}
+		else {
+			steganography.setEnabled(true);
+		}
 		//JButton KEYRING
 		setJButton(keyring, buttonColor, foregroundColor, font, false, false);
 		setLimit(limit, ipadDefaultx, ipadDefaulty, insetsBotton, 
 				GridBagConstraints.BOTH, GridBagConstraints.NORTH, container, keyring);
 		setGridposition(limit, xPosition, yPosition+1, defaultCellArea, defaultCellArea, 
 				noResizable, noResizable, container, keyring);	
-		if(KeyringView.isOpen())keyring.setEnabled(false);
-		else keyring.setEnabled(true);
+		if(KeyringView.isOpen()){
+			keyring.setEnabled(false);
+		}
+		else{
+			keyring.setEnabled(true);
+		}
 		//JButton FILEEXCHANGE
 		setJButton(fileExchange, buttonColor, foregroundColor, font, false, false);
 		setLimit(limit, ipadDefaultx, ipadDefaulty, insetsBotton, 
 				GridBagConstraints.BOTH, GridBagConstraints.NORTH, container, fileExchange);
 		setGridposition(limit, xPosition+1, yPosition+1, defaultCellArea, defaultCellArea, 
 				noResizable, noResizable, container, fileExchange);	
-		if(FileExchangeView.isOpen())fileExchange.setEnabled(false);
-		else fileExchange.setEnabled(true);
+		if(FileExchangeView.isOpen()){
+			fileExchange.setEnabled(false);
+		}
+		else{
+			fileExchange.setEnabled(true);
+		}
 		//JLabel CREDITS
 		authorName.setFont(new Font("Verdana",Font.BOLD, 12));
 		authorName.setForeground(buttonColor);
@@ -160,21 +192,6 @@ public class StartScreenView extends AbstractGuiMethodSetter{
 				
 			}
 		});
-	}
-	
-	private static void setFrame() {
-		frame.getContentPane().removeAll();
-		try {
-			frame.setIconImage(ImageIO.read(ClassLoader.getSystemResourceAsStream(APPLICATION_ICON)));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		frame.setResizable(false);
-		frame.setTitle("Start Screen");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(450, 350);
-		frame.getContentPane().add(container);
-		frame.setVisible(true);
 	}
 	
 	//initialize again many method for draw the start screen

@@ -23,7 +23,7 @@ import gui.models.Triple;
 import gui.views.IKeyringView;
 import gui.views.OpenButtons;
 import gui.views.StartScreenView;
-import gui.views.OpenButtons.FileTypes;
+import gui.views.OpenButtons.Theme;
 
 /**
  * Class used to implement the keyring function controller.
@@ -57,7 +57,7 @@ public class KeyringController implements IKeyringViewObserver, IGeneralViewObse
 		this.model = model;
 		this.view.attachViewObserver(this);
 		this.view.getTable().setModel(this.tableBuilder());
-		final File selectedFile = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
+		final File selectedFile = new OpenButtons().fileChooser(Theme.GENERIC_FILE);
 		if(selectedFile == null || !(selectedFile.exists())) {
 			this.view.showMessageDialog(KEY_NOT_SET_WARNING);
 		} else {
@@ -146,7 +146,7 @@ public class KeyringController implements IKeyringViewObserver, IGeneralViewObse
 			ObjectOutputStream oos;
 			File selectedFile = null;
 			try {
-				selectedFile = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
+				selectedFile = new OpenButtons().fileChooser(Theme.GENERIC_FILE);
 				if(selectedFile != null) {
 					newEncryptor.generateKey(128);
 					this.aesKey = newEncryptor.getSymmetricKeySpec().getEncoded();
@@ -163,7 +163,7 @@ public class KeyringController implements IKeyringViewObserver, IGeneralViewObse
 			}
 		} else { // Reads the key from file
 			ObjectInputStream ois;
-			final File selectedFile = new OpenButtons().fileChooser(FileTypes.GENERIC_FILE);
+			final File selectedFile = new OpenButtons().fileChooser(Theme.GENERIC_FILE);
 			try {
 				if(selectedFile != null) {
 					ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(selectedFile)));

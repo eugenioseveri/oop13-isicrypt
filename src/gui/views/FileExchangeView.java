@@ -41,6 +41,7 @@ import javax.swing.table.TableModel;
 public class FileExchangeView extends AbstractGuiMethodSetter implements IFileExchangeView{
 	
 	private static final long serialVersionUID = -1686107590453441615L;
+	//Path of resource 
 	private final String APPLICATION_ICON = "isiCryptICON_MetroStyle.jpg";
 	private Font font;
 	private Color panelBackColor;
@@ -93,7 +94,7 @@ public class FileExchangeView extends AbstractGuiMethodSetter implements IFileEx
 	
 	//View Observer attacher
 	@Override
-	public void attachFileExchangeViewObserve(IFileExchangeViewObserver controller){
+	public void attachFileExchangeViewObserve(final IFileExchangeViewObserver controller){
 		this.controller = controller;
 	}
 	
@@ -105,29 +106,32 @@ public class FileExchangeView extends AbstractGuiMethodSetter implements IFileEx
 		setFrame();
 	}
 	/**
-	 * Set color and font from file, because there are many theme, and will be load the last used
-	 * and set the layout
+	 * Set color and font from file, because there are many theme,
+	 *  and will be load the last used and set the layout
 	 */
 	private void buildLayout() {
 		buttonColor = ThemeChooser.getButtonColor();
 		font = ThemeChooser.getFont();
 		foregroundColor = ThemeChooser.getForegroundColor();
 		panelBackColor = ThemeChooser.getPanelBackColor();
-		GridBagLayout layout = new GridBagLayout();
+		final GridBagLayout layout = new GridBagLayout();
 		limit = new GridBagConstraints();
 		container.setLayout(layout);
 		container.setBackground(panelBackColor);
 	}
 	/**
-	 * Create a new Frame that contain the Component of the GUI and set closing and opening operations
+	 * Create a new Frame that contain the Component of the GUI
+	 *  and set closing and opening operations
 	 */
 	private void setFrame() {
 		frame = new JFrame();
 		try {
 			frame.setIconImage(ImageIO.read(ClassLoader.getSystemResourceAsStream(APPLICATION_ICON)));
-		} catch (IOException e) {}
+		} catch (IOException e) {
+			optionPanel(e);
+		}
 		//Set action when frame is open and close
-		WindowAdapter listener = new WindowAdapter() {
+		final WindowAdapter listener = new WindowAdapter() {
 
 	        @Override
 	        public void windowOpened(WindowEvent e) {
@@ -260,7 +264,7 @@ public class FileExchangeView extends AbstractGuiMethodSetter implements IFileEx
 		//Set disable because first it must be visible the table
 		chatTextArea.setEnabled(false);
 		scrollPaneChat.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		Dimension chatAreaDimensiono = new Dimension(0,ipadDefaulty);
+		final Dimension chatAreaDimensiono = new Dimension(0,ipadDefaulty);
 		scrollPaneChat.setMinimumSize(chatAreaDimensiono);
 		scrollPaneChat.setPreferredSize(chatAreaDimensiono);
 		setLimit(limit, zeroIpad, ipadDefaulty, insetsChatArea, 
@@ -344,7 +348,7 @@ public class FileExchangeView extends AbstractGuiMethodSetter implements IFileEx
 	
 	//the dialog for show the error 
 	@Override
-	public void optionPanel( Object error ){
+	public void optionPanel(final Object error ){
 		if(error instanceof Exception)JOptionPane.showMessageDialog(this.dialog, error);
 		if(error instanceof String)JOptionPane.showMessageDialog(this.dialog, error);
 	}
@@ -419,8 +423,8 @@ public class FileExchangeView extends AbstractGuiMethodSetter implements IFileEx
 		FileExchangeView.isOpen = isOpen;
 	}
 	@Override
-	public String setOptionPane(String name, String text){
-		String back = JOptionPane.showInputDialog(name, text);
+	public String setOptionPane(final String name, final String text){
+		final String back = JOptionPane.showInputDialog(name, text);
 		return back;
 	}
  }

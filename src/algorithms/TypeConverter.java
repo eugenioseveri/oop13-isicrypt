@@ -25,23 +25,23 @@ public class TypeConverter {
 	 * @return	byte[]
 	 * @throws IOException 
 	 */
-	public static byte[] fileToByte(File file) throws IOException, FileNotFoundException{
+	public static byte[] fileToByte(File file) throws IOException, FileNotFoundException{	
 		//Create Buffer in/out for read and write the file
-		ByteArrayOutputStream baos = null;
-		FileInputStream filebufferInput = null;
-		byte[] fileArray = null;
-		int variable = 0;
-		//initialize buffer
-		baos = new ByteArrayOutputStream();
-		filebufferInput = new FileInputStream(file);		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		FileInputStream filebufferInput = new FileInputStream(file);		
 		//write byte after byte of file on byte[]
+		int variable = 0;
 		while((variable = filebufferInput.read()) != -1){
 			baos.write(variable);
 		}
 		//Write byte[] of buffer on normal byte[]
-		fileArray = baos.toByteArray();
-		if(baos != null)baos.close();
-		if(filebufferInput != null)filebufferInput.close();
+		byte[] fileArray = baos.toByteArray();
+		if(baos != null){
+			baos.close();
+		}
+		if(filebufferInput != null){
+			filebufferInput.close();
+		}
 		return fileArray;
 	}
 	/**
@@ -51,7 +51,7 @@ public class TypeConverter {
 	 * @return String
 	 * @throws FileNotFoundException
 	 */
-	public  static String fileToString(File file) throws FileNotFoundException{
+	public  static String fileToString(final File file) throws FileNotFoundException{
 		Scanner myScanner = null;
 		String contents = null;
 		try
@@ -79,7 +79,7 @@ public class TypeConverter {
 	 * @param value int value to convert
 	 * @return byte[]
 	 */
-	public static byte[] intToByteArray(int value){
+	public static byte[] intToByteArray(final int value){
 		return new byte[]{
 				(byte)(value >>> 24),
 	            (byte)(value >>> 16),
@@ -92,13 +92,13 @@ public class TypeConverter {
 	 * @param byteArray		byte[] to convert
 	 * @return int
 	 */
-	public int byteArrayToInt(byte[] byteArray){
-	    int MASK = 0xFF;
+	public int byteArrayToInt(final byte[] byteArray){
+	    final int MASK = 0xFF;
 	    int result = 0;   
-	        result = byteArray[3] & MASK;
-	        result = result + ((byteArray[2] & MASK) << 8);
-	        result = result + ((byteArray[1] & MASK) << 16);
-	        result = result + ((byteArray[0] & MASK) << 24);            
+	    result = byteArray[3] & MASK;
+	    result = result + ((byteArray[2] & MASK) << 8);
+	    result = result + ((byteArray[1] & MASK) << 16);
+	    result = result + ((byteArray[0] & MASK) << 24);            
 	    return result; 
 	}
 	/**
@@ -107,8 +107,8 @@ public class TypeConverter {
 	 * @param byteArray		byte[] to convert
 	 * @return	String
 	 */
-	public static String byteArrayToString(byte[] byteArray){			
-		StringBuilder sb = new StringBuilder(new String(byteArray));
+	public static String byteArrayToString(final byte[] byteArray){			
+		final StringBuilder sb = new StringBuilder(new String(byteArray));
 		return sb.toString();
 	}
 	/**
@@ -119,14 +119,13 @@ public class TypeConverter {
 	 * @returnFile
 	 * @throws IOException 		General I/O problem
 	 */
-	public static File bufferedInputTOtempFile(InputStream inputStream, String name, String extension) throws IOException{
-		BufferedInputStream bis = new BufferedInputStream(inputStream);
-		String nomeTemp = name;
-		String tempExtension = extension;
-		File tempFile;
-		tempFile = File.createTempFile(nomeTemp, tempExtension);
+	public static File bufferedInputTOtempFile(final InputStream inputStream, final String name, final String extension) throws IOException{
+		final BufferedInputStream bis = new BufferedInputStream(inputStream);
+		final String nomeTemp = name;
+		final String tempExtension = extension;
+		File tempFile = File.createTempFile(nomeTemp, tempExtension);
 		tempFile.deleteOnExit();
-        FileOutputStream out = new FileOutputStream(tempFile);
+        final FileOutputStream out = new FileOutputStream(tempFile);
         IOUtils.copy(bis, out);
 	    return tempFile;
 	}

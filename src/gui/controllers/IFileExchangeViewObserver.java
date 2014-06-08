@@ -15,11 +15,13 @@ public interface IFileExchangeViewObserver {
 	 */
 	void selectFile();
 	/**
-	 * Hide a selected text on the selected image and send the image with hidden text, through the  client to the server
+	 * Hide a selected text on the selected image and send the image with hidden text,
+	 *  through the  client to the server
 	 */
 	void stegaImage();
 	/**
-	 * Send a compressed file with Gzip, through the  client to the server, then the server will decompress and save the file
+	 * Send a compressed file with Gzip, through the  client to the server,
+	 *  then the server will decompress and save the file
 	 */
 	void selectCompressedFile();
 	/**
@@ -27,11 +29,13 @@ public interface IFileExchangeViewObserver {
 	 */
 	void selectContact();
 	/**
-	 * Add contact in ContactList, save the list on File, then update the Table for show new contact
+	 * Add contact in ContactList, save the list on File, 
+	 * then update the Table for show new contact
 	 */
 	void addContact();
 	/**
-	 * delete contact in ContactList, save the list on File, then update the Table for hide the contact
+	 * delete contact in ContactList, save the list on File,
+	 *  then update the Table for hide the contact
 	 */
 	void deleteContact();
 	/**
@@ -43,8 +47,10 @@ public interface IFileExchangeViewObserver {
 	 */
 	void sendText();
 	/**
-	 * Create a TableModel with two columns that represents the host and the name of the reachable server.
-	 * Set the cell of the table no editable and load from File the list of contact.
+	 * Create a TableModel with two columns that represents
+	 *  the host and the name of the reachable server.
+	 * Set the cell of the table no editable and load 
+	 * from File the list of contact.
 	 * 
 	 * @return TableModel
 	 */
@@ -59,7 +65,10 @@ public interface IFileExchangeViewObserver {
 	 * close the server connection, used like bridge for view from model
 	 */
 	void closeThread();
-	
+	/**
+	 * Progress bar for show the status
+	 * @param value
+	 */
 	void setProgressbar(int value);
 	/**
 	 * Append  text on JTextArea, with the formatting of text for the Client.

@@ -2,8 +2,6 @@ package gui.views;
 /**
  * @author Filippo Vimini 
  */
-import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
 import java.io.File;
 
 
@@ -13,44 +11,46 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 
 public class OpenButtons extends JPanel{
-	
-	public static enum FileTypes {
+	/**
+	 * 
+	 * @author Filippo
+	 *Enum that represent the theme that the user can set
+	 */
+	public static enum Theme {
 		GENERIC_FILE, IMAGE, TEXT, DIRECTORY;
 	}
 	private static final long serialVersionUID = 1L;
 	
-	JFileChooser fileChooser = new JFileChooser();
-	File hashObj;
-	BufferedInputStream stream;
-	BufferedImage image;
+	JFileChooser selectFile = new JFileChooser();
 	/**
-	 * Switch from enum for choose the correct file to open from file system and return the selected file on file system 
+	 * Switch from enum for choose the correct file to open from file system
+	 *  and return the selected file on file system 
 	 * 
-	 * @param fileType 		enum to be checked
+	 * @param themes 		enum to be checked
 	 * @return File			selected file
 	 */
-	public File fileChooser(FileTypes fileType) {
-			fileChooser.setAcceptAllFileFilterUsed(false);			
-		switch( fileType ){
+	public File fileChooser(Theme themes) {
+			selectFile.setAcceptAllFileFilterUsed(false);			
+		switch( themes ){
 		case IMAGE: 	
-			fileChooser.setDialogTitle("select Image");
-			fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Image(*.png;*.jpg)","png","jpg"));
+			selectFile.setDialogTitle("select Image");
+			selectFile.addChoosableFileFilter(new FileNameExtensionFilter("Image(*.png;*.jpg)","png","jpg"));
 			break;
 		case TEXT:
-			fileChooser.setDialogTitle("select Text");
-			fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Text(*.txt)","txt"));
+			selectFile.setDialogTitle("select Text");
+			selectFile.addChoosableFileFilter(new FileNameExtensionFilter("Text(*.txt)","txt"));
 			break;
 		case DIRECTORY: 
-			fileChooser.setDialogTitle("select Folder");
-			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			selectFile.setDialogTitle("select Folder");
+			selectFile.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		case GENERIC_FILE:
-			fileChooser.setAcceptAllFileFilterUsed(true);		
+			selectFile.setAcceptAllFileFilterUsed(true);		
 			break;
 		}
-		int controller = fileChooser.showOpenDialog(getParent());
+		final int controller = selectFile.showOpenDialog(getParent());
 		File fileReturn = null;
 		if(controller == JFileChooser.APPROVE_OPTION){
-			fileReturn = fileChooser.getSelectedFile();
+			fileReturn = selectFile.getSelectedFile();
 			return fileReturn;
 		}
 		return null;
