@@ -22,7 +22,7 @@ public final class GZip implements ICompression {
 	}
 	
 	/**
-	 * Returns an instance of this class
+	 * @return An instance of this class
 	 */
 	public static GZip getInstance() {
 		if (singleton == null) {

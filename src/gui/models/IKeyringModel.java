@@ -11,6 +11,8 @@ public interface IKeyringModel {
 	 * Saves current HashSet to an output stream, crypted with AES.
 	 * @param outputFile The output stream where you want to save the Set
 	 * @param aesKey The AES key used to encrypt the data.
+	 * @throws IOException If an error occurs while saving the data
+	 * @throws InvalidKeyException If the previously set AES key is not valid
 	 */
 	void saveData(OutputStream outputFile, byte[] aesKey) throws IOException, InvalidKeyException;
 	

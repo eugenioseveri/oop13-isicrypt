@@ -24,9 +24,9 @@ public interface IHashing {
 	 /**
 	  * Compare two String
 	  * 
-	  * @param hashOne				
-	  * @param hashTwo
-	  * @return boolean
+	  * @param hashOne			The hash of the first stream
+	  * @param hashTwo			The hash of the second stream
+	  * @return boolean			If the hashes match
 	  */
 	 boolean compare(String hashOne, String hashTwo);
 	

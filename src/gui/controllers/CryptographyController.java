@@ -52,7 +52,7 @@ public class CryptographyController implements ICryptographyViewObserver, IGener
 	
 	/**
 	 * Creates a new controller for the cryptography function. No model is required.
-	 * @param view
+	 * @param view The view associated with this controller
 	 */
 	public CryptographyController(final CryptographyView view) {
 		this.view = view;

@@ -47,6 +47,7 @@ public class FileInterpret implements Serializable, IFileInterpret {
 	 * @param encryptedSymmetricKey The previously encrypted symmetric key using RSA
 	 * @param hashingAlgorithm The hashing algorithm you want to use to ensure the payload's integrity. Must be one of @link {@link EnumAvailableHashingAlgorithms}
 	 * @param compressionAlgorithm The compression algorithm you want to use. Must be one of @link {@link EnumAvailableCompressionAlgorithms}
+	 * @param originalFileName The source file name: it will be restored during decryption
 	 * @param payloadFile The file you want to put inside this FileInterpret wrapper
 	 * @throws IOException If the payload file is not found or an error occurs while generating its hash
 	 */

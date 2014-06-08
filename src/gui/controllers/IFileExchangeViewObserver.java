@@ -67,7 +67,7 @@ public interface IFileExchangeViewObserver {
 	void closeThread();
 	/**
 	 * Progress bar for show the status
-	 * @param value
+	 * @param value [0-100]
 	 */
 	void setProgressbar(int value);
 	/**

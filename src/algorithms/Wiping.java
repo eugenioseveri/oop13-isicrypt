@@ -24,7 +24,7 @@ public final class Wiping implements IWiping {
 	}
 	
 	/**
-	 * Returns an instance of this class
+	 * @return An instance of this class
 	 */
 	public static Wiping getInstance() {
 		if (singleton == null) {
